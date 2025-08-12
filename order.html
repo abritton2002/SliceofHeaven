@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YSH4YT68W2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-YSH4YT68W2');
+    </script>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order - Slice of Heaven Vintage Cakes</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="images/word-logo.PNG" alt="Slice of Heaven Vintage Cakes" class="logo-img">
+            </div>
+            <div class="nav-menu" id="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="gallery.html" class="nav-link">Gallery</a>
+                <a href="contact.html" class="nav-link">Contact</a>
+                <a href="order.html" class="nav-link order-btn">Order Now</a>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Order Section -->
+    <section id="order" class="order" style="padding-top: 120px;">
+        <div class="container">
+            <h2>Place Your Order</h2>
+            <p class="order-intro">Design your perfect cake with our custom order form. Get an instant price estimate!</p>
+            
+            <form id="order-form" class="order-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="customer-name">Name *</label>
+                        <input type="text" id="customer-name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customer-phone">Phone Number *</label>
+                        <input type="tel" id="customer-phone" name="phone" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cake-shape">Cake Shape *</label>
+                        <select id="cake-shape" name="shape" required>
+                            <option value="">Select shape</option>
+                            <option value="Heart">Heart</option>
+                            <option value="Round">Round</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="desired-servings">Number of Desired Servings *</label>
+                        <input type="number" id="desired-servings" name="servings" min="1" required>
+                    </div>
+                </div>
+
+                <div class="cake-configuration">
+                    <h3>Cake Configuration</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cake-layers">Number of Layers *</label>
+                            <select id="cake-layers" name="layers" required>
+                                <option value="">Select layers</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="cake-size">Cake Size *</label>
+                            <select id="cake-size" name="size" required>
+                                <option value="">Select size</option>
+                                <option value="6 inch">6 inch</option>
+                                <option value="8 inch">8 inch</option>
+                                <option value="10 inch">10 inch</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Flavor and Filling *</label>
+                        <div class="checkbox-group" id="flavor-filling-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="vanilla" name="flavors" value="Vanilla">
+                                <label for="vanilla">Vanilla</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="chocolate" name="flavors" value="Chocolate">
+                                <label for="chocolate">Chocolate</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="red-velvet" name="flavors" value="Red Velvet">
+                                <label for="red-velvet">Red Velvet</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="carrot" name="flavors" value="Carrot">
+                                <label for="carrot">Carrot</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="confetti" name="flavors" value="Confetti">
+                                <label for="confetti">Confetti</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="lemon" name="flavors" value="Lemon">
+                                <label for="lemon">Lemon</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="vanilla-buttercream" name="flavors" value="Vanilla Buttercream (Included)" checked>
+                                <label for="vanilla-buttercream">Vanilla Buttercream (Included)</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="oreo-vanilla-cake" name="flavors" value="Oreo-Vanilla Cake (+$5-$10)" data-price="7.5">
+                                <label for="oreo-vanilla-cake">Oreo-Vanilla Cake (+$5-$10)</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="cream-cheese-filling" name="flavors" value="Cream Cheese Filling (+$5-$10)" data-price="7.5">
+                                <label for="cream-cheese-filling">Cream Cheese Filling (+$5-$10)</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="oreo-filling" name="flavors" value="Oreo Filling (+$5-$10)" data-price="7.5">
+                                <label for="oreo-filling">Oreo Filling (+$5-$10)</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="raspberry-filling" name="flavors" value="Raspberry Filling (+$5-$10)" data-price="7.5">
+                                <label for="raspberry-filling">Raspberry Filling (+$5-$10)</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="chocolate-ganache" name="flavors" value="Chocolate Ganache (+$5-10)" data-price="7.5">
+                                <label for="chocolate-ganache">Chocolate Ganache (+$5-10)</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Enhancements (Optional)</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="edible-glitter" name="extras" value="Edible Glitter  (+$3-$5)" data-price="4">
+                                <label for="edible-glitter">Edible Glitter (+$3-$5)</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="edible-pearls" name="extras" value="Edible Pearls  (+$3-$5)" data-price="4">
+                                <label for="edible-pearls">Edible Pearls (+$3-$5)</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="cherries" name="extras" value="Cherries  (+$5)" data-price="5">
+                                <label for="cherries">Cherries (+$5)</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="glitter-cherries" name="extras" value="Glitter Cherries (+$10)" data-price="10">
+                                <label for="glitter-cherries">Glitter Cherries (+$10)</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="bows" name="extras" value="Bows  (+$5)" data-price="5">
+                                <label for="bows">Bows (+$5)</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="sprinkles" name="extras" value="Sprinkles (+$3-5)" data-price="4">
+                                <label for="sprinkles">Sprinkles (+$3-5)</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="3d-lettering" name="extras" value="3D Chocolate Lettering (+$5)" data-price="5">
+                                <label for="3d-lettering">3D Chocolate Lettering (+$5)</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="custom-addon" name="extras" value="Custom Add On (DM me for any custom add ons)">
+                                <label for="custom-addon">Custom Add On (DM me for any custom add ons)</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cake-colors">Cake Colors *</label>
+                        <input type="text" id="cake-colors" name="colors" placeholder="Specify what colors you'd like" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cake-message">What would you like your cake to say? *</label>
+                        <input type="text" id="cake-message" name="message" placeholder="Standard writing is included" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="occasion">Occasion *</label>
+                        <select id="occasion" name="occasion" required>
+                            <option value="">Select occasion</option>
+                            <option value="Birthday">Birthday</option>
+                            <option value="Wedding">Wedding</option>
+                            <option value="Gender Reveal">Gender Reveal</option>
+                            <option value="Bridal Shower/Engagement Party">Bridal Shower/Engagement Party</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="event-date">Date Needed *</label>
+                        <input type="date" id="event-date" name="eventDate" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="pickup-time">Preferred Pick-Up Time *</label>
+                        <input type="time" id="pickup-time" name="pickupTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="delivery">Delivery Needed? *</label>
+                        <select id="delivery" name="delivery" required>
+                            <option value="">Select option</option>
+                            <option value="Yes (additional fee with be calculated based on mileage)">Yes (additional fee calculated by mileage)</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="inspiration-photos">Inspiration Photos (Optional)</label>
+                    <input type="file" id="inspiration-photos" name="photos" multiple accept="image/*">
+                    <p class="field-note">Upload up to 5 photos to help us understand your vision</p>
+                </div>
+
+                <div class="price-summary">
+                    <h3>Price Estimate</h3>
+                    <div class="price-breakdown">
+                        <div class="price-line">
+                            <span>Base Price:</span>
+                            <span id="base-price">$0</span>
+                        </div>
+                        <div class="price-line">
+                            <span>Fillings:</span>
+                            <span id="fillings-price">$0</span>
+                        </div>
+                        <div class="price-line">
+                            <span>Extras:</span>
+                            <span id="extras-price">$0</span>
+                        </div>
+                        <div class="price-line total">
+                            <span><strong>Total Estimate:</strong></span>
+                            <span id="total-price"><strong>$0</strong></span>
+                        </div>
+                    </div>
+                    <p class="price-note">*Final pricing may vary based on design complexity, certain designs, and colors</p>
+                </div>
+
+                <div class="form-group">
+                    <div class="acknowledgment-section">
+                        <div class="checkbox-item">
+                            <input type="radio" id="pricing-ack" name="pricingAck" value="Yes" required>
+                            <label for="pricing-ack">I acknowledge that all prices listed are starting prices, and my final quote will depend on the level of detail, customization, and colors requested *</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="acknowledgment-section">
+                        <div class="checkbox-item">
+                            <input type="radio" id="terms-ack" name="termsAck" value="Yes" required>
+                            <label for="terms-ack">I acknowledge that once my cake is picked up or delivered, Slice of Heaven Cakes is no longer responsible for damage during transport. I understand buttercream is heat-sensitive and requires proper storage *</label>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-order-btn">Submit Order Request</button>
+                
+                <div class="order-disclaimer">
+                    <p><strong>Next Steps:</strong></p>
+                    <ul>
+                        <li>I'll review your order and get back to you within 24 hours</li>
+                        <li>A 50% non-refundable deposit will be required to secure your date</li>
+                        <li>Final payment is due 24 hours before pickup</li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 Slice of Heaven Vintage Cakes. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
