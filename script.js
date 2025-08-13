@@ -424,7 +424,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 };
 
                 // Google Apps Script web app URL
-                const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzu76bb_iBKP9G26dPhzv90FTzVvMt68ugDia89XR0LdP85v_Qx0y1oaZww8OW-9qBK/exec';
+                const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyqWNlM6jJkzJNJi5h0na0YbzksCwtCG0D9mdCP26onxj_rOr2UdpR10UO86_zmgz_I/exec';
 
                 // Submit to Google Apps Script
                 const response = await fetch(APPS_SCRIPT_URL, {
