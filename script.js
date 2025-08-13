@@ -20,8 +20,9 @@ function initHeroCarousel() {
         // Hide all slides with proper transition
         heroCakes.forEach(cake => {
             cake.classList.remove('active');
-            cake.style.opacity = '0';
-            cake.style.transform = 'scale(0.9)';
+            // Remove inline styles to let CSS handle transitions
+            cake.style.removeProperty('opacity');
+            cake.style.removeProperty('transform');
         });
         
         // Remove active class from all dots
@@ -32,8 +33,6 @@ function initHeroCarousel() {
         // Show current slide and activate corresponding dot
         if (heroCakes[index]) {
             heroCakes[index].classList.add('active');
-            heroCakes[index].style.opacity = '1';
-            heroCakes[index].style.transform = 'scale(1)';
         }
         if (heroDots[index]) {
             heroDots[index].classList.add('active');
@@ -44,7 +43,7 @@ function initHeroCarousel() {
         // Allow transitions again after animation completes
         setTimeout(() => {
             isTransitioning = false;
-        }, 600); // Match CSS transition duration
+        }, 400); // Match CSS transition duration
     }
 
     function nextSlide() {
