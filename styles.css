@@ -176,6 +176,8 @@ h1, h2, h3, h4, h5, h6 {
     overflow: hidden;
 }
 
+
+
 /* Hero Background Texture */
 .hero::before {
     content: '';
@@ -223,12 +225,32 @@ h1, h2, h3, h4, h5, h6 {
 
 .hero-text h1 {
     font-size: 3.5rem;
-    color: var(--black);
-    margin-bottom: 1rem;
+    color: var(--dark-blue);
+    margin-bottom: 0;
     line-height: 1.2;
     font-family: 'Open Sans', sans-serif;
     font-weight: 700;
     letter-spacing: -0.02em;
+    text-align: left;
+}
+
+.hero-logo-container {
+    text-align: left;
+    margin-bottom: 0;
+    padding-left: 0;
+}
+
+.hero-title-logo {
+    height: 15rem;
+    width: auto;
+    vertical-align: middle;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    transition: all 0.3s ease;
+}
+
+.hero-title-logo:hover {
+    transform: scale(1.05);
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
 }
 
 .tagline {
@@ -1212,6 +1234,7 @@ body section#order.order {
     .nav-container {
         height: 80px;
         padding: 0 15px;
+        justify-content: center;
     }
     
     .logo-img {
@@ -1264,6 +1287,8 @@ body section#order.order {
         text-align: center;
     }
 
+
+
     .hero-image {
         height: 350px;
     }
@@ -1279,6 +1304,10 @@ body section#order.order {
 
     .hero-text h1 {
         font-size: 2.5rem;
+    }
+    
+    .hero-title-logo {
+        height: 10.5rem;
     }
 
     .tagline {
@@ -1389,8 +1418,14 @@ body section#order.order {
 }
 
 @media (max-width: 480px) {
+
+    
     .hero-text h1 {
         font-size: 2rem;
+    }
+    
+    .hero-title-logo {
+        height: 7.5rem;
     }
 
     .tagline {

@@ -6,9 +6,15 @@ function initHeroCarousel() {
     let autoPlayInterval;
 
     function showSlide(index) {
-        // Hide all slides
+        // Ensure index is within bounds
+        if (index < 0) index = heroCakes.length - 1;
+        if (index >= heroCakes.length) index = 0;
+        
+        // Hide all slides with proper transition
         heroCakes.forEach(cake => {
             cake.classList.remove('active');
+            cake.style.opacity = '0';
+            cake.style.transform = 'scale(0.9)';
         });
         
         // Remove active class from all dots
@@ -19,6 +25,8 @@ function initHeroCarousel() {
         // Show current slide and activate corresponding dot
         if (heroCakes[index]) {
             heroCakes[index].classList.add('active');
+            heroCakes[index].style.opacity = '1';
+            heroCakes[index].style.transform = 'scale(1)';
         }
         if (heroDots[index]) {
             heroDots[index].classList.add('active');
@@ -29,11 +37,14 @@ function initHeroCarousel() {
 
     function nextSlide() {
         const nextIndex = (currentSlide + 1) % heroCakes.length;
-        showSlide(nextIndex);
+        // Add a small delay to prevent rapid cycling
+        setTimeout(() => {
+            showSlide(nextIndex);
+        }, 100);
     }
 
     function startAutoPlay() {
-        autoPlayInterval = setInterval(nextSlide, 4000); // Change slide every 4 seconds
+        autoPlayInterval = setInterval(nextSlide, 2000); // Change slide every 2 seconds
     }
 
     function stopAutoPlay() {
@@ -49,16 +60,27 @@ function initHeroCarousel() {
         });
     });
 
-    // Start autoplay
+    // Initialize first slide
+    if (heroCakes.length > 0) {
+        showSlide(0);
+    }
+    
+    // Start autoplay only if there are multiple slides
     if (heroCakes.length > 1) {
         startAutoPlay();
     }
 
-    // Pause autoplay on hover
+    // Pause autoplay on hover and touch
     const heroGallery = document.querySelector('.hero-gallery');
     if (heroGallery) {
         heroGallery.addEventListener('mouseenter', stopAutoPlay);
         heroGallery.addEventListener('mouseleave', startAutoPlay);
+        
+        // Mobile touch events
+        heroGallery.addEventListener('touchstart', stopAutoPlay);
+        heroGallery.addEventListener('touchend', () => {
+            setTimeout(startAutoPlay, 1000); // Resume after 1 second
+        });
     }
 }
 
