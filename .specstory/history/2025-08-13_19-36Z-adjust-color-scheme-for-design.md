@@ -7780,11 +7780,85 @@ Now on mobile screens (768px and below), the main logo will be perfectly centere
 
 _**User**_
 
-okay commit andpush please
+the text logo needs to be centered on mobile as well and the hamburger on navbar on mobile still needs to be right side
 
 ---
 
 _**Assistant**_
+
+I'll fix the mobile navigation layout to center the text logo and keep the hamburger menu on the right side.
+
+
+---
+
+<details><summary>Edit file: styles.css</summary>
+
+undefined
+
+**Chunk 1**
+Lines added: 5, lines removed: 1
+
+```diff
+@@ -1235,10 +1235,14 @@
+          height: 80px;
+          padding: 0 15px;
+-         justify-content: center;
++         justify-content: space-between;
+      }
+      
+      .logo-img {
+          height: 60px;
+      }
++     
++     .hero-logo-container {
++         text-align: center;
++     }
+      
+      .nav-menu {
+```
+
+</details>
+
+---
+
+Perfect! ✅ I've made the following changes for mobile:
+
+1. **Navigation Layout**: Changed `justify-content: center` back to `justify-content: space-between` so the hamburger menu stays on the right side
+2. **Text Logo Centering**: Added `.hero-logo-container { text-align: center; }` to center the word logo on mobile
+
+Now on mobile:
+- The main logo will be on the left
+- The hamburger menu will be on the right
+- The word logo in the hero section will be centered
+
+This creates a balanced mobile layout with proper navigation functionality.
+
+---
+
+_**User**_
+
+also dont have the carousel auto rotate just allow person to swipe. when picture rotates though on mobile make sure it doesnt bug out
+
+---
+
+_**Assistant**_
+
+I'll modify the carousel to remove auto-rotation and only allow manual swiping, while ensuring smooth transitions on mobile.
+
+
+---
+
+
+
+---
+
+
+
+---
+
+
+
+---
 
 
 

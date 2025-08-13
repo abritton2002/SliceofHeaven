@@ -3,12 +3,19 @@ function initHeroCarousel() {
     const heroCakes = document.querySelectorAll('.hero-cake');
     const heroDots = document.querySelectorAll('.hero-dot');
     let currentSlide = 0;
-    let autoPlayInterval;
+    let touchStartX = 0;
+    let touchEndX = 0;
+    let isTransitioning = false;
 
     function showSlide(index) {
+        // Prevent rapid transitions
+        if (isTransitioning) return;
+        
         // Ensure index is within bounds
         if (index < 0) index = heroCakes.length - 1;
         if (index >= heroCakes.length) index = 0;
+        
+        isTransitioning = true;
         
         // Hide all slides with proper transition
         heroCakes.forEach(cake => {
@@ -33,30 +40,29 @@ function initHeroCarousel() {
         }
         
         currentSlide = index;
+        
+        // Allow transitions again after animation completes
+        setTimeout(() => {
+            isTransitioning = false;
+        }, 600); // Match CSS transition duration
     }
 
     function nextSlide() {
         const nextIndex = (currentSlide + 1) % heroCakes.length;
-        // Add a small delay to prevent rapid cycling
-        setTimeout(() => {
-            showSlide(nextIndex);
-        }, 100);
+        showSlide(nextIndex);
     }
 
-    function startAutoPlay() {
-        autoPlayInterval = setInterval(nextSlide, 2000); // Change slide every 2 seconds
-    }
-
-    function stopAutoPlay() {
-        clearInterval(autoPlayInterval);
+    function prevSlide() {
+        const prevIndex = (currentSlide - 1 + heroCakes.length) % heroCakes.length;
+        showSlide(prevIndex);
     }
 
     // Add click event listeners to dots
     heroDots.forEach((dot, index) => {
         dot.addEventListener('click', () => {
-            showSlide(index);
-            stopAutoPlay();
-            startAutoPlay(); // Restart autoplay after manual navigation
+            if (!isTransitioning) {
+                showSlide(index);
+            }
         });
     });
 
@@ -64,22 +70,44 @@ function initHeroCarousel() {
     if (heroCakes.length > 0) {
         showSlide(0);
     }
-    
-    // Start autoplay only if there are multiple slides
-    if (heroCakes.length > 1) {
-        startAutoPlay();
-    }
 
-    // Pause autoplay on hover and touch
+    // Touch/swipe functionality for mobile
     const heroGallery = document.querySelector('.hero-gallery');
     if (heroGallery) {
-        heroGallery.addEventListener('mouseenter', stopAutoPlay);
-        heroGallery.addEventListener('mouseleave', startAutoPlay);
-        
-        // Mobile touch events
-        heroGallery.addEventListener('touchstart', stopAutoPlay);
-        heroGallery.addEventListener('touchend', () => {
-            setTimeout(startAutoPlay, 1000); // Resume after 1 second
+        // Touch events for mobile swipe
+        heroGallery.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        heroGallery.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, { passive: true });
+
+        function handleSwipe() {
+            const swipeThreshold = 50; // Minimum swipe distance
+            const swipeDistance = touchEndX - touchStartX;
+            
+            if (Math.abs(swipeDistance) > swipeThreshold && !isTransitioning) {
+                if (swipeDistance > 0) {
+                    // Swipe right - go to previous slide
+                    prevSlide();
+                } else {
+                    // Swipe left - go to next slide
+                    nextSlide();
+                }
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (!isTransitioning) {
+                if (e.key === 'ArrowLeft') {
+                    prevSlide();
+                } else if (e.key === 'ArrowRight') {
+                    nextSlide();
+                }
+            }
         });
     }
 }

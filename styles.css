@@ -1234,11 +1234,15 @@ body section#order.order {
     .nav-container {
         height: 80px;
         padding: 0 15px;
-        justify-content: center;
+        justify-content: space-between;
     }
     
     .logo-img {
         height: 60px;
+    }
+    
+    .hero-logo-container {
+        text-align: center;
     }
     
     .nav-menu {
