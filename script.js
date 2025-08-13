@@ -1,3 +1,72 @@
+// Hero Carousel Functionality
+function initHeroCarousel() {
+    const heroCakes = document.querySelectorAll('.hero-cake');
+    const heroDots = document.querySelectorAll('.hero-dot');
+    let currentSlide = 0;
+    let autoPlayInterval;
+
+    function showSlide(index) {
+        // Hide all slides
+        heroCakes.forEach(cake => {
+            cake.classList.remove('active');
+        });
+        
+        // Remove active class from all dots
+        heroDots.forEach(dot => {
+            dot.classList.remove('active');
+        });
+        
+        // Show current slide and activate corresponding dot
+        if (heroCakes[index]) {
+            heroCakes[index].classList.add('active');
+        }
+        if (heroDots[index]) {
+            heroDots[index].classList.add('active');
+        }
+        
+        currentSlide = index;
+    }
+
+    function nextSlide() {
+        const nextIndex = (currentSlide + 1) % heroCakes.length;
+        showSlide(nextIndex);
+    }
+
+    function startAutoPlay() {
+        autoPlayInterval = setInterval(nextSlide, 4000); // Change slide every 4 seconds
+    }
+
+    function stopAutoPlay() {
+        clearInterval(autoPlayInterval);
+    }
+
+    // Add click event listeners to dots
+    heroDots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+            showSlide(index);
+            stopAutoPlay();
+            startAutoPlay(); // Restart autoplay after manual navigation
+        });
+    });
+
+    // Start autoplay
+    if (heroCakes.length > 1) {
+        startAutoPlay();
+    }
+
+    // Pause autoplay on hover
+    const heroGallery = document.querySelector('.hero-gallery');
+    if (heroGallery) {
+        heroGallery.addEventListener('mouseenter', stopAutoPlay);
+        heroGallery.addEventListener('mouseleave', startAutoPlay);
+    }
+}
+
+// Initialize carousel when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    initHeroCarousel();
+});
+
 // Mobile Navigation Toggle
 const hamburger = document.getElementById('hamburger');
 const navMenu = document.getElementById('nav-menu');
@@ -46,62 +115,8 @@ window.addEventListener('scroll', () => {
     lastScrollY = window.scrollY;
 });
 
-// Contact form handling
-const contactForm = document.getElementById('contact-form');
-const submitBtn = document.querySelector('.submit-btn');
-
-contactForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    // Get form data
-    const formData = new FormData(contactForm);
-    const name = formData.get('name');
-    const email = formData.get('email');
-    const message = formData.get('message');
-    
-    // Basic form validation
-    if (!name || !email || !message) {
-        showNotification('Please fill in all fields.', 'error');
-        return;
-    }
-    
-    if (!isValidEmail(email)) {
-        showNotification('Please enter a valid email address.', 'error');
-        return;
-    }
-    
-    // Create email body for contact form
-    const emailSubject = 'Website Contact Form - ' + name;
-    const emailBody = `
-New message from website contact form:
-
-Name: ${name}
-Email: ${email}
-
-Message:
-${message}
-
-Sent from: Slice of Heaven Cakes Website
-Time: ${new Date().toLocaleString()}
-    `.trim();
-
-    // Create mailto link
-    const mailtoLink = `mailto:sliceofheaven.cakes7@gmail.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
-    
-    // Update button
-    submitBtn.textContent = 'Opening Email...';
-    submitBtn.disabled = true;
-    
-    // Open email client
-    window.location.href = mailtoLink;
-    
-    setTimeout(() => {
-        showNotification('Email client opened! Please send the email to complete your message.', 'success');
-        contactForm.reset();
-        submitBtn.textContent = 'Send Message';
-        submitBtn.disabled = false;
-    }, 1000);
-});
+// Netlify form handling - form will be handled automatically by Netlify
+// No additional JavaScript needed for form submission
 
 // Email validation function
 function isValidEmail(email) {
