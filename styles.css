@@ -1319,6 +1319,8 @@ body section#order.order {
     }
 }
 
+
+
 /* Footer */
 .footer {
     background: var(--dark-blue);
@@ -1720,6 +1722,8 @@ body section#order.order {
         position: relative !important;
         z-index: 1 !important;
     }
+    
+
 
     .order-process {
         grid-template-columns: 1fr;
