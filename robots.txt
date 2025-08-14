@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://sliceofheavencakes.com/sitemap.xml
+Sitemap: https://sliceofheavenvintagecakes.com/sitemap.xml
 
 # Crawl-delay
 Crawl-delay: 1
