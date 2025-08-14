@@ -169,8 +169,8 @@ h1, h2, h3, h4, h5, h6 {
 /* Hero Section */
 .hero {
     background: linear-gradient(rgba(230, 243, 255, 0.05), rgba(240, 248, 255, 0.1)), url('images/maybehero.png');
-    background-size: 110%;
-    background-position: calc(50% + 90px) center;
+    background-size: cover;
+    background-position: center 40%;
     background-repeat: no-repeat;
     padding: 60px 20px 15px;
     min-height: 100vh;
@@ -189,8 +189,8 @@ h1, h2, h3, h4, h5, h6 {
     right: 0;
     bottom: 0;
     background: inherit;
-    background-size: 80%;
-    background-position: calc(50% + 90px) center;
+    background-size: cover;
+    background-position: center 40%;
     background-repeat: no-repeat;
     filter: blur(2px);
     z-index: 0;
