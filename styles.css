@@ -168,13 +168,50 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Hero Section */
 .hero {
-    background: linear-gradient(135deg, var(--baby-blue) 0%, #F0F8FF 50%, var(--baby-blue) 100%);
+    background: linear-gradient(rgba(230, 243, 255, 0.05), rgba(240, 248, 255, 0.1)), url('images/maybehero.png');
+    background-size: 110%;
+    background-position: center;
+    background-repeat: no-repeat;
     padding: 60px 20px 15px;
     min-height: 100vh;
     display: flex;
     align-items: center;
     position: relative;
     overflow: hidden;
+}
+
+/* Blur effect for hero background */
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: inherit;
+    background-size: 80%;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: blur(2px);
+    z-index: 0;
+}
+
+/* Vintage effect for hero background */
+.hero::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        linear-gradient(45deg, rgba(139, 69, 19, 0.1) 0%, transparent 50%),
+        linear-gradient(135deg, rgba(160, 82, 45, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 30% 70%, rgba(210, 180, 140, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 70% 30%, rgba(244, 164, 96, 0.08) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 2;
+    filter: sepia(0.3) saturate(0.8) contrast(1.1) brightness(0.95) blur(0);
 }
 
 
@@ -188,23 +225,40 @@ h1, h2, h3, h4, h5, h6 {
     right: 0;
     bottom: 0;
     background-image: 
-        radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+        radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
     pointer-events: none;
     z-index: 1;
 }
 
 .hero-content {
-    max-width: 1200px;
+    max-width: 800px;
     margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
+    display: flex;
+    flex-direction: column;
     align-items: center;
+    justify-content: center;
+    text-align: center;
     position: relative;
-    z-index: 2;
+    z-index: 4;
     animation: fadeInUp 1s ease-out 0.3s both;
+}
+
+/* Welcome Section */
+.welcome {
+    background: var(--baby-blue);
+    padding: 80px 0;
+    text-align: center;
+}
+
+.welcome-content {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
 }
 
 .hero-logo-accent {
@@ -348,178 +402,7 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--white);
 }
 
-.hero-image {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    height: 500px;
-    background-image: 
-        radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
-    background-size: 100px 100px;
-    border-radius: 20px;
-}
 
-.hero-gallery {
-    position: relative;
-    width: 100%;
-    max-width: 500px;
-    height: 500px;
-    margin: 0 auto;
-}
-
-.hero-cake {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--white);
-    border-radius: var(--border-radius);
-    padding: 1rem;
-    box-shadow: 
-        0 8px 30px rgba(0, 0, 0, 0.12),
-        0 4px 15px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
-    opacity: 0;
-    transform: scale(0.9) translateY(20px);
-    aspect-ratio: 1 / 1;
-    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    will-change: transform, opacity;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    pointer-events: none;
-}
-
-.hero-cake.active {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-    z-index: 2;
-    pointer-events: auto;
-}
-
-/* Loading animation for carousel */
-.hero-cake.loading {
-    animation: pulse 1.5s ease-in-out infinite;
-}
-
-@keyframes pulse {
-    0%, 100% {
-        opacity: 0.6;
-        transform: scale(0.95) translateY(10px);
-    }
-    50% {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
-}
-
-.hero-cake-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center center;
-    border-radius: var(--border-radius);
-}
-
-/* Enhanced Carousel Navigation */
-.hero-dots {
-    position: absolute;
-    bottom: -40px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 12px;
-    z-index: 10;
-    padding: 8px 16px;
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 25px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-.hero-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: rgba(0, 0, 0, 0.2);
-    cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    position: relative;
-    overflow: hidden;
-}
-
-.hero-dot::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--dark-blue);
-    border-radius: 50%;
-    transform: scale(0);
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.hero-dot.active::before {
-    transform: scale(1);
-}
-
-.hero-dot:hover {
-    transform: scale(1.3);
-    background: rgba(0, 0, 0, 0.1);
-}
-
-/* Carousel Navigation Arrows */
-.hero-nav {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    padding: 0 20px;
-    z-index: 5;
-    pointer-events: none;
-}
-
-.hero-nav-btn {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.9);
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    pointer-events: auto;
-    opacity: 0;
-    transform: scale(0.8);
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
-}
-
-.hero-gallery:hover .hero-nav-btn {
-    opacity: 1;
-    transform: scale(1);
-}
-
-.hero-nav-btn:hover {
-    background: var(--dark-blue);
-    color: white;
-    transform: scale(1.1);
-}
-
-.hero-nav-btn svg {
-    width: 20px;
-    height: 20px;
-    fill: currentColor;
-}
 
 
 
@@ -1493,83 +1376,29 @@ body section#order.order {
     }
     
     .hero-content {
-        grid-template-columns: 1fr;
-        gap: 3rem;
+        max-width: 100%;
+        padding: 0 20px;
         text-align: center;
-        justify-items: center;
         justify-content: center;
         align-items: center;
-        padding: 0;
-        margin: 0;
-        width: 100%;
+        margin: 0 auto;
+    }
+    
+    .welcome {
+        padding: 60px 20px;
+    }
+    
+    .welcome-content {
         max-width: 100%;
-        transform: translateX(-10px);
-    }
-
-
-
-    .hero-image {
-        height: 400px;
-        width: 100%;
-        max-width: 400px;
-        margin: 0 auto;
-    }
-
-    .hero-gallery {
-        width: 100%;
-        max-width: 400px;
-        height: 400px;
-        aspect-ratio: 1 / 1;
-        touch-action: pan-y pinch-zoom;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-        margin: 0 auto;
+        padding: 0 20px;
     }
     
-    /* Ensure minimum size for very small screens */
-    @media (max-width: 375px) {
-        .hero {
-            padding: 60px 10px 15px;
-        }
-        
-        .hero-gallery {
-            max-width: 350px;
-            height: 350px;
-        }
-        
-        .hero-image {
-            height: 350px;
-            max-width: 350px;
-        }
-    }
-    
-    /* Mobile carousel improvements */
-    .hero-nav-btn {
-        width: 45px;
-        height: 45px;
-        opacity: 1;
-        transform: scale(1);
-        touch-action: manipulation;
-        -webkit-tap-highlight-color: transparent;
-        cursor: pointer;
-        background: rgba(255, 255, 255, 0.95);
-    }
-    
-    .hero-dots {
-        bottom: -35px;
-        padding: 6px 12px;
-        gap: 8px;
-    }
-    
-    .hero-dot {
-        width: 8px;
-        height: 8px;
-        touch-action: manipulation;
-        -webkit-tap-highlight-color: transparent;
-        cursor: pointer;
-    }
+         /* Ensure minimum size for very small screens */
+     @media (max-width: 375px) {
+         .hero {
+             padding: 60px 10px 15px;
+         }
+     }
     
 
 
@@ -1717,45 +1546,7 @@ body section#order.order {
         font-size: 1rem;
     }
 
-    .hero-cake {
-        padding: 0.5rem;
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        aspect-ratio: 1 / 1;
-        box-sizing: border-box;
-    }
-
-    .hero-cake-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center center;
-        border-radius: var(--border-radius);
-        display: block;
-        max-width: 100%;
-        max-height: 100%;
-    }
     
-    .hero-cake.active {
-        opacity: 1 !important;
-        visibility: visible !important;
-    }
-    
-    .hero-cake.active .hero-cake-img {
-        opacity: 1 !important;
-        visibility: visible !important;
-        display: block !important;
-    }
-    
-    /* Force all hero cake images to be visible on mobile */
-    .hero-cake .hero-cake-img {
-        opacity: 1 !important;
-        visibility: visible !important;
-        display: block !important;
-        position: relative !important;
-        z-index: 1 !important;
-    }
     
 
 
@@ -1800,25 +1591,7 @@ body section#order.order {
         gap: 0.75rem;
     }
     
-    .hero-cake {
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        padding: 0.5rem;
-        aspect-ratio: 1 / 1;
-        box-sizing: border-box;
-    }
     
-    .hero-cake-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center center;
-        border-radius: var(--border-radius);
-        display: block;
-        max-width: 100%;
-        max-height: 100%;
-    }
     
     .hero-text h1 {
         font-size: 1.75rem;
