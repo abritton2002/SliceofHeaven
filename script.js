@@ -5,6 +5,12 @@ function initHeroCarousel() {
     const prevBtn = document.getElementById('prev-btn');
     const nextBtn = document.getElementById('next-btn');
 
+    // Debug logging
+    console.log('Carousel initialization started');
+    console.log('Hero cakes found:', heroCakes.length);
+    console.log('Hero dots found:', heroDots.length);
+    console.log('Prev button found:', !!prevBtn);
+    console.log('Next button found:', !!nextBtn);
     
     let currentSlide = 0;
     let touchStartX = 0;
@@ -20,11 +26,14 @@ function initHeroCarousel() {
         if (index < 0) index = heroCakes.length - 1;
         if (index >= heroCakes.length) index = 0;
         
+        console.log('Showing slide:', index, 'Total slides:', heroCakes.length);
+        
         isTransitioning = true;
         
         // Hide all slides
-        heroCakes.forEach(cake => {
+        heroCakes.forEach((cake, i) => {
             cake.classList.remove('active');
+            console.log(`Slide ${i} classes after remove:`, cake.className);
         });
         
         // Remove active class from all dots
@@ -35,14 +44,14 @@ function initHeroCarousel() {
         // Show current slide and activate corresponding dot
         if (heroCakes[index]) {
             heroCakes[index].classList.add('active');
+            console.log(`Slide ${index} classes after add:`, heroCakes[index].className);
+            console.log(`Slide ${index} image src:`, heroCakes[index].querySelector('img')?.src);
         }
         if (heroDots[index]) {
             heroDots[index].classList.add('active');
         }
         
         currentSlide = index;
-        
-
         
         // Allow transitions again after animation completes
         setTimeout(() => {
@@ -87,23 +96,33 @@ function initHeroCarousel() {
 
     // Event Listeners
     if (prevBtn) {
-        prevBtn.addEventListener('click', () => {
+        prevBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Prev button clicked');
             if (!isTransitioning) {
                 prevSlide();
                 pauseAutoPlay();
                 setTimeout(resumeAutoPlay, 3000); // Resume after 3 seconds
             }
         });
+    } else {
+        console.error('Prev button not found');
     }
 
     if (nextBtn) {
-        nextBtn.addEventListener('click', () => {
+        nextBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Next button clicked');
             if (!isTransitioning) {
                 nextSlide();
                 pauseAutoPlay();
                 setTimeout(resumeAutoPlay, 3000); // Resume after 3 seconds
             }
         });
+    } else {
+        console.error('Next button not found');
     }
 
     // Dot navigation
@@ -119,13 +138,17 @@ function initHeroCarousel() {
 
     // Touch/swipe functionality for mobile
     const heroGallery = document.querySelector('.hero-gallery');
+    console.log('Hero gallery found:', !!heroGallery);
+    
     if (heroGallery) {
         heroGallery.addEventListener('touchstart', (e) => {
+            console.log('Touch start detected:', e.changedTouches[0].screenX);
             touchStartX = e.changedTouches[0].screenX;
             pauseAutoPlay();
         }, { passive: true });
 
         heroGallery.addEventListener('touchend', (e) => {
+            console.log('Touch end detected:', e.changedTouches[0].screenX);
             touchEndX = e.changedTouches[0].screenX;
             handleSwipe();
             setTimeout(resumeAutoPlay, 3000); // Resume after 3 seconds
@@ -134,11 +157,14 @@ function initHeroCarousel() {
         function handleSwipe() {
             const swipeThreshold = 50;
             const swipeDistance = touchEndX - touchStartX;
+            console.log('Swipe distance:', swipeDistance);
             
             if (Math.abs(swipeDistance) > swipeThreshold && !isTransitioning) {
                 if (swipeDistance > 0) {
+                    console.log('Swipe right - going to previous slide');
                     prevSlide();
                 } else {
+                    console.log('Swipe left - going to next slide');
                     nextSlide();
                 }
             }
@@ -168,8 +194,34 @@ function initHeroCarousel() {
 
     // Initialize carousel
     if (heroCakes.length > 0) {
+        console.log('Initializing carousel with', heroCakes.length, 'slides');
+        
+        // Check if all images are loaded
+        heroCakes.forEach((cake, index) => {
+            const img = cake.querySelector('img');
+            if (img) {
+                console.log(`Slide ${index} image:`, img.src);
+                console.log(`Slide ${index} image display:`, window.getComputedStyle(img).display);
+                console.log(`Slide ${index} image opacity:`, window.getComputedStyle(img).opacity);
+                console.log(`Slide ${index} image visibility:`, window.getComputedStyle(img).visibility);
+                
+                if (img.complete) {
+                    console.log(`Slide ${index} image loaded:`, img.naturalWidth, 'x', img.naturalHeight);
+                } else {
+                    img.addEventListener('load', () => {
+                        console.log(`Slide ${index} image loaded:`, img.naturalWidth, 'x', img.naturalHeight);
+                    });
+                    img.addEventListener('error', () => {
+                        console.error(`Slide ${index} image failed to load:`, img.src);
+                    });
+                }
+            }
+        });
+        
         showSlide(0);
         startAutoPlay();
+    } else {
+        console.error('No hero cakes found for carousel initialization');
     }
 
     // Pause autoplay when page is not visible
@@ -182,9 +234,23 @@ function initHeroCarousel() {
     });
 }
 
+// Fallback initialization
+window.addEventListener('load', function() {
+    console.log('Window loaded, checking if carousel is initialized...');
+    const heroCakes = document.querySelectorAll('.hero-cake');
+    if (heroCakes.length > 0 && !document.querySelector('.hero-cake.active')) {
+        console.log('Carousel not initialized, initializing now...');
+        initHeroCarousel();
+    }
+});
+
 // Initialize carousel when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    initHeroCarousel();
+    console.log('DOM loaded, initializing carousel...');
+    // Small delay to ensure all elements are properly rendered
+    setTimeout(() => {
+        initHeroCarousel();
+    }, 100);
 });
 
 // Mobile Navigation Toggle
