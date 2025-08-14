@@ -1427,13 +1427,22 @@ body section#order.order {
         margin: 0 auto;
         display: flex;
         justify-content: center;
+        align-items: center;
+        width: 100%;
     }
     
     .hero-text {
         width: 100%;
         max-width: 100%;
         margin: 0 auto;
-        padding: 0;
+        padding: 0 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
     }
     
     .nav-menu {
@@ -1478,6 +1487,9 @@ body section#order.order {
 
     .hero {
         padding: 60px 15px 15px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
     
     .hero-content {
@@ -1485,7 +1497,13 @@ body section#order.order {
         gap: 3rem;
         text-align: center;
         justify-items: center;
+        justify-content: center;
+        align-items: center;
         padding: 0;
+        margin: 0;
+        width: 100%;
+        max-width: 100%;
+        transform: translateX(-10px);
     }
 
 
