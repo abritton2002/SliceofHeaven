@@ -337,13 +337,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .tagline {
-    font-size: 1.4rem;
+    font-size: 2.2rem;
     color: var(--black);
     font-style: italic;
     margin-bottom: 0.5rem;
     font-family: "Playwrite AU NSW", cursive;
     font-optical-sizing: auto;
-    font-weight: 300;
+    font-weight: 600;
     text-align: center;
 }
 
@@ -441,7 +441,7 @@ section h2 {
 /* Custom Orders Section */
 .custom-orders {
     padding: 80px 0 60px;
-    background: var(--white);
+    background: var(--baby-blue);
 }
 
 .order-info {
@@ -582,6 +582,111 @@ section h2 {
 .pricing-note p {
     color: var(--black);
     font-style: italic;
+}
+
+/* Instagram Section */
+.instagram-section {
+    background: var(--white);
+    padding: 140px 0 80px;
+}
+
+.instagram-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 3rem;
+    text-align: center;
+}
+
+.instagram-embed {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 600px;
+}
+
+.instagram-embed iframe {
+    border-radius: var(--border-radius);
+    box-shadow: 
+        0 8px 30px rgba(0, 0, 0, 0.1),
+        0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.instagram-embed iframe:hover {
+    transform: translateY(-5px);
+    box-shadow: 
+        0 15px 40px rgba(0, 0, 0, 0.15),
+        0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.instagram-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
+    max-width: 600px;
+}
+
+.instagram-info h3 {
+    font-size: 2rem;
+    color: var(--dark-blue);
+    margin-bottom: 1rem;
+    font-family: "Playwrite AU NSW", cursive;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    letter-spacing: -0.01em;
+}
+
+.instagram-info p {
+    font-size: 1.2rem;
+    color: var(--text-light);
+    line-height: 1.8;
+    font-style: italic;
+    margin-bottom: 1rem;
+}
+
+.instagram-follow-btn {
+    display: inline-block;
+    background: linear-gradient(45deg, #833AB4, #FD1D1D, #F77737);
+    color: var(--white);
+    padding: 15px 30px;
+    text-decoration: none;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 
+        0 4px 15px rgba(131, 58, 180, 0.3),
+        0 2px 8px rgba(253, 29, 29, 0.2);
+    font-size: 1rem;
+    position: relative;
+    overflow: hidden;
+    align-self: flex-start;
+}
+
+.instagram-follow-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.instagram-follow-btn:hover {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 
+        0 8px 25px rgba(131, 58, 180, 0.4),
+        0 4px 12px rgba(253, 29, 29, 0.3);
+}
+
+.instagram-follow-btn:hover::before {
+    left: 100%;
 }
 
 /* Gallery Section */
@@ -1389,6 +1494,13 @@ body section#order.order {
         display: flex;
         justify-content: center;
         align-items: center;
+        background-position: center center !important;
+        background-size: 110% !important;
+    }
+    
+    .hero::before {
+        background-position: center center !important;
+        background-size: 80% !important;
     }
     
     .hero-content {
@@ -1434,7 +1546,7 @@ body section#order.order {
     }
 
     .tagline {
-        font-size: 1.2rem;
+        font-size: 1.8rem;
         text-align: center;
     }
 
@@ -1494,6 +1606,8 @@ body section#order.order {
         gap: 1.5rem;
         margin: 3rem 1rem 0;
     }
+    
+
 
     .gallery-img {
         height: 100%;
@@ -1518,6 +1632,10 @@ body section#order.order {
         grid-template-columns: 1fr;
         text-align: center;
     }
+    
+    .footer-socials {
+        justify-content: center;
+    }
 
     section h2 {
         font-size: 2rem;
@@ -1530,6 +1648,13 @@ body section#order.order {
     .hero {
         padding: 100px 20px 30px;
         min-height: auto;
+        background-position: center center !important;
+        background-size: 110% !important;
+    }
+    
+    .hero::before {
+        background-position: center center !important;
+        background-size: 80% !important;
     }
     
     .order {
@@ -1558,7 +1683,7 @@ body section#order.order {
     }
 
     .tagline {
-        font-size: 1rem;
+        font-size: 1.8rem;
     }
 
     .main-message {
