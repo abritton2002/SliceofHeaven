@@ -1429,6 +1429,13 @@ body section#order.order {
         justify-content: center;
     }
     
+    .hero-text {
+        width: 100%;
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 0;
+    }
+    
     .nav-menu {
         position: fixed;
         top: 80px;
@@ -1469,11 +1476,16 @@ body section#order.order {
         transform: rotate(45deg) translate(-5px, -6px);
     }
 
+    .hero {
+        padding: 60px 15px 15px;
+    }
+    
     .hero-content {
         grid-template-columns: 1fr;
         gap: 3rem;
         text-align: center;
         justify-items: center;
+        padding: 0;
     }
 
 
@@ -1500,6 +1512,10 @@ body section#order.order {
     
     /* Ensure minimum size for very small screens */
     @media (max-width: 375px) {
+        .hero {
+            padding: 60px 10px 15px;
+        }
+        
         .hero-gallery {
             max-width: 350px;
             height: 350px;
