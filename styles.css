@@ -584,10 +584,12 @@ section h2 {
     font-style: italic;
 }
 
+
+
 /* Instagram Section */
 .instagram-section {
     background: var(--white);
-    padding: 140px 0 80px;
+    padding: 80px 0 60px;
 }
 
 .instagram-content {
@@ -1668,11 +1670,14 @@ body section#order.order {
     }
     
     .gallery {
+        background: var(--baby-blue);
         padding-top: 140px !important;
     }
 }
 
 @media (max-width: 480px) {
+    
+
     
 
     
