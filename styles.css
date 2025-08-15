@@ -61,6 +61,8 @@ h1, h2, h3, h4, h5, h6 {
 .logo-img {
     height: 100px;
     width: auto;
+    max-width: 200px;
+    object-fit: contain;
     transition: all 0.3s ease;
 }
 
@@ -169,13 +171,14 @@ h1, h2, h3, h4, h5, h6 {
 /* Hero Section */
 .hero {
     background: linear-gradient(rgba(230, 243, 255, 0.05), rgba(240, 248, 255, 0.1)), url('images/maybehero.png');
-    background-size: 110%;
-    background-position: calc(50% + 80px) calc(50% + 0px);
+    background-size: cover;
+    background-position: center center;
     background-repeat: no-repeat;
-    padding: 60px 20px 15px;
+    padding: 120px 20px 60px;
     min-height: 100vh;
     display: flex;
     align-items: center;
+    justify-content: center;
     position: relative;
     overflow: hidden;
 }
@@ -234,6 +237,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .hero-content {
     max-width: 800px;
+    width: 100%;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
@@ -243,6 +247,8 @@ h1, h2, h3, h4, h5, h6 {
     position: relative;
     z-index: 4;
     animation: fadeInUp 1s ease-out 0.3s both;
+    padding: 0 20px;
+    box-sizing: border-box;
 }
 
 /* Welcome Section */
@@ -320,16 +326,18 @@ h1, h2, h3, h4, h5, h6 {
     text-align: center;
     margin: 0;
     padding: 0;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 600px;
 }
 
 .hero-title-logo {
     height: 20rem;
     width: auto;
-    vertical-align: middle;
+    max-width: 100%;
+    object-fit: contain;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
     transition: all 0.3s ease;
 }
@@ -1633,15 +1641,12 @@ body section#order.order {
     
     .logo-img {
         height: 60px;
+        max-width: 120px;
     }
     
     .hero-logo-container {
-        text-align: center;
+        max-width: 500px;
         margin: 0 auto;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
     }
     
     .hero-text {
@@ -1699,22 +1704,20 @@ body section#order.order {
     }
 
     .hero {
-        padding: 60px 15px 15px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-position: center center !important;
-        background-size: 110% !important;
+        padding: 100px 20px 40px;
+        min-height: 80vh;
+        background-size: cover;
+        background-position: center center;
     }
     
     .hero::before {
-        background-position: center center !important;
-        background-size: 80% !important;
+        background-size: cover;
+        background-position: center center;
     }
     
     .hero-content {
         max-width: 100%;
-        padding: 0 20px;
+        padding: 0 15px;
         text-align: center;
         justify-content: center;
         align-items: center;
@@ -1752,6 +1755,7 @@ body section#order.order {
     
     .hero-title-logo {
         height: 16rem;
+        max-width: 100%;
     }
 
     .tagline {
@@ -1854,17 +1858,7 @@ body section#order.order {
         padding: 140px 0;
     }
 
-    .hero {
-        padding: 100px 20px 30px;
-        min-height: auto;
-        background-position: center center !important;
-        background-size: 110% !important;
-    }
-    
-    .hero::before {
-        background-position: center center !important;
-        background-size: 80% !important;
-    }
+
     
     .order {
         padding: 140px 0 80px !important;
@@ -1881,17 +1875,18 @@ body section#order.order {
 }
 
 @media (max-width: 480px) {
+    .hero {
+        padding: 80px 15px 30px;
+        min-height: 70vh;
+    }
     
-
-    
-
-    
-    .hero-text h1 {
-        font-size: 2rem;
+    .hero-logo-container {
+        max-width: 400px;
     }
     
     .hero-title-logo {
         height: 12rem;
+        max-width: 100%;
     }
 
     .tagline {
@@ -1919,6 +1914,11 @@ body section#order.order {
     .nav-container {
         padding: 0 15px;
     }
+    
+    .logo-img {
+        height: 50px;
+        max-width: 100px;
+    }
 
     .container {
         padding: 0 15px;
@@ -1927,6 +1927,24 @@ body section#order.order {
 
 /* Extra small screens (320px and down) */
 @media (max-width: 320px) {
+    .hero {
+        padding: 60px 10px 20px;
+        min-height: 60vh;
+    }
+    
+    .hero-logo-container {
+        max-width: 300px;
+    }
+    
+    .hero-title-logo {
+        height: 10rem;
+    }
+    
+    .logo-img {
+        height: 45px;
+        max-width: 90px;
+    }
+    
     .container {
         padding: 0 10px;
     }
