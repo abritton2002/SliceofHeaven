@@ -170,7 +170,7 @@ h1, h2, h3, h4, h5, h6 {
 .hero {
     background: linear-gradient(rgba(230, 243, 255, 0.05), rgba(240, 248, 255, 0.1)), url('images/maybehero.png');
     background-size: cover;
-    background-position: center 40%;
+    background-position: center 70%;
     background-repeat: no-repeat;
     padding: 60px 20px 15px;
     min-height: 100vh;
@@ -190,7 +190,7 @@ h1, h2, h3, h4, h5, h6 {
     bottom: 0;
     background: inherit;
     background-size: cover;
-    background-position: center 40%;
+    background-position: center 70%;
     background-repeat: no-repeat;
     filter: blur(2px);
     z-index: 0;
