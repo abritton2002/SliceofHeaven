@@ -73,8 +73,16 @@
             <div class="contact-content single-column">
                 <div class="contact-form">
                     <div class="form-intro">
-                        <h3>Not Ready to Order Yet?</h3>
-                        <p>Have questions about availability, pricing, or want to discuss your cake ideas? Fill out the form below and I'll get back to you within 24 hours!</p>
+                        <h3 id="formTitle">Not Ready to Order Yet?</h3>
+                        <p id="formDescription">Have questions about availability, pricing, or want to discuss your cake ideas? Fill out the form below and I'll get back to you within 24 hours!</p>
+                    </div>
+                    
+                    <!-- Cake Image Display -->
+                    <div id="cakeImageContainer" class="cake-image-container" style="display: none;">
+                        <h4>You're interested in this cake:</h4>
+                        <img id="selectedCakeImage" src="" alt="" class="selected-cake-image">
+                        <input type="hidden" id="cakeImageInput" name="cake-image" value="">
+                        <input type="hidden" id="cakeTitleInput" name="cake-title" value="">
                     </div>
                     
                     <form name="contact" method="POST" data-netlify="true" id="contact-form">
@@ -123,5 +131,35 @@
     </footer>
 
     <script src="script.js"></script>
+    <script>
+        // Check if cake image was passed from gallery
+        window.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const cakeImage = urlParams.get('cake');
+            const cakeTitle = urlParams.get('title');
+            
+            if (cakeImage && cakeTitle) {
+                // Update form title and description
+                document.getElementById('formTitle').textContent = 'Inquire About This Cake';
+                document.getElementById('formDescription').textContent = 'Tell me about the modifications you\'d like for this cake!';
+                
+                // Show and populate cake image
+                const cakeContainer = document.getElementById('cakeImageContainer');
+                const cakeImg = document.getElementById('selectedCakeImage');
+                const cakeImageInput = document.getElementById('cakeImageInput');
+                const cakeTitleInput = document.getElementById('cakeTitleInput');
+                
+                cakeImg.src = 'images/' + cakeImage;
+                cakeImg.alt = cakeTitle;
+                cakeImageInput.value = cakeImage;
+                cakeTitleInput.value = cakeTitle;
+                cakeContainer.style.display = 'block';
+                
+                // Pre-fill message with cake reference
+                const messageField = document.getElementById('message');
+                messageField.placeholder = `I love this ${cakeTitle}! I'd like to order something similar. Here are my details: [Date needed, serving size, any modifications you'd like]`;
+            }
+        });
+    </script>
 </body>
 </html>

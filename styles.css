@@ -743,6 +743,16 @@ section h2 {
     }
 }
 
+/* Gallery Intro */
+.gallery-intro {
+    text-align: center;
+    font-size: 1.1rem;
+    color: var(--text-light);
+    margin-bottom: 2rem;
+    font-style: italic;
+}
+
+/* Enhanced Gallery Item */
 .gallery-item {
     position: relative;
     overflow: hidden;
@@ -754,6 +764,7 @@ section h2 {
     background: var(--white);
     aspect-ratio: 1 / 1;
     border: 1px solid rgba(255, 255, 255, 0.2);
+    cursor: pointer;
 }
 
 .gallery-item:hover {
@@ -803,6 +814,197 @@ section h2 {
 
 .gallery-item:hover .overlay {
     opacity: 1;
+}
+
+/* Cake Modal Styles */
+.cake-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.cake-modal-content {
+    background: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.25),
+        0 10px 20px rgba(0, 0, 0, 0.15);
+    max-width: 900px;
+    width: 100%;
+    max-height: 90vh;
+    overflow: hidden;
+    position: relative;
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.close-modal {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--text-light);
+    cursor: pointer;
+    z-index: 10;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    transition: all 0.3s ease;
+}
+
+.close-modal:hover {
+    background: var(--dark-blue);
+    color: var(--white);
+    transform: scale(1.1);
+}
+
+.cake-modal-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    height: 100%;
+}
+
+.cake-modal-body .cake-image-container {
+    position: relative;
+    overflow: hidden;
+    background: var(--white);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    min-height: 400px;
+    margin-top: 30px;
+    width: 100%;
+    height: 200px;
+}
+
+.modal-cake-image {
+    max-width: 90%;
+    max-height: 90%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    object-position: center;
+    border-radius: var(--border-radius);
+    display: block;
+    margin: 0 auto;
+}
+
+.cake-details {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: var(--white);
+}
+
+.cake-details h3 {
+    font-size: 1.8rem;
+    color: var(--dark-blue);
+    margin-bottom: 0.75rem;
+    font-family: "Playwrite AU NSW", cursive;
+    text-align: center;
+}
+
+.cake-details p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-style: italic;
+}
+
+.cake-actions {
+    display: flex;
+    justify-content: center;
+}
+
+.cake-actions .cta-button {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    min-width: 200px;
+    text-align: center;
+}
+
+/* Responsive Modal */
+@media (max-width: 768px) {
+    .cake-modal {
+        padding: 10px;
+    }
+    
+    .cake-modal-content {
+        max-height: 95vh;
+    }
+    
+    .cake-modal-body {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+    }
+    
+    .cake-image-container {
+        height: 300px;
+    }
+    
+    .cake-details {
+        padding: 1.5rem;
+    }
+    
+    .cake-details h3 {
+        font-size: 1.5rem;
+    }
+    
+    .cake-actions {
+        flex-direction: column;
+    }
+    
+    .cake-actions .cta-button {
+        flex: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .cake-image-container {
+        height: 250px;
+    }
+    
+    .cake-details {
+        padding: 1rem;
+    }
+    
+    .cake-details h3 {
+        font-size: 1.3rem;
+    }
+    
+    .cake-details p {
+        font-size: 1rem;
+    }
 }
 
 /* Contact Section */
@@ -1959,5 +2161,40 @@ html {
     
     .acknowledgment-item label {
         font-size: 0.9rem;
+    }
+}
+
+/* Cake Image in Contact Form */
+.cake-image-container {
+    background: var(--baby-blue);
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 2rem;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.cake-image-container h4 {
+    color: var(--dark-blue);
+    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+}
+
+.selected-cake-image {
+    max-width: 150px;
+    max-height: 150px;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    object-fit: cover;
+}
+
+@media (max-width: 768px) {
+    .selected-cake-image {
+        max-width: 150px;
+        max-height: 150px;
     }
 }
