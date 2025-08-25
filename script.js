@@ -604,6 +604,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 const extras = Array.from(orderForm.querySelectorAll('input[name="extras"]:checked'))
                     .map(cb => cb.value).join(', ');
                 
+                // Handle file uploads
+                const fileInput = orderForm.querySelector('input[type="file"]');
+                let photoInfo = 'No photos uploaded';
+                
+                if (fileInput && fileInput.files.length > 0) {
+                    const files = Array.from(fileInput.files);
+                    photoInfo = files.map(file => `${file.name} (${(file.size / 1024).toFixed(1)}KB)`).join(', ');
+                }
+                
                 // Create data object for submission
                 const orderData = {
                     name: formData.get('name'),
@@ -620,12 +629,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     eventDate: formData.get('eventDate'),
                     pickupTime: formData.get('pickupTime'),
                     delivery: formData.get('delivery'),
+                    photos: photoInfo,
                     pricingAck: formData.get('pricingAck'),
                     termsAck: formData.get('termsAck')
                 };
 
                 // Google Apps Script web app URL
-                const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyqWNlM6jJkzJNJi5h0na0YbzksCwtCG0D9mdCP26onxj_rOr2UdpR10UO86_zmgz_I/exec';
+                const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxpa-2ggVrJLxHiIU-H9A7Z-vz3V0KpCZHCZ3TV7RUeFKNuAhl8UOObj6vjlT4yuMbB/exec';
+
+                // Add form type identifier
+                orderData.formType = 'order';
+
+                console.log('Submitting order data:', orderData);
 
                 // Submit to Google Apps Script
                 const response = await fetch(APPS_SCRIPT_URL, {
@@ -636,7 +651,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     body: new URLSearchParams(orderData)
                 });
 
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+                
                 const result = await response.json();
+                console.log('Response result:', result);
 
                 if (result.status === 'success') {
                     showNotification('Thank you for your order! We\'ll review your request and get back to you within 24 hours.', 'success');
@@ -663,4 +682,104 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize pricing display
     updatePricing();
+});
+
+// Contact Form Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const contactForm = document.getElementById('contact-form');
+    
+    if (contactForm) {
+        contactForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Basic validation
+            const name = contactForm.querySelector('[name="name"]').value.trim();
+            const email = contactForm.querySelector('[name="email"]').value.trim();
+            const message = contactForm.querySelector('[name="message"]').value.trim();
+            const inquiryType = contactForm.querySelector('[name="inquiry-type"]').value;
+            
+            if (!name || !email || !message || !inquiryType) {
+                showNotification('Please fill in all required fields.', 'error');
+                return;
+            }
+            
+            if (!isValidEmail(email)) {
+                showNotification('Please enter a valid email address.', 'error');
+                return;
+            }
+            
+            const submitBtn = contactForm.querySelector('.submit-btn');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Sending Message...';
+            submitBtn.disabled = true;
+            
+            try {
+                // Collect form data
+                const formData = new FormData(contactForm);
+                
+                // Add cake image info if available
+                const cakeImageInput = document.getElementById('cakeImageInput');
+                const cakeTitleInput = document.getElementById('cakeTitleInput');
+                
+                if (cakeImageInput && cakeImageInput.value) {
+                    formData.append('cakeImage', cakeImageInput.value);
+                    formData.append('cakeTitle', cakeTitleInput.value);
+                }
+                
+                // Create data object for Google Apps Script
+                const contactData = {
+                    name: formData.get('name'),
+                    email: formData.get('email'),
+                    phone: formData.get('phone') || '',
+                    inquiryType: formData.get('inquiry-type'),
+                    message: formData.get('message'),
+                    cakeImage: formData.get('cakeImage') || '',
+                    cakeTitle: formData.get('cakeTitle') || ''
+                };
+
+                // Google Apps Script web app URL for contact form
+                const CONTACT_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxpa-2ggVrJLxHiIU-H9A7Z-vz3V0KpCZHCZ3TV7RUeFKNuAhl8UOObj6vjlT4yuMbB/exec';
+
+                // Add form type identifier
+                contactData.formType = 'contact';
+
+                console.log('Submitting contact data:', contactData);
+
+                // Submit to Google Apps Script
+                const response = await fetch(CONTACT_APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams(contactData)
+                });
+
+                console.log('Contact response status:', response.status);
+                
+                const result = await response.json();
+                console.log('Contact response result:', result);
+
+                if (result.status === 'success') {
+                    showNotification('Thank you for your message! I\'ll get back to you within 24 hours.', 'success');
+                    contactForm.reset();
+                    
+                    // Reset cake image display if it was shown
+                    const cakeContainer = document.getElementById('cakeImageContainer');
+                    if (cakeContainer) {
+                        cakeContainer.style.display = 'none';
+                    }
+                } else {
+                    throw new Error(result.message || 'Submission failed');
+                }
+                
+            } catch (error) {
+                console.error('Contact form submission error:', error);
+                showNotification('Sorry, there was an error sending your message. Please try again or contact us directly.', 'error');
+            }
+            
+            // Reset button
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+        });
+    }
 });
