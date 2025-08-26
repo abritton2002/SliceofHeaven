@@ -74,45 +74,59 @@ function handleOrderForm(data) {
   let photoLinks = '';
   if (data.photos && data.photos !== 'No photos uploaded') {
     try {
-      // Parse the file information from the form
-      const fileInfo = data.photos.split(', ');
-      const driveLinks = [];
+      // Create a Google Drive folder for this order
+      const folderName = `Cake Order - ${data.name} - ${new Date().toISOString().split('T')[0]}`;
+      let folder;
       
-      for (const info of fileInfo) {
-        const match = info.match(/(.+) \((\d+\.?\d*)KB\)/);
-        if (match) {
-          const fileName = match[1];
-          const fileSize = match[2];
+      try {
+        // Try to find existing folder or create new one
+        const folders = DriveApp.getFoldersByName(folderName);
+        if (folders.hasNext()) {
+          folder = folders.next();
+        } else {
+          folder = DriveApp.createFolder(folderName);
+        }
+        
+        const driveLinks = [];
+        const fileCount = parseInt(data.file_count) || 0;
+        
+        // Process uploaded files
+        for (let i = 0; i < fileCount; i++) {
+          const fileName = data[`file_${i}_name`];
+          const fileSize = data[`file_${i}_size`];
+          const fileType = data[`file_${i}_type`];
           
-          // Create a Google Drive folder for this order
-          const folderName = `Cake Order - ${data.name} - ${new Date().toISOString().split('T')[0]}`;
-          let folder;
-          
-          try {
-            // Try to find existing folder or create new one
-            const folders = DriveApp.getFoldersByName(folderName);
-            if (folders.hasNext()) {
-              folder = folders.next();
-            } else {
-              folder = DriveApp.createFolder(folderName);
+          if (fileName && fileSize) {
+            try {
+              // Get the file blob from the form data
+              const fileBlob = data[`file_${i}`];
+              
+              if (fileBlob) {
+                // Create the actual image file in Google Drive
+                const file = folder.createFile(fileBlob);
+                file.setName(fileName);
+                const driveLink = file.getUrl();
+                driveLinks.push(`${fileName}: ${driveLink}`);
+              } else {
+                // Fallback if file blob not available
+                const fileContent = `Inspiration Photo for ${data.name}'s ${data.occasion} cake\n\nOrder Details:\n- Shape: ${data.shape}\n- Size: ${data.size}\n- Layers: ${data.layers}\n- Colors: ${data.colors}\n- Message: ${data.message}\n\nCustomer uploaded: ${fileName} (${fileSize}KB)\n\nPlease ask customer to send the actual image via text or email.`;
+                const file = folder.createFile(fileName + '.txt', fileContent, MimeType.PLAIN_TEXT);
+                const driveLink = file.getUrl();
+                driveLinks.push(`${fileName}: ${driveLink}`);
+              }
+            } catch (fileError) {
+              console.error('Error processing file:', fileError);
+              driveLinks.push(`${fileName} (${fileSize}KB) - Error processing file`);
             }
-            
-            // Create a placeholder file with order information
-            const fileContent = `Inspiration Photo for ${data.name}'s ${data.occasion} cake\n\nOrder Details:\n- Shape: ${data.shape}\n- Size: ${data.size}\n- Layers: ${data.layers}\n- Colors: ${data.colors}\n- Message: ${data.message}\n\nCustomer uploaded: ${fileName} (${fileSize}KB)\n\nPlease ask customer to send the actual image via text or email.`;
-            
-            const file = folder.createFile(fileName + '.txt', fileContent, MimeType.PLAIN_TEXT);
-            const driveLink = file.getUrl();
-            driveLinks.push(`${fileName}: ${driveLink}`);
-            
-          } catch (driveError) {
-            console.error('Error creating Drive file:', driveError);
-            // Fallback to just the file info
-            driveLinks.push(`${fileName} (${fileSize}KB) - Please request actual image from customer`);
           }
         }
+        
+        photoLinks = driveLinks.join(' | ');
+        
+      } catch (driveError) {
+        console.error('Error creating Drive folder:', driveError);
+        photoLinks = data.photos; // Fallback to original data
       }
-      
-      photoLinks = driveLinks.join(' | ');
     } catch (error) {
       console.error('Error processing photos:', error);
       photoLinks = data.photos; // Fallback to original data

@@ -604,51 +604,39 @@ document.addEventListener('DOMContentLoaded', function() {
                 const extras = Array.from(orderForm.querySelectorAll('input[name="extras"]:checked'))
                     .map(cb => cb.value).join(', ');
                 
-                // Handle file uploads
+                // Add flavors and extras to form data
+                formData.append('flavors', flavors);
+                formData.append('extras', extras);
+                formData.append('formType', 'order');
+                
+                // Handle file uploads - add actual files to form data
                 const fileInput = orderForm.querySelector('input[type="file"]');
                 let photoInfo = 'No photos uploaded';
                 
                 if (fileInput && fileInput.files.length > 0) {
                     const files = Array.from(fileInput.files);
                     photoInfo = files.map(file => `${file.name} (${(file.size / 1024).toFixed(1)}KB)`).join(', ');
+                    
+                    // Add each file to the form data
+                    files.forEach((file, index) => {
+                        formData.append(`file_${index}`, file);
+                        formData.append(`file_${index}_name`, file.name);
+                        formData.append(`file_${index}_size`, file.size);
+                        formData.append(`file_${index}_type`, file.type);
+                    });
+                    
+                    formData.append('file_count', files.length);
                 }
                 
-                // Create data object for submission
-                const orderData = {
-                    name: formData.get('name'),
-                    phone: formData.get('phone'),
-                    shape: formData.get('shape'),
-                    servings: formData.get('servings'),
-                    layers: formData.get('layers'),
-                    size: formData.get('size'),
-                    flavors: flavors,
-                    extras: extras,
-                    colors: formData.get('colors'),
-                    message: formData.get('message'),
-                    occasion: formData.get('occasion'),
-                    eventDate: formData.get('eventDate'),
-                    pickupTime: formData.get('pickupTime'),
-                    delivery: formData.get('delivery'),
-                    photos: photoInfo,
-                    pricingAck: formData.get('pricingAck'),
-                    termsAck: formData.get('termsAck')
-                };
+                // Add photo info to form data
+                formData.append('photos', photoInfo);
 
-                // Google Apps Script web app URL
-                const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxpa-2ggVrJLxHiIU-H9A7Z-vz3V0KpCZHCZ3TV7RUeFKNuAhl8UOObj6vjlT4yuMbB/exec';
+                console.log('Submitting order data with files:', photoInfo);
 
-                // Add form type identifier
-                orderData.formType = 'order';
-
-                console.log('Submitting order data:', orderData);
-
-                // Submit to Google Apps Script
-                const response = await fetch(APPS_SCRIPT_URL, {
+                // Submit to Google Apps Script with files
+                const response = await fetch('https://script.google.com/macros/s/AKfycbyJw54gtIcNUx9Fzw4QputPx6HyDVHvLbfEDNzsZIvxOXvG0kW9skf3jfA2y0lVDHMO/exec', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: new URLSearchParams(orderData)
+                    body: formData // Send as FormData to include files
                 });
 
                 console.log('Response status:', response.status);
@@ -738,7 +726,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 };
 
                 // Google Apps Script web app URL for contact form
-                const CONTACT_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxpa-2ggVrJLxHiIU-H9A7Z-vz3V0KpCZHCZ3TV7RUeFKNuAhl8UOObj6vjlT4yuMbB/exec';
+                const CONTACT_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyJw54gtIcNUx9Fzw4QputPx6HyDVHvLbfEDNzsZIvxOXvG0kW9skf3jfA2y0lVDHMO/exec';
 
                 // Add form type identifier
                 contactData.formType = 'contact';
