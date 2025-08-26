@@ -44,14 +44,20 @@ function doPost(e) {
       
       console.log('Form type received:', formType);
       console.log('Data received:', data);
+      console.log('Raw post data:', e.postData);
+      
+      // Handle file uploads if present
+      if (e.postData && e.postData.contents) {
+        console.log('Post data contents length:', e.postData.contents.length);
+      }
       
       if (formType === 'order') {
-        return handleOrderForm(data);
+        return handleOrderForm(data, e);
       } else if (formType === 'contact') {
         return handleContactForm(data);
       } else {
         // Fallback to order form for backward compatibility
-        return handleOrderForm(data);
+        return handleOrderForm(data, e);
       }
       
     } catch (error) {
@@ -63,7 +69,7 @@ function doPost(e) {
     }
 }
 
-function handleOrderForm(data) {
+function handleOrderForm(data, e) {
   // Your actual Google Sheet ID for orders
   const sheet = SpreadsheetApp.openById('1trxugWBoe89HKANnnHhqi14tiLrx5Q37EBo4xdoKqLY').getSheetByName('Form Responses 1');
 
@@ -90,16 +96,46 @@ function handleOrderForm(data) {
         const driveLinks = [];
         const fileCount = parseInt(data.file_count) || 0;
         
+        console.log('Processing', fileCount, 'files');
+        
         // Process uploaded files
         for (let i = 0; i < fileCount; i++) {
           const fileName = data[`file_${i}_name`];
           const fileSize = data[`file_${i}_size`];
           const fileType = data[`file_${i}_type`];
           
+          console.log(`Processing file ${i}:`, fileName, fileSize, fileType);
+          
           if (fileName && fileSize) {
             try {
-              // Get the file blob from the form data
-              const fileBlob = data[`file_${i}`];
+              // Try to get file blob from different possible sources
+              let fileBlob = null;
+              
+              // Method 1: Try to get base64 encoded file
+              if (data[`file_${i}_base64`]) {
+                try {
+                  const base64Data = data[`file_${i}_base64`];
+                  const mimeType = data[`file_${i}_type`] || 'image/jpeg';
+                  
+                  // Convert base64 to blob
+                  const byteCharacters = Utilities.base64Decode(base64Data);
+                  const byteNumbers = new Array(byteCharacters.length);
+                  for (let j = 0; j < byteCharacters.length; j++) {
+                    byteNumbers[j] = byteCharacters.charCodeAt(j);
+                  }
+                  const byteArray = Utilities.newUint8Array(byteNumbers);
+                  fileBlob = Utilities.newBlob(byteArray, mimeType, fileName);
+                  
+                  console.log('Successfully converted base64 to blob for:', fileName);
+                } catch (base64Error) {
+                  console.error('Error converting base64 to blob:', base64Error);
+                }
+              }
+              // Method 2: Try to get from form data (fallback)
+              else if (data[`file_${i}`]) {
+                fileBlob = data[`file_${i}`];
+                console.log('Got file blob from form data');
+              }
               
               if (fileBlob) {
                 // Create the actual image file in Google Drive
@@ -107,12 +143,14 @@ function handleOrderForm(data) {
                 file.setName(fileName);
                 const driveLink = file.getUrl();
                 driveLinks.push(`${fileName}: ${driveLink}`);
+                console.log('Successfully created file in Drive:', driveLink);
               } else {
-                // Fallback if file blob not available
+                // Fallback: Create a placeholder file with order information
                 const fileContent = `Inspiration Photo for ${data.name}'s ${data.occasion} cake\n\nOrder Details:\n- Shape: ${data.shape}\n- Size: ${data.size}\n- Layers: ${data.layers}\n- Colors: ${data.colors}\n- Message: ${data.message}\n\nCustomer uploaded: ${fileName} (${fileSize}KB)\n\nPlease ask customer to send the actual image via text or email.`;
                 const file = folder.createFile(fileName + '.txt', fileContent, MimeType.PLAIN_TEXT);
                 const driveLink = file.getUrl();
                 driveLinks.push(`${fileName}: ${driveLink}`);
+                console.log('Created placeholder file:', driveLink);
               }
             } catch (fileError) {
               console.error('Error processing file:', fileError);

@@ -617,6 +617,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     const files = Array.from(fileInput.files);
                     photoInfo = files.map(file => `${file.name} (${(file.size / 1024).toFixed(1)}KB)`).join(', ');
                     
+                    console.log('Files to upload:', files.length);
+                    files.forEach((file, index) => {
+                        console.log(`File ${index}:`, file.name, file.size, file.type);
+                    });
+                    
                     // Add each file to the form data
                     files.forEach((file, index) => {
                         formData.append(`file_${index}`, file);
@@ -633,10 +638,35 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 console.log('Submitting order data with files:', photoInfo);
 
-                // Submit to Google Apps Script with files
+                // Convert files to base64 and send as text data
+                if (fileInput && fileInput.files.length > 0) {
+                    const files = Array.from(fileInput.files);
+                    
+                    // Convert each file to base64
+                    for (let i = 0; i < files.length; i++) {
+                        const file = files[i];
+                        const reader = new FileReader();
+                        
+                        await new Promise((resolve) => {
+                            reader.onload = function(e) {
+                                const base64 = e.target.result.split(',')[1]; // Remove data:image/jpeg;base64, prefix
+                                formData.append(`file_${i}_base64`, base64);
+                                formData.append(`file_${i}_name`, file.name);
+                                formData.append(`file_${i}_type`, file.type);
+                                resolve();
+                            };
+                            reader.readAsDataURL(file);
+                        });
+                    }
+                }
+                
+                // Submit to Google Apps Script with base64 encoded files
                 const response = await fetch('https://script.google.com/macros/s/AKfycbyJw54gtIcNUx9Fzw4QputPx6HyDVHvLbfEDNzsZIvxOXvG0kW9skf3jfA2y0lVDHMO/exec', {
                     method: 'POST',
-                    body: formData // Send as FormData to include files
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams(formData)
                 });
 
                 console.log('Response status:', response.status);
