@@ -36,6 +36,17 @@ function formatTime(timeString) {
   }
 }
 
+// Required doGet function for Google Apps Script web apps
+function doGet(e) {
+  return ContentService
+    .createTextOutput(JSON.stringify({
+      status: 'success', 
+      message: 'Slice of Heaven Cakes API is running',
+      timestamp: new Date().toISOString()
+    }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
 function doPost(e) {
     try {
       // Parse the form data
@@ -45,6 +56,9 @@ function doPost(e) {
       console.log('Form type received:', formType);
       console.log('Data received:', data);
       console.log('Raw post data:', e.postData);
+      console.log('Post data contents:', e.postData ? e.postData.contents : 'none');
+      console.log('Post data length:', e.postData ? e.postData.contents.length : 'none');
+      console.log('Available parameter keys:', Object.keys(data));
       
       // Handle file uploads if present
       if (e.postData && e.postData.contents) {
@@ -97,65 +111,44 @@ function handleOrderForm(data, e) {
         const fileCount = parseInt(data.file_count) || 0;
         
         console.log('Processing', fileCount, 'files');
+        console.log('Available data keys:', Object.keys(data));
         
         // Process uploaded files
         for (let i = 0; i < fileCount; i++) {
           const fileName = data[`file_${i}_name`];
           const fileSize = data[`file_${i}_size`];
           const fileType = data[`file_${i}_type`];
+          const base64Data = data[`file_${i}_base64`];
           
           console.log(`Processing file ${i}:`, fileName, fileSize, fileType);
+          console.log(`Base64 data length:`, base64Data ? base64Data.length : 'none');
           
-          if (fileName && fileSize) {
+          if (fileName && base64Data) {
             try {
-              // Try to get file blob from different possible sources
-              let fileBlob = null;
+              // Convert base64 to blob
+              const byteCharacters = Utilities.base64Decode(base64Data);
+              const byteNumbers = new Array(byteCharacters.length);
+              for (let j = 0; j < byteCharacters.length; j++) {
+                byteNumbers[j] = byteCharacters.charCodeAt(j);
+              }
+              const byteArray = Utilities.newUint8Array(byteNumbers);
+              const fileBlob = Utilities.newBlob(byteArray, fileType || 'image/jpeg', fileName);
               
-              // Method 1: Try to get base64 encoded file
-              if (data[`file_${i}_base64`]) {
-                try {
-                  const base64Data = data[`file_${i}_base64`];
-                  const mimeType = data[`file_${i}_type`] || 'image/jpeg';
-                  
-                  // Convert base64 to blob
-                  const byteCharacters = Utilities.base64Decode(base64Data);
-                  const byteNumbers = new Array(byteCharacters.length);
-                  for (let j = 0; j < byteCharacters.length; j++) {
-                    byteNumbers[j] = byteCharacters.charCodeAt(j);
-                  }
-                  const byteArray = Utilities.newUint8Array(byteNumbers);
-                  fileBlob = Utilities.newBlob(byteArray, mimeType, fileName);
-                  
-                  console.log('Successfully converted base64 to blob for:', fileName);
-                } catch (base64Error) {
-                  console.error('Error converting base64 to blob:', base64Error);
-                }
-              }
-              // Method 2: Try to get from form data (fallback)
-              else if (data[`file_${i}`]) {
-                fileBlob = data[`file_${i}`];
-                console.log('Got file blob from form data');
-              }
+              console.log('Successfully converted base64 to blob for:', fileName);
               
-              if (fileBlob) {
-                // Create the actual image file in Google Drive
-                const file = folder.createFile(fileBlob);
-                file.setName(fileName);
-                const driveLink = file.getUrl();
-                driveLinks.push(`${fileName}: ${driveLink}`);
-                console.log('Successfully created file in Drive:', driveLink);
-              } else {
-                // Fallback: Create a placeholder file with order information
-                const fileContent = `Inspiration Photo for ${data.name}'s ${data.occasion} cake\n\nOrder Details:\n- Shape: ${data.shape}\n- Size: ${data.size}\n- Layers: ${data.layers}\n- Colors: ${data.colors}\n- Message: ${data.message}\n\nCustomer uploaded: ${fileName} (${fileSize}KB)\n\nPlease ask customer to send the actual image via text or email.`;
-                const file = folder.createFile(fileName + '.txt', fileContent, MimeType.PLAIN_TEXT);
-                const driveLink = file.getUrl();
-                driveLinks.push(`${fileName}: ${driveLink}`);
-                console.log('Created placeholder file:', driveLink);
-              }
+              // Create the actual image file in Google Drive
+              const file = folder.createFile(fileBlob);
+              file.setName(fileName);
+              const driveLink = file.getUrl();
+              driveLinks.push(`${fileName}: ${driveLink}`);
+              console.log('Successfully created file in Drive:', driveLink);
+              
             } catch (fileError) {
               console.error('Error processing file:', fileError);
-              driveLinks.push(`${fileName} (${fileSize}KB) - Error processing file`);
+              driveLinks.push(`${fileName} (${fileSize}KB) - Error processing file: ${fileError.message}`);
             }
+          } else {
+            console.log(`Skipping file ${i} - missing fileName or base64Data`);
           }
         }
         

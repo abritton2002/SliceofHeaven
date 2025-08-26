@@ -591,7 +591,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Collect form data
             const submitBtn = orderForm.querySelector('.submit-order-btn');
             const originalText = submitBtn.textContent;
-            submitBtn.textContent = 'Submitting Order...';
+            submitBtn.textContent = 'Processing Files...';
             submitBtn.disabled = true;
 
             try {
@@ -609,12 +609,33 @@ document.addEventListener('DOMContentLoaded', function() {
                 formData.append('extras', extras);
                 formData.append('formType', 'order');
                 
-                // Handle file uploads - add actual files to form data
+                // Handle file uploads - convert files to base64 and send as text data
                 const fileInput = orderForm.querySelector('input[type="file"]');
                 let photoInfo = 'No photos uploaded';
                 
                 if (fileInput && fileInput.files.length > 0) {
                     const files = Array.from(fileInput.files);
+                    
+                    // Validate file sizes (Google Apps Script has limits)
+                    const maxFileSize = 10 * 1024 * 1024; // 10MB limit
+                    const oversizedFiles = files.filter(file => file.size > maxFileSize);
+                    
+                    if (oversizedFiles.length > 0) {
+                        const fileNames = oversizedFiles.map(f => f.name).join(', ');
+                        showNotification(`Files too large (max 10MB each): ${fileNames}`, 'error');
+                        submitBtn.textContent = originalText;
+                        submitBtn.disabled = false;
+                        return;
+                    }
+                    
+                    // Limit to 5 files
+                    if (files.length > 5) {
+                        showNotification('Please select no more than 5 photos.', 'error');
+                        submitBtn.textContent = originalText;
+                        submitBtn.disabled = false;
+                        return;
+                    }
+                    
                     photoInfo = files.map(file => `${file.name} (${(file.size / 1024).toFixed(1)}KB)`).join(', ');
                     
                     console.log('Files to upload:', files.length);
@@ -622,13 +643,39 @@ document.addEventListener('DOMContentLoaded', function() {
                         console.log(`File ${index}:`, file.name, file.size, file.type);
                     });
                     
-                    // Add each file to the form data
-                    files.forEach((file, index) => {
-                        formData.append(`file_${index}`, file);
-                        formData.append(`file_${index}_name`, file.name);
-                        formData.append(`file_${index}_size`, file.size);
-                        formData.append(`file_${index}_type`, file.type);
-                    });
+                    // Update button text to show progress
+                    submitBtn.textContent = `Processing ${files.length} file(s)...`;
+                    
+                    // Convert each file to base64 and add to form data
+                    for (let i = 0; i < files.length; i++) {
+                        const file = files[i];
+                        const reader = new FileReader();
+                        
+                        // Update progress
+                        submitBtn.textContent = `Processing file ${i + 1} of ${files.length}...`;
+                        
+                        await new Promise((resolve, reject) => {
+                            reader.onload = function(e) {
+                                try {
+                                    const base64 = e.target.result.split(',')[1]; // Remove data:image/jpeg;base64, prefix
+                                    formData.append(`file_${i}_base64`, base64);
+                                    formData.append(`file_${i}_name`, file.name);
+                                    formData.append(`file_${i}_size`, file.size);
+                                    formData.append(`file_${i}_type`, file.type);
+                                    console.log(`Successfully processed file ${i}: ${file.name}`);
+                                    resolve();
+                                } catch (error) {
+                                    console.error(`Error processing file ${i}:`, error);
+                                    reject(error);
+                                }
+                            };
+                            reader.onerror = function(error) {
+                                console.error(`Error reading file ${i}:`, error);
+                                reject(error);
+                            };
+                            reader.readAsDataURL(file);
+                        });
+                    }
                     
                     formData.append('file_count', files.length);
                 }
@@ -638,30 +685,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 console.log('Submitting order data with files:', photoInfo);
 
-                // Convert files to base64 and send as text data
-                if (fileInput && fileInput.files.length > 0) {
-                    const files = Array.from(fileInput.files);
-                    
-                    // Convert each file to base64
-                    for (let i = 0; i < files.length; i++) {
-                        const file = files[i];
-                        const reader = new FileReader();
-                        
-                        await new Promise((resolve) => {
-                            reader.onload = function(e) {
-                                const base64 = e.target.result.split(',')[1]; // Remove data:image/jpeg;base64, prefix
-                                formData.append(`file_${i}_base64`, base64);
-                                formData.append(`file_${i}_name`, file.name);
-                                formData.append(`file_${i}_type`, file.type);
-                                resolve();
-                            };
-                            reader.readAsDataURL(file);
-                        });
-                    }
-                }
-                
+                // Update button text for submission
+                submitBtn.textContent = 'Submitting Order...';
+
                 // Submit to Google Apps Script with base64 encoded files
-                const response = await fetch('https://script.google.com/macros/s/AKfycbyJw54gtIcNUx9Fzw4QputPx6HyDVHvLbfEDNzsZIvxOXvG0kW9skf3jfA2y0lVDHMO/exec', {
+                const response = await fetch('https://script.google.com/macros/s/AKfycbzFqvXz9hLpiHn1AOyN4Q_DH3NBZ7aOlAm4KNiypat769rWkZ3-qdVcbr-Ain0apQNV/exec', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
@@ -700,6 +728,72 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize pricing display
     updatePricing();
+    
+    // File preview functionality
+    const fileInput = document.getElementById('inspiration-photos');
+    const filePreview = document.getElementById('file-preview');
+    const fileList = document.getElementById('file-list');
+    
+    if (fileInput) {
+        fileInput.addEventListener('change', function() {
+            const files = Array.from(this.files);
+            
+            if (files.length > 0) {
+                filePreview.style.display = 'block';
+                fileList.innerHTML = '';
+                
+                files.forEach((file, index) => {
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'file-item';
+                    
+                    const fileIcon = document.createElement('span');
+                    fileIcon.innerHTML = '📷';
+                    fileIcon.style.marginRight = '8px';
+                    
+                    const fileInfo = document.createElement('div');
+                    fileInfo.style.flex = '1';
+                    
+                    const fileName = document.createElement('div');
+                    fileName.textContent = file.name;
+                    fileName.style.fontWeight = '600';
+                    fileName.style.fontSize = '14px';
+                    
+                    const fileSize = document.createElement('div');
+                    fileSize.textContent = `${(file.size / 1024).toFixed(1)} KB`;
+                    fileSize.style.fontSize = '12px';
+                    fileSize.style.color = '#6c757d';
+                    
+                    fileInfo.appendChild(fileName);
+                    fileInfo.appendChild(fileSize);
+                    
+                    const removeBtn = document.createElement('button');
+                    removeBtn.textContent = '×';
+                    removeBtn.type = 'button';
+                    
+                    removeBtn.addEventListener('click', function() {
+                        // Create a new FileList without this file
+                        const dt = new DataTransfer();
+                        files.forEach((f, i) => {
+                            if (i !== index) {
+                                dt.items.add(f);
+                            }
+                        });
+                        fileInput.files = dt.files;
+                        
+                        // Re-trigger the change event
+                        fileInput.dispatchEvent(new Event('change'));
+                    });
+                    
+                    fileItem.appendChild(fileIcon);
+                    fileItem.appendChild(fileInfo);
+                    fileItem.appendChild(removeBtn);
+                    fileList.appendChild(fileItem);
+                });
+            } else {
+                filePreview.style.display = 'none';
+            }
+        });
+    }
 });
 
 // Contact Form Functionality
@@ -756,7 +850,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 };
 
                 // Google Apps Script web app URL for contact form
-                const CONTACT_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyJw54gtIcNUx9Fzw4QputPx6HyDVHvLbfEDNzsZIvxOXvG0kW9skf3jfA2y0lVDHMO/exec';
+                const CONTACT_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzFqvXz9hLpiHn1AOyN4Q_DH3NBZ7aOlAm4KNiypat769rWkZ3-qdVcbr-Ain0apQNV/exec';
 
                 // Add form type identifier
                 contactData.formType = 'contact';
