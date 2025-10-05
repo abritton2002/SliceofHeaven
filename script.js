@@ -689,7 +689,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 submitBtn.textContent = 'Submitting Order...';
 
                 // Submit to Google Apps Script with base64 encoded files
-                const response = await fetch('https://script.google.com/macros/s/AKfycbzFqvXz9hLpiHn1AOyN4Q_DH3NBZ7aOlAm4KNiypat769rWkZ3-qdVcbr-Ain0apQNV/exec', {
+                const response = await fetch('https://script.google.com/macros/s/AKfycbwpN3ssjXz404mz9klZJN3W7TGHK55wgIqH1Nhh_KehJtlMDmSnm9HcEvDLiQ2aCHwF/exec', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
@@ -850,7 +850,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 };
 
                 // Google Apps Script web app URL for contact form
-                const CONTACT_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzFqvXz9hLpiHn1AOyN4Q_DH3NBZ7aOlAm4KNiypat769rWkZ3-qdVcbr-Ain0apQNV/exec';
+                const CONTACT_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwpN3ssjXz404mz9klZJN3W7TGHK55wgIqH1Nhh_KehJtlMDmSnm9HcEvDLiQ2aCHwF/exec';
 
                 // Add form type identifier
                 contactData.formType = 'contact';

@@ -2,8 +2,9 @@
 function formatDate(dateString) {
   if (!dateString) return '';
   try {
-    const date = new Date(dateString);
-    return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+    // Parse the date string manually to avoid timezone issues
+    const [year, month, day] = dateString.split('-').map(num => parseInt(num, 10));
+    return `${month}/${day}/${year}`;
   } catch (error) {
     return dateString; // Return original if parsing fails
   }
@@ -238,8 +239,9 @@ function handleOrderForm(data, e) {
       // Get the default calendar
       const calendar = CalendarApp.getDefaultCalendar();
       
-      // Parse the event date and time
-      const eventDate = new Date(data.eventDate);
+      // Parse the event date and time (avoiding timezone shift)
+      const [year, month, day] = data.eventDate.split('-').map(num => parseInt(num, 10));
+      const eventDate = new Date(year, month - 1, day); // month is 0-indexed
       const pickupTime = data.pickupTime;
       
       // Convert pickup time to 24-hour format for the calendar
