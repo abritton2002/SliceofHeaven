@@ -127,14 +127,9 @@ function handleOrderForm(data, e) {
 
           if (fileName && base64Data) {
             try {
-              // Convert base64 to blob
-              const byteCharacters = Utilities.base64Decode(base64Data);
-              const byteNumbers = new Array(byteCharacters.length);
-              for (let j = 0; j < byteCharacters.length; j++) {
-                byteNumbers[j] = byteCharacters.charCodeAt(j);
-              }
-              const byteArray = Utilities.newUint8Array(byteNumbers);
-              const fileBlob = Utilities.newBlob(byteArray, fileType || 'image/jpeg', fileName);
+              // Convert base64 to blob - base64Decode returns a byte array directly
+              const decodedBytes = Utilities.base64Decode(base64Data);
+              const fileBlob = Utilities.newBlob(decodedBytes, fileType || 'image/jpeg', fileName);
 
               console.log('Successfully converted base64 to blob for:', fileName);
 
