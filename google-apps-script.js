@@ -105,6 +105,7 @@ function handleOrderForm(data, e) {
     data.colors || '', // Colors
     data.message || '', // What would you like your cake to say?
     data.occasion || '', // Occasion
+    '', // Inspiration Photos (blank column for sheet alignment)
     formatDate(data.eventDate) || '', // Date Needed
     formatTime(data.pickupTime) || '', // Preferred Pick-Up Time
     data.delivery || '', // Will you need it delivered?
