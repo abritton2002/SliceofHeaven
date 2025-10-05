@@ -93,12 +93,13 @@ function handleOrderForm(data, e) {
 
   // Handle file uploads and create Google Drive links
   let photoLinks = '';
+  let thumbnailUrls = [];
   if (data.photos && data.photos !== 'No photos uploaded') {
     try {
       // Create a Google Drive folder for this order
       const folderName = `Cake Order - ${data.name} - ${new Date().toISOString().split('T')[0]}`;
       let folder;
-      
+
       try {
         // Try to find existing folder or create new one
         const folders = DriveApp.getFoldersByName(folderName);
@@ -107,23 +108,23 @@ function handleOrderForm(data, e) {
         } else {
           folder = DriveApp.createFolder(folderName);
         }
-        
+
         const driveLinks = [];
         const fileCount = parseInt(data.file_count) || 0;
-        
+
         console.log('Processing', fileCount, 'files');
         console.log('Available data keys:', Object.keys(data));
-        
+
         // Process uploaded files
         for (let i = 0; i < fileCount; i++) {
           const fileName = data[`file_${i}_name`];
           const fileSize = data[`file_${i}_size`];
           const fileType = data[`file_${i}_type`];
           const base64Data = data[`file_${i}_base64`];
-          
+
           console.log(`Processing file ${i}:`, fileName, fileSize, fileType);
           console.log(`Base64 data length:`, base64Data ? base64Data.length : 'none');
-          
+
           if (fileName && base64Data) {
             try {
               // Convert base64 to blob
@@ -134,16 +135,25 @@ function handleOrderForm(data, e) {
               }
               const byteArray = Utilities.newUint8Array(byteNumbers);
               const fileBlob = Utilities.newBlob(byteArray, fileType || 'image/jpeg', fileName);
-              
+
               console.log('Successfully converted base64 to blob for:', fileName);
-              
+
               // Create the actual image file in Google Drive
               const file = folder.createFile(fileBlob);
               file.setName(fileName);
+
+              // Make file viewable by anyone with link
+              file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+
+              // Get the file ID for thumbnail URL
+              const fileId = file.getId();
+              const thumbnailUrl = `https://drive.google.com/thumbnail?id=${fileId}&sz=w400`;
               const driveLink = file.getUrl();
+
               driveLinks.push(`${fileName}: ${driveLink}`);
+              thumbnailUrls.push(thumbnailUrl);
               console.log('Successfully created file in Drive:', driveLink);
-              
+
             } catch (fileError) {
               console.error('Error processing file:', fileError);
               driveLinks.push(`${fileName} (${fileSize}KB) - Error processing file: ${fileError.message}`);
@@ -152,9 +162,9 @@ function handleOrderForm(data, e) {
             console.log(`Skipping file ${i} - missing fileName or base64Data`);
           }
         }
-        
+
         photoLinks = driveLinks.join(' | ');
-        
+
       } catch (driveError) {
         console.error('Error creating Drive folder:', driveError);
         photoLinks = data.photos; // Fallback to original data
@@ -189,6 +199,30 @@ function handleOrderForm(data, e) {
 
   // Add the row to the sheet
   targetSheet.appendRow(row);
+
+  // Add IMAGE formulas for thumbnails in a separate column if we have images
+  if (thumbnailUrls.length > 0) {
+    try {
+      const lastRow = targetSheet.getLastRow();
+      const imageColumn = 19; // Column S (after all the existing columns)
+
+      // Create IMAGE formulas for each thumbnail
+      const imageFormulas = thumbnailUrls.map(url => `IMAGE("${url}", 1)`).join('\n');
+      targetSheet.getRange(lastRow, imageColumn).setFormula(`=${imageFormulas.split('\n')[0]}`);
+
+      // If multiple images, add them to adjacent columns or stack vertically
+      for (let i = 1; i < thumbnailUrls.length && i < 3; i++) {
+        targetSheet.getRange(lastRow, imageColumn + i).setFormula(`=IMAGE("${thumbnailUrls[i]}", 1)`);
+      }
+
+      // Set row height to accommodate images
+      targetSheet.setRowHeight(lastRow, 150);
+
+    } catch (imageError) {
+      console.error('Error adding image formulas:', imageError);
+      // Don't fail the whole operation if image display fails
+    }
+  }
 
   // Send email notification
   const emailSubject = `🍰 New Cake Order - ${data.name}`;
