@@ -91,85 +91,6 @@ function handleOrderForm(data, e) {
   // If the sheet doesn't exist, get the active sheet
   const targetSheet = sheet || SpreadsheetApp.openById('1trxugWBoe89HKANnnHhqi14tiLrx5Q37EBo4xdoKqLY').getActiveSheet();
 
-  // Handle file uploads and create Google Drive links
-  let photoLinks = '';
-  let thumbnailUrls = [];
-  if (data.photos && data.photos !== 'No photos uploaded') {
-    try {
-      // Create a Google Drive folder for this order
-      const folderName = `Cake Order - ${data.name} - ${new Date().toISOString().split('T')[0]}`;
-      let folder;
-
-      try {
-        // Try to find existing folder or create new one
-        const folders = DriveApp.getFoldersByName(folderName);
-        if (folders.hasNext()) {
-          folder = folders.next();
-        } else {
-          folder = DriveApp.createFolder(folderName);
-        }
-
-        const driveLinks = [];
-        const fileCount = parseInt(data.file_count) || 0;
-
-        console.log('Processing', fileCount, 'files');
-        console.log('Available data keys:', Object.keys(data));
-
-        // Process uploaded files
-        for (let i = 0; i < fileCount; i++) {
-          const fileName = data[`file_${i}_name`];
-          const fileSize = data[`file_${i}_size`];
-          const fileType = data[`file_${i}_type`];
-          const base64Data = data[`file_${i}_base64`];
-
-          console.log(`Processing file ${i}:`, fileName, fileSize, fileType);
-          console.log(`Base64 data length:`, base64Data ? base64Data.length : 'none');
-
-          if (fileName && base64Data) {
-            try {
-              // Convert base64 to blob - base64Decode returns a byte array directly
-              const decodedBytes = Utilities.base64Decode(base64Data);
-              const fileBlob = Utilities.newBlob(decodedBytes, fileType || 'image/jpeg', fileName);
-
-              console.log('Successfully converted base64 to blob for:', fileName);
-
-              // Create the actual image file in Google Drive
-              const file = folder.createFile(fileBlob);
-              file.setName(fileName);
-
-              // Make file viewable by anyone with link
-              file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-
-              // Get the file ID for thumbnail URL
-              const fileId = file.getId();
-              const thumbnailUrl = `https://drive.google.com/thumbnail?id=${fileId}&sz=w400`;
-              const driveLink = file.getUrl();
-
-              driveLinks.push(`${fileName}: ${driveLink}`);
-              thumbnailUrls.push(thumbnailUrl);
-              console.log('Successfully created file in Drive:', driveLink);
-
-            } catch (fileError) {
-              console.error('Error processing file:', fileError);
-              driveLinks.push(`${fileName} (${fileSize}KB) - Error processing file: ${fileError.message}`);
-            }
-          } else {
-            console.log(`Skipping file ${i} - missing fileName or base64Data`);
-          }
-        }
-
-        photoLinks = driveLinks.join(' | ');
-
-      } catch (driveError) {
-        console.error('Error creating Drive folder:', driveError);
-        photoLinks = data.photos; // Fallback to original data
-      }
-    } catch (error) {
-      console.error('Error processing photos:', error);
-      photoLinks = data.photos; // Fallback to original data
-    }
-  }
-
   // Create a row with the form data matching Google Sheet column order based on Odalys's correct data
   const row = [
     new Date(), // Timestamp
@@ -184,7 +105,6 @@ function handleOrderForm(data, e) {
     data.colors || '', // Colors
     data.message || '', // What would you like your cake to say?
     data.occasion || '', // Occasion
-    photoLinks || data.photos || '', // Inspiration Photos with Drive links
     formatDate(data.eventDate) || '', // Date Needed
     formatTime(data.pickupTime) || '', // Preferred Pick-Up Time
     data.delivery || '', // Will you need it delivered?
@@ -194,30 +114,6 @@ function handleOrderForm(data, e) {
 
   // Add the row to the sheet
   targetSheet.appendRow(row);
-
-  // Add IMAGE formulas for thumbnails in a separate column if we have images
-  if (thumbnailUrls.length > 0) {
-    try {
-      const lastRow = targetSheet.getLastRow();
-      const imageColumn = 19; // Column S (after all the existing columns)
-
-      // Create IMAGE formulas for each thumbnail
-      const imageFormulas = thumbnailUrls.map(url => `IMAGE("${url}", 1)`).join('\n');
-      targetSheet.getRange(lastRow, imageColumn).setFormula(`=${imageFormulas.split('\n')[0]}`);
-
-      // If multiple images, add them to adjacent columns or stack vertically
-      for (let i = 1; i < thumbnailUrls.length && i < 3; i++) {
-        targetSheet.getRange(lastRow, imageColumn + i).setFormula(`=IMAGE("${thumbnailUrls[i]}", 1)`);
-      }
-
-      // Set row height to accommodate images
-      targetSheet.setRowHeight(lastRow, 150);
-
-    } catch (imageError) {
-      console.error('Error adding image formulas:', imageError);
-      // Don't fail the whole operation if image display fails
-    }
-  }
 
   // Send email notification
   const emailSubject = `🍰 New Cake Order - ${data.name}`;
@@ -245,12 +141,7 @@ function handleOrderForm(data, e) {
     <p><strong>Event Date:</strong> ${data.eventDate}</p>
     <p><strong>Pickup Time:</strong> ${data.pickupTime}</p>
     <p><strong>Delivery:</strong> ${data.delivery}</p>
-    
-    <h3>📸 INSPIRATION PHOTOS:</h3>
-    <p><strong>Photos:</strong> ${data.photos}</p>
-    ${photoLinks && photoLinks !== data.photos ? `<p><strong>Google Drive Links:</strong> ${photoLinks}</p>` : ''}
-    <p><em>Note: Customer uploaded inspiration photos. Check the Google Drive links above for order details and request actual images from customer.</em></p>
-    
+
     <hr>
     <h3>📱 TEXT CUSTOMER: <a href="tel:${data.phone}">${data.phone}</a></h3>
   `;

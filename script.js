@@ -597,96 +597,21 @@ document.addEventListener('DOMContentLoaded', function() {
             try {
                 // Collect all form data
                 const formData = new FormData(orderForm);
-                
+
                 // Collect selected flavors and extras
                 const flavors = Array.from(orderForm.querySelectorAll('input[name="flavors"]:checked'))
                     .map(cb => cb.value).join(', ');
                 const extras = Array.from(orderForm.querySelectorAll('input[name="extras"]:checked'))
                     .map(cb => cb.value).join(', ');
-                
-                // Add flavors and extras to form data
+
+                // Delete individual checkbox entries to avoid duplicates
+                formData.delete('flavors');
+                formData.delete('extras');
+
+                // Add comma-separated flavors and extras to form data
                 formData.append('flavors', flavors);
                 formData.append('extras', extras);
                 formData.append('formType', 'order');
-                
-                // Handle file uploads - convert files to base64 and send as text data
-                const fileInput = orderForm.querySelector('input[type="file"]');
-                let photoInfo = 'No photos uploaded';
-                
-                if (fileInput && fileInput.files.length > 0) {
-                    const files = Array.from(fileInput.files);
-                    
-                    // Validate file sizes (Google Apps Script has limits)
-                    const maxFileSize = 10 * 1024 * 1024; // 10MB limit
-                    const oversizedFiles = files.filter(file => file.size > maxFileSize);
-                    
-                    if (oversizedFiles.length > 0) {
-                        const fileNames = oversizedFiles.map(f => f.name).join(', ');
-                        showNotification(`Files too large (max 10MB each): ${fileNames}`, 'error');
-                        submitBtn.textContent = originalText;
-                        submitBtn.disabled = false;
-                        return;
-                    }
-                    
-                    // Limit to 5 files
-                    if (files.length > 5) {
-                        showNotification('Please select no more than 5 photos.', 'error');
-                        submitBtn.textContent = originalText;
-                        submitBtn.disabled = false;
-                        return;
-                    }
-                    
-                    photoInfo = files.map(file => `${file.name} (${(file.size / 1024).toFixed(1)}KB)`).join(', ');
-                    
-                    console.log('Files to upload:', files.length);
-                    files.forEach((file, index) => {
-                        console.log(`File ${index}:`, file.name, file.size, file.type);
-                    });
-                    
-                    // Update button text to show progress
-                    submitBtn.textContent = `Processing ${files.length} file(s)...`;
-                    
-                    // Convert each file to base64 and add to form data
-                    for (let i = 0; i < files.length; i++) {
-                        const file = files[i];
-                        const reader = new FileReader();
-                        
-                        // Update progress
-                        submitBtn.textContent = `Processing file ${i + 1} of ${files.length}...`;
-                        
-                        await new Promise((resolve, reject) => {
-                            reader.onload = function(e) {
-                                try {
-                                    const base64 = e.target.result.split(',')[1]; // Remove data:image/jpeg;base64, prefix
-                                    formData.append(`file_${i}_base64`, base64);
-                                    formData.append(`file_${i}_name`, file.name);
-                                    formData.append(`file_${i}_size`, file.size);
-                                    formData.append(`file_${i}_type`, file.type);
-                                    console.log(`Successfully processed file ${i}: ${file.name}`);
-                                    resolve();
-                                } catch (error) {
-                                    console.error(`Error processing file ${i}:`, error);
-                                    reject(error);
-                                }
-                            };
-                            reader.onerror = function(error) {
-                                console.error(`Error reading file ${i}:`, error);
-                                reject(error);
-                            };
-                            reader.readAsDataURL(file);
-                        });
-                    }
-                    
-                    formData.append('file_count', files.length);
-                }
-                
-                // Add photo info to form data
-                formData.append('photos', photoInfo);
-
-                console.log('Submitting order data with files:', photoInfo);
-
-                // Update button text for submission
-                submitBtn.textContent = 'Submitting Order...';
 
                 // Submit to Google Apps Script with base64 encoded files
                 const response = await fetch('https://script.google.com/macros/s/AKfycbwVjjbAWdzKb76mwOtgOC_odDXEmKNW0w2jBaMM_MOTA5RLZfA25yDorkMBFZnVkapq/exec', {
@@ -728,72 +653,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize pricing display
     updatePricing();
-    
-    // File preview functionality
-    const fileInput = document.getElementById('inspiration-photos');
-    const filePreview = document.getElementById('file-preview');
-    const fileList = document.getElementById('file-list');
-    
-    if (fileInput) {
-        fileInput.addEventListener('change', function() {
-            const files = Array.from(this.files);
-            
-            if (files.length > 0) {
-                filePreview.style.display = 'block';
-                fileList.innerHTML = '';
-                
-                files.forEach((file, index) => {
-                    const fileItem = document.createElement('div');
-                    fileItem.className = 'file-item';
-                    
-                    const fileIcon = document.createElement('span');
-                    fileIcon.innerHTML = '📷';
-                    fileIcon.style.marginRight = '8px';
-                    
-                    const fileInfo = document.createElement('div');
-                    fileInfo.style.flex = '1';
-                    
-                    const fileName = document.createElement('div');
-                    fileName.textContent = file.name;
-                    fileName.style.fontWeight = '600';
-                    fileName.style.fontSize = '14px';
-                    
-                    const fileSize = document.createElement('div');
-                    fileSize.textContent = `${(file.size / 1024).toFixed(1)} KB`;
-                    fileSize.style.fontSize = '12px';
-                    fileSize.style.color = '#6c757d';
-                    
-                    fileInfo.appendChild(fileName);
-                    fileInfo.appendChild(fileSize);
-                    
-                    const removeBtn = document.createElement('button');
-                    removeBtn.textContent = '×';
-                    removeBtn.type = 'button';
-                    
-                    removeBtn.addEventListener('click', function() {
-                        // Create a new FileList without this file
-                        const dt = new DataTransfer();
-                        files.forEach((f, i) => {
-                            if (i !== index) {
-                                dt.items.add(f);
-                            }
-                        });
-                        fileInput.files = dt.files;
-                        
-                        // Re-trigger the change event
-                        fileInput.dispatchEvent(new Event('change'));
-                    });
-                    
-                    fileItem.appendChild(fileIcon);
-                    fileItem.appendChild(fileInfo);
-                    fileItem.appendChild(removeBtn);
-                    fileList.appendChild(fileItem);
-                });
-            } else {
-                filePreview.style.display = 'none';
-            }
-        });
-    }
 });
 
 // Contact Form Functionality
