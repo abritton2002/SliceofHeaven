@@ -110,7 +110,8 @@ function handleOrderForm(data, e) {
     formatTime(data.pickupTime) || '', // Preferred Pick-Up Time
     data.delivery || '', // Will you need it delivered?
     data.pricingAck || '', // Pricing acknowledgment
-    data.termsAck || '' // Terms acknowledgment
+    data.termsAck || '', // Terms acknowledgment
+    data.allergies || '' // Allergies / Dietary Restrictions
   ];
 
   // Add the row to the sheet
@@ -137,6 +138,9 @@ function handleOrderForm(data, e) {
     <p><strong>Colors:</strong> ${data.colors}</p>
     <p><strong>Message:</strong> "${data.message}"</p>
     <p><strong>Occasion:</strong> ${data.occasion}</p>
+    
+    <h3>⚠️ ALLERGIES / DIETARY RESTRICTIONS:</h3>
+    <p><strong>Allergies:</strong> ${data.allergies || 'None specified'}</p>
     
     <h3>📅 EVENT INFO:</h3>
     <p><strong>Event Date:</strong> ${data.eventDate}</p>
@@ -197,6 +201,7 @@ CAKE DETAILS:
 • Extras: ${data.extras}
 • Colors: ${data.colors}
 • Message: "${data.message}"
+• Allergies: ${data.allergies || 'None specified'}
 
 DELIVERY: ${data.delivery}
 PHOTOS: ${data.photos}

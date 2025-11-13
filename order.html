@@ -245,7 +245,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label>🍰 Flavors (Included / No Extra Charge) *</label>
+                        <label>Flavors (Included / No Extra Charge) *</label>
                         <div class="checkbox-group" id="flavor-group">
                             <div class="checkbox-item">
                                 <input type="checkbox" id="vanilla" name="flavors" value="Vanilla">
@@ -272,14 +272,14 @@
                                 <label for="lemon">Lemon</label>
                             </div>
                             <div class="checkbox-item">
-                                <input type="checkbox" id="oreo-vanilla" name="flavors" value="Oreo Vanilla">
-                                <label for="oreo-vanilla">Oreo Vanilla</label>
+                                <input type="checkbox" id="oreo-vanilla-cake" name="flavors" value="Oreo Vanilla Cake (+$5-$10)" data-price="7.5">
+                                <label for="oreo-vanilla-cake">Oreo Vanilla Cake (+$5-$10)</label>
                             </div>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label>🍥 Fillings *</label>
+                        <label>Fillings *</label>
                         <div class="checkbox-group" id="filling-group">
                             <div class="checkbox-item">
                                 <input type="checkbox" id="vanilla-buttercream" name="flavors" value="Vanilla Buttercream (Included)" checked data-price="0">
@@ -288,10 +288,6 @@
                             <div class="checkbox-item">
                                 <input type="checkbox" id="cream-cheese-filling" name="flavors" value="Cream Cheese Filling (+$5-$10)" data-price="7.5">
                                 <label for="cream-cheese-filling">Cream Cheese Filling (+$5-$10)</label>
-                            </div>
-                            <div class="checkbox-item">
-                                <input type="checkbox" id="oreo-vanilla-cake" name="flavors" value="Oreo-Vanilla Cake (+$5-$10)" data-price="7.5">
-                                <label for="oreo-vanilla-cake">Oreo-Vanilla Cake (+$5-$10)</label>
                             </div>
                             <div class="checkbox-item">
                                 <input type="checkbox" id="oreo-filling" name="flavors" value="Oreo Filling (+$5-$10)" data-price="7.5">
@@ -309,7 +305,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label>✨ Extras / Add-Ons (Optional)</label>
+                        <label>Extras / Add-Ons (Optional)</label>
                         <div class="checkbox-group">
                             <div class="checkbox-item">
                                 <input type="checkbox" id="edible-glitter" name="extras" value="Edible Glitter (Starting at $5)" data-price="5">
@@ -363,6 +359,15 @@
                             <label for="cake-message">What would you like your cake to say? *</label>
                             <input type="text" id="cake-message" name="message" placeholder="Standard Writing – Included" required>
                         </div>
+                    </div>
+                </div>
+
+                <!-- 5. Allergies / Dietary Restrictions -->
+                <div class="form-section">
+                    <h3 class="section-title">Allergies / Dietary Restrictions</h3>
+                    <div class="form-group">
+                        <label for="allergies">Please list any allergies or dietary restrictions (Optional)</label>
+                        <textarea id="allergies" name="allergies" placeholder="Please list any allergies or dietary restrictions (e.g., nuts, dairy, gluten, etc.). Leave blank if none." rows="3"></textarea>
                     </div>
                 </div>
 
