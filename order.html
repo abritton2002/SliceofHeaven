@@ -245,8 +245,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Flavor and Filling *</label>
-                        <div class="checkbox-group" id="flavor-filling-group">
+                        <label>🍰 Flavors (Included / No Extra Charge) *</label>
+                        <div class="checkbox-group" id="flavor-group">
                             <div class="checkbox-item">
                                 <input type="checkbox" id="vanilla" name="flavors" value="Vanilla">
                                 <label for="vanilla">Vanilla</label>
@@ -272,16 +272,26 @@
                                 <label for="lemon">Lemon</label>
                             </div>
                             <div class="checkbox-item">
-                                <input type="checkbox" id="vanilla-buttercream" name="flavors" value="Vanilla Buttercream (Included)" checked>
-                                <label for="vanilla-buttercream">Vanilla Buttercream (Included)</label>
+                                <input type="checkbox" id="oreo-vanilla" name="flavors" value="Oreo Vanilla">
+                                <label for="oreo-vanilla">Oreo Vanilla</label>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>🍥 Fillings *</label>
+                        <div class="checkbox-group" id="filling-group">
                             <div class="checkbox-item">
-                                <input type="checkbox" id="oreo-vanilla-cake" name="flavors" value="Oreo-Vanilla Cake (+$5-$10)" data-price="7.5">
-                                <label for="oreo-vanilla-cake">Oreo-Vanilla Cake (+$5-$10)</label>
+                                <input type="checkbox" id="vanilla-buttercream" name="flavors" value="Vanilla Buttercream (Included)" checked data-price="0">
+                                <label for="vanilla-buttercream">Vanilla Buttercream – Included</label>
                             </div>
                             <div class="checkbox-item">
                                 <input type="checkbox" id="cream-cheese-filling" name="flavors" value="Cream Cheese Filling (+$5-$10)" data-price="7.5">
                                 <label for="cream-cheese-filling">Cream Cheese Filling (+$5-$10)</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="oreo-vanilla-cake" name="flavors" value="Oreo-Vanilla Cake (+$5-$10)" data-price="7.5">
+                                <label for="oreo-vanilla-cake">Oreo-Vanilla Cake (+$5-$10)</label>
                             </div>
                             <div class="checkbox-item">
                                 <input type="checkbox" id="oreo-filling" name="flavors" value="Oreo Filling (+$5-$10)" data-price="7.5">
@@ -292,42 +302,46 @@
                                 <label for="raspberry-filling">Raspberry Filling (+$5-$10)</label>
                             </div>
                             <div class="checkbox-item">
-                                <input type="checkbox" id="chocolate-ganache" name="flavors" value="Chocolate Ganache (+$5-10)" data-price="7.5">
-                                <label for="chocolate-ganache">Chocolate Ganache (+$5-10)</label>
+                                <input type="checkbox" id="chocolate-ganache" name="flavors" value="Chocolate Ganache (+$5-$10)" data-price="7.5">
+                                <label for="chocolate-ganache">Chocolate Ganache (+$5-$10)</label>
                             </div>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label>Enhancements (Optional)</label>
+                        <label>✨ Extras / Add-Ons (Optional)</label>
                         <div class="checkbox-group">
                             <div class="checkbox-item">
-                                <input type="checkbox" id="edible-glitter" name="extras" value="Edible Glitter  (+$3-$5)" data-price="4">
-                                <label for="edible-glitter">Edible Glitter (+$3-$5)</label>
+                                <input type="checkbox" id="edible-glitter" name="extras" value="Edible Glitter (Starting at $5)" data-price="5">
+                                <label for="edible-glitter">Edible Glitter (Starting at $5)</label>
                             </div>
                             <div class="checkbox-item">
-                                <input type="checkbox" id="edible-pearls" name="extras" value="Edible Pearls  (+$3-$5)" data-price="4">
-                                <label for="edible-pearls">Edible Pearls (+$3-$5)</label>
+                                <input type="checkbox" id="edible-pearls" name="extras" value="Edible Pearls (Starting at $5)" data-price="5">
+                                <label for="edible-pearls">Edible Pearls (Starting at $5)</label>
                             </div>
                             <div class="checkbox-item">
-                                <input type="checkbox" id="cherries" name="extras" value="Cherries  (+$5)" data-price="5">
-                                <label for="cherries">Cherries (+$5)</label>
+                                <input type="checkbox" id="cherries" name="extras" value="Cherries (Starting at $5)" data-price="5">
+                                <label for="cherries">Cherries (Starting at $5)</label>
                             </div>
                             <div class="checkbox-item">
                                 <input type="checkbox" id="glitter-cherries" name="extras" value="Glitter Cherries (+$10)" data-price="10">
                                 <label for="glitter-cherries">Glitter Cherries (+$10)</label>
                             </div>
                             <div class="checkbox-item">
-                                <input type="checkbox" id="bows" name="extras" value="Bows  (+$5)" data-price="5">
-                                <label for="bows">Bows (+$5)</label>
+                                <input type="checkbox" id="bows" name="extras" value="Bows (Starting at $5)" data-price="5">
+                                <label for="bows">Bows (Starting at $5)</label>
                             </div>
                             <div class="checkbox-item">
-                                <input type="checkbox" id="sprinkles" name="extras" value="Sprinkles (+$3-5)" data-price="4">
-                                <label for="sprinkles">Sprinkles (+$3-5)</label>
+                                <input type="checkbox" id="sprinkles" name="extras" value="Sprinkles (Starting at $5)" data-price="5">
+                                <label for="sprinkles">Sprinkles (Starting at $5)</label>
                             </div>
                             <div class="checkbox-item">
-                                <input type="checkbox" id="3d-lettering" name="extras" value="3D Chocolate Lettering (+$5)" data-price="5">
-                                <label for="3d-lettering">3D Chocolate Lettering (+$5)</label>
+                                <input type="checkbox" id="3d-lettering" name="extras" value="3D Lettering (+$3)" data-price="3">
+                                <label for="3d-lettering">3D Lettering (+$3)</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="standard-writing" name="extras" value="Standard Writing (Included)" disabled checked>
+                                <label for="standard-writing">Standard Writing – Included</label>
                             </div>
                             <div class="checkbox-item">
                                 <input type="checkbox" id="custom-addon" name="extras" value="Custom Add On (DM me for any custom add ons)">
@@ -347,7 +361,7 @@
                         </div>
                         <div class="form-group">
                             <label for="cake-message">What would you like your cake to say? *</label>
-                            <input type="text" id="cake-message" name="message" placeholder="Standard writing is included" required>
+                            <input type="text" id="cake-message" name="message" placeholder="Standard Writing – Included" required>
                         </div>
                     </div>
                 </div>

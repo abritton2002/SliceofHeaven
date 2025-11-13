@@ -493,9 +493,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Pricing structure based on your menu
     const basePrices = {
-        2: { 6: 60, 8: 70, 10: 80 },
-        3: { 6: 70, 8: 80, 10: 90 },
-        4: { 6: 80, 8: 90, 10: 100 }
+        2: { 6: 65, 8: 75, 10: 85 },
+        3: { 6: 75, 8: 85, 10: 95 },
+        4: { 6: 85, 8: 95, 10: 105 }
     };
 
     // Calculate and update pricing
