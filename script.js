@@ -285,20 +285,16 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Navbar scroll effect
+// Navbar scroll effect - add background when scrolling
 const navbar = document.getElementById('navbar');
 let lastScrollY = window.scrollY;
 
 window.addEventListener('scroll', () => {
-    if (window.scrollY > 100) {
-        navbar.style.background = 'rgba(255, 255, 255, 0.95)';
-        navbar.style.backdropFilter = 'blur(10px)';
+    if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
     } else {
-        navbar.style.background = 'var(--white)';
-        navbar.style.backdropFilter = 'none';
+        navbar.classList.remove('scrolled');
     }
-    
-    lastScrollY = window.scrollY;
 });
 
 // Netlify form handling - form will be handled automatically by Netlify
@@ -614,7 +610,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 formData.append('formType', 'order');
 
                 // Submit to Google Apps Script with base64 encoded files
-                const response = await fetch('https://script.google.com/macros/s/AKfycbyhw9jFVpdFAD4th8pP7a7k_-F2XsEfwKLybqzLJD_vtV_6PTfBvoWI82KtCFERv541/exec', {
+                const response = await fetch('https://script.google.com/macros/s/AKfycbzJgHWxhgSIaLeP0xLaTwBRww5A2lCeH-D9zcyQJiUp3KkxzNk5St9jaonRLUWG7BHS/exec', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
@@ -629,8 +625,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('Response result:', result);
 
                 if (result.status === 'success') {
-                    showNotification('Thank you for your order! We\'ll review your request and get back to you within 24 hours.', 'success');
-                    
+                    // Get order details for confirmation modal
+                    const customerName = formData.get('name');
+                    const occasion = formData.get('occasion');
+                    const eventDate = formData.get('eventDate');
+                    const cakeSize = formData.get('size');
+                    const cakeLayers = formData.get('layers');
+                    const cakeShape = formData.get('shape');
+                    const totalPrice = document.getElementById('total-price').textContent;
+
+                    // Show confirmation modal
+                    showOrderConfirmation({
+                        name: customerName,
+                        occasion: occasion,
+                        date: eventDate,
+                        cake: `${cakeSize}, ${cakeLayers} layers, ${cakeShape}`,
+                        total: totalPrice
+                    });
+
                     // Reset form
                     orderForm.reset();
                     updatePricing(); // Reset pricing display
@@ -709,7 +721,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 };
 
                 // Google Apps Script web app URL for contact form
-                const CONTACT_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyhw9jFVpdFAD4th8pP7a7k_-F2XsEfwKLybqzLJD_vtV_6PTfBvoWI82KtCFERv541/exec';
+                const CONTACT_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzJgHWxhgSIaLeP0xLaTwBRww5A2lCeH-D9zcyQJiUp3KkxzNk5St9jaonRLUWG7BHS/exec';
 
                 // Add form type identifier
                 contactData.formType = 'contact';
@@ -752,5 +764,135 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.textContent = originalText;
             submitBtn.disabled = false;
         });
+    }
+
+    // Initialize Order Progress Indicator
+    initOrderProgress();
+});
+
+// Order Progress Indicator Functionality
+function initOrderProgress() {
+    const progressContainer = document.getElementById('order-progress');
+    const orderForm = document.getElementById('order-form');
+
+    if (!progressContainer || !orderForm) return;
+
+    const formSections = orderForm.querySelectorAll('.form-section');
+    const progressSteps = progressContainer.querySelectorAll('.progress-step');
+    const progressConnectors = progressContainer.querySelectorAll('.progress-connector');
+
+    if (formSections.length === 0 || progressSteps.length === 0) return;
+
+    // Update progress based on scroll position
+    function updateProgress() {
+        const scrollPosition = window.scrollY + window.innerHeight / 2;
+
+        let activeSection = 0;
+        formSections.forEach((section, index) => {
+            const sectionTop = section.offsetTop;
+            const sectionBottom = sectionTop + section.offsetHeight;
+
+            if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+                activeSection = index;
+            } else if (scrollPosition >= sectionBottom) {
+                activeSection = Math.min(index + 1, formSections.length - 1);
+            }
+        });
+
+        // Map form sections to progress steps (we have 4 progress steps)
+        // Sections: Customer Info (0), Event Details (1), Cake Config (2), Extras (3), Allergies (4), Review (5)
+        // Progress: Your Info (0), Event Details (1), Cake Design (2), Extras (3)
+        let progressIndex = Math.min(activeSection, progressSteps.length - 1);
+
+        // Update progress steps
+        progressSteps.forEach((step, index) => {
+            step.classList.remove('active', 'completed');
+
+            if (index < progressIndex) {
+                step.classList.add('completed');
+            } else if (index === progressIndex) {
+                step.classList.add('active');
+            }
+        });
+
+        // Update connectors
+        progressConnectors.forEach((connector, index) => {
+            connector.classList.remove('active');
+            if (index < progressIndex) {
+                connector.classList.add('active');
+            }
+        });
+    }
+
+    // Throttle scroll events
+    let ticking = false;
+    window.addEventListener('scroll', function() {
+        if (!ticking) {
+            window.requestAnimationFrame(function() {
+                updateProgress();
+                ticking = false;
+            });
+            ticking = true;
+        }
+    });
+
+    // Initial update
+    updateProgress();
+}
+
+// Order Confirmation Modal Functions
+function showOrderConfirmation(orderDetails) {
+    const modal = document.getElementById('orderConfirmationModal');
+    if (!modal) return;
+
+    // Populate order details
+    document.getElementById('confirm-name').textContent = orderDetails.name || 'N/A';
+    document.getElementById('confirm-occasion').textContent = orderDetails.occasion || 'N/A';
+
+    // Format date nicely
+    if (orderDetails.date) {
+        const date = new Date(orderDetails.date + 'T00:00:00');
+        const formattedDate = date.toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+        document.getElementById('confirm-date').textContent = formattedDate;
+    } else {
+        document.getElementById('confirm-date').textContent = 'N/A';
+    }
+
+    document.getElementById('confirm-cake').textContent = orderDetails.cake || 'N/A';
+    document.getElementById('confirm-total').textContent = orderDetails.total || '$0';
+
+    // Show modal
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+
+    // Scroll to top of page
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function closeConfirmationModal() {
+    const modal = document.getElementById('orderConfirmationModal');
+    if (!modal) return;
+
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+}
+
+// Close modal when clicking outside
+document.addEventListener('click', function(e) {
+    const modal = document.getElementById('orderConfirmationModal');
+    if (e.target === modal) {
+        closeConfirmationModal();
+    }
+});
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeConfirmationModal();
     }
 });

@@ -76,18 +76,20 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playwrite+AU+NSW:wght@100..400&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <div class="nav-container">
             <div class="nav-logo">
-                <img src="images/word-logo.PNG" alt="Slice of Heaven Vintage Cakes" class="logo-img">
+                <a href="index.html">
+                    <img src="images/word-logo.PNG" alt="Slice of Heaven Vintage Cakes" class="logo-img">
+                </a>
             </div>
             <div class="nav-menu" id="nav-menu">
-                <a href="index.html" class="nav-link">Home</a>
                 <a href="gallery.html" class="nav-link">Gallery</a>
+                <a href="weddings.html" class="nav-link">Special Events</a>
                 <a href="contact.html" class="nav-link">Inquire</a>
                 <a href="order.html" class="nav-link order-btn">Order Now</a>
                 <div class="nav-socials">
@@ -155,7 +157,79 @@
                         <p>Click to order similar</p>
                     </div>
                 </div>
-                
+                <div class="gallery-item" onclick="openCakeModal('pink21choco8hrt.jpg', 'Pink 21 Chocolate Heart Cake', 'Stunning two-tiered pink heart cake with chocolate bars, pink spheres, and gold accents. Perfect for a 21st birthday celebration.', 'Pink, Heart, 21st Birthday, Chocolate')">
+                    <img src="images/pink21choco8hrt.jpg" alt="Pink 21 chocolate heart cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openCakeModal('pinkcherry21hrt.jpg', 'Pink Cherry 21 Heart Cake', 'Beautiful two-tiered pink heart cake with fresh cherries and elegant piping. A fun way to celebrate turning 21.', 'Pink, Heart, Cherries, 21st Birthday')">
+                    <img src="images/pinkcherry21hrt.jpg" alt="Pink cherry 21 heart cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openCakeModal('pinkfloral27hrt.jpg', 'Pink Floral 27 Heart Cake', 'Gorgeous pink heart cake adorned with delicate flowers and white ribbons. A romantic choice for a 27th birthday.', 'Pink, Heart, Floral, Birthday')">
+                    <img src="images/pinkfloral27hrt.jpg" alt="Pink floral 27 heart cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openCakeModal('pinkredbirthday8hrt.jpg', 'Pink Red Birthday Heart Cake', 'Vibrant two-tiered pink and red heart cake with cherries and red bows. A festive choice for birthday celebrations.', 'Pink, Red, Heart, Birthday, Cherries')">
+                    <img src="images/pinkredbirthday8hrt.jpg" alt="Pink red birthday heart cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openCakeModal('pinkprincess6rnd.jpg', 'Pink Princess Round Cake', 'Elegant pink round cake with a vintage cameo accent and delicate piping. Fit for a princess.', 'Pink, Round, Princess, Vintage')">
+                    <img src="images/pinkprincess6rnd.jpg" alt="Pink princess round cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openCakeModal('pink24rnd.jpg', 'Pink 24 Round Cake', 'Sweet pink round cake with soft bows and elegant piping. Perfect for celebrating 24 years.', 'Pink, Round, Birthday, Bows')">
+                    <img src="images/pink24rnd.jpg" alt="Pink 24 round cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openCakeModal('pinkdirty308hrt.jpg', 'Pink Dirty Thirty Heart Cake', 'Fun two-tiered pink heart cake with black bows, perfect for celebrating the big 3-0 in style.', 'Pink, Heart, 30th Birthday, Black Bows')">
+                    <img src="images/pinkdirty308hrt.jpg" alt="Pink dirty thirty heart cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openCakeModal('pinkwhitebday8hrt.jpg', 'Pink White Birthday Heart Cake', 'Classic two-tiered pink and white heart cake with pink bows and elegant piping. A timeless birthday choice.', 'Pink, White, Heart, Birthday')">
+                    <img src="images/pinkwhitebday8hrt.jpg" alt="Pink white birthday heart cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openCakeModal('pinkbutterfly25hrt.jpg', 'Pink Butterfly 25 Heart Cake', 'Enchanting pink heart cake with green vines, flowers, and butterflies. A garden-inspired 25th birthday design.', 'Pink, Heart, Butterflies, 25th Birthday')">
+                    <img src="images/pinkbutterfly25hrt.jpg" alt="Pink butterfly 25 heart cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openCakeModal('pinkorange24hrt.jpg', 'Pink Orange Disco Heart Cake', 'Retro two-tiered pink and orange heart cake with disco balls and cherries. A groovy 24th birthday celebration.', 'Pink, Orange, Heart, Disco, Birthday')">
+                    <img src="images/pinkorange24hrt.jpg" alt="Pink orange disco heart cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openCakeModal('pink258hrt.jpg', 'Pink 25 Heart Cake', 'Elegant two-tiered pink and white heart cake with delicate piping and pearl number 25.', 'Pink, Heart, 25th Birthday')">
+                    <img src="images/pink258hrt.jpg" alt="Pink 25 heart cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openCakeModal('pinkdogs8hrt.jpg', 'Pink Dogs Heart Cake', 'Adorable pink heart cake featuring two cute piped dogs. A sweet way to celebrate your furry friends.', 'Pink, Heart, Dogs, Custom')">
+                    <img src="images/pinkdogs8hrt.jpg" alt="Pink dogs heart cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+
                 <!-- Red Cakes -->
                 <div class="gallery-item" onclick="openCakeModal('red8hrt.JPG', 'Red Themed Heart Cake', 'Bold red heart cake with striking color and elegant design, perfect for passionate celebrations.', 'Red, Heart-shaped, Bold')">
                     <img src="images/red8hrt.JPG" alt="Red themed heart cake" class="gallery-img" loading="lazy">
@@ -175,7 +249,37 @@
                         <p>Click to order similar</p>
                     </div>
                 </div>
-                
+                <div class="gallery-item" onclick="openCakeModal('redleopard40hrt.jpg', 'Red Leopard Forty Fine Heart Cake', 'Bold red heart cake with leopard print, black bows, and glittery cherries. A fierce way to celebrate 40.', 'Red, Heart, Leopard, 40th Birthday')">
+                    <img src="images/redleopard40hrt.jpg" alt="Red leopard forty fine heart cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openCakeModal('redleopard04hrt.jpg', 'Red Leopard Since 04 Heart Cake', 'Stunning red heart cake with black piping, leopard print accent, and glittery cherries.', 'Red, Heart, Leopard, Birthday')">
+                    <img src="images/redleopard04hrt.jpg" alt="Red leopard since 04 heart cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openCakeModal('redblackheart8hrt.jpg', 'Red Black Ruler of My Heart Cake', 'Dramatic two-tiered black and red heart cake with elegant piping and black bows. A romantic statement piece.', 'Red, Black, Heart, Romantic')">
+                    <img src="images/redblackheart8hrt.jpg" alt="Red black ruler of my heart cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openCakeModal('burgundy28hrt.jpg', 'Burgundy 28 Heart Cake', 'Rich burgundy heart cake with gold pearl accents and elegant monochromatic piping. Perfect for a 28th birthday.', 'Burgundy, Heart, Gold, Birthday')">
+                    <img src="images/burgundy28hrt.jpg" alt="Burgundy 28 heart cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openCakeModal('redbday8hrt.jpg', 'Red Birthday Baby Heart Cake', 'Bold red two-tiered heart cake with black bows and elegant piping. A striking birthday celebration cake.', 'Red, Heart, Birthday, Black Bows')">
+                    <img src="images/redbday8hrt.jpg" alt="Red birthday baby heart cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+
                 <!-- Purple Cakes -->
                 <div class="gallery-item" onclick="openCakeModal('purp8hrt.JPG', 'Purple Themed Heart Cake', 'Rich purple heart cake with elegant design and sophisticated color palette.', 'Purple, Heart-shaped, Elegant')">
                     <img src="images/purp8hrt.JPG" alt="Purple themed heart cake" class="gallery-img" loading="lazy">
@@ -183,7 +287,13 @@
                         <p>Click to order similar</p>
                     </div>
                 </div>
-                
+                <div class="gallery-item" onclick="openCakeModal('purp25hrt.jpg', 'Purple Twenty Fine Heart Cake', 'Elegant purple heart cake with white piping and pearl accents. A sophisticated choice for a 25th birthday.', 'Purple, Heart, 25th Birthday, Elegant')">
+                    <img src="images/purp25hrt.jpg" alt="Purple twenty fine heart cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+
                 <!-- Green Cakes -->
                 <div class="gallery-item" onclick="openCakeModal('greenanimal8round.JPG', 'Green Animal Themed Cake', 'Playful green cake with adorable animal decorations and fun design elements.', 'Green, Animals, Playful, Round')">
                     <img src="images/greenanimal8round.JPG" alt="Green animal themed cake" class="gallery-img" loading="lazy">
@@ -217,7 +327,37 @@
                         <p>Click to order similar</p>
                     </div>
                 </div>
-                
+                <div class="gallery-item" onclick="openCakeModal('blueshell30rnd.jpg', 'Blue Seashell Thirty Cake', 'Beautiful coastal-themed round cake in blue and white with seashell decorations. A perfect way to celebrate turning 30.', 'Blue, Round, Seashells, 30th Birthday')">
+                    <img src="images/blueshell30rnd.jpg" alt="Blue seashell thirty cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openCakeModal('bluerose34hrt.jpg', 'Blue Rose 34 Heart Cake', 'Charming two-tiered blue heart cake with white piping and pink roses. A lovely design for a 34th birthday.', 'Blue, Heart, Roses, Birthday')">
+                    <img src="images/bluerose34hrt.jpg" alt="Blue rose 34 heart cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openCakeModal('navygold8rnd.jpg', 'Navy Gold Birthday Cake', 'Sophisticated navy blue round cake with gold spheres and gold leaf accents. An elegant choice for any birthday.', 'Navy, Gold, Round, Birthday')">
+                    <img src="images/navygold8rnd.jpg" alt="Navy gold birthday cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openCakeModal('tealorangedisco8rnd.jpg', 'Teal Orange Disco Cake', 'Fun retro-inspired round cake in teal and orange with disco ball decorations. A groovy birthday celebration.', 'Teal, Orange, Round, Disco, Retro')">
+                    <img src="images/tealorangedisco8rnd.jpg" alt="Teal orange disco cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openCakeModal('blueengaged8hrt.jpg', 'Blue Engaged Heart Cake', 'Romantic two-tiered blue and white heart cake with lavender ribbons and pearl details. Perfect for an engagement celebration.', 'Blue, Heart, Engagement, Wedding')">
+                    <img src="images/blueengaged8hrt.jpg" alt="Blue engaged heart cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+
                 <!-- White & Cream Cakes -->
                 <div class="gallery-item" onclick="openCakeModal('lemon8rnd.jpg', 'Lemon Drop Ribbon Cake', 'A bright and cheerful round cake with a lemon theme. It features sunny yellow piping, cute hand-piped lemons, and is stylishly decorated with black ribbons.')">
                     <img src="images/lemon8rnd.jpg" alt="Lemon Drop Ribbon Cake" class="gallery-img" loading="lazy">
@@ -297,7 +437,79 @@
                         <p>Click to order similar</p>
                     </div>
                 </div>
-                
+                <div class="gallery-item" onclick="openCakeModal('whitegold24hrt.jpg', 'White Gold Twenty Four Heart Cake', 'Elegant white heart cake with gold accents, gold pearls, and script text. A sophisticated choice for a 24th birthday.', 'White, Gold, Heart, Birthday')">
+                    <img src="images/whitegold24hrt.jpg" alt="White gold twenty four heart cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openCakeModal('white26hrt.jpg', 'White Twenty Six Heart Cake', 'Beautiful two-tiered white heart cake with delicate piping and pearl accents. Perfect for celebrating 26 years.', 'White, Heart, Pearls, Birthday')">
+                    <img src="images/white26hrt.jpg" alt="White twenty six heart cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openCakeModal('whitecherry8hrt.jpg', 'White Cherry Birthday Heart Cake', 'Charming white heart cake with cherries, pink bows, and elegant piping. A sweet outdoor celebration cake.', 'White, Heart, Cherries, Birthday')">
+                    <img src="images/whitecherry8hrt.jpg" alt="White cherry birthday heart cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openCakeModal('whitegold23hrt.jpg', 'White Gold 23 Heart Cake', 'Stunning two-tiered white heart cake with gold ribbons and gold pearl accents. An elegant 23rd birthday design.', 'White, Gold, Heart, Birthday')">
+                    <img src="images/whitegold23hrt.jpg" alt="White gold 23 heart cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openCakeModal('whitegrad8rnd.jpg', 'White Graduation Round Cake', 'Classic white graduation cake with elegant piping, a graduation cap topper, and red lettering. Perfect for celebrating academic achievements.', 'White, Round, Graduation, Special Occasion')">
+                    <img src="images/whitegrad8rnd.jpg" alt="White graduation round cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openCakeModal('whiteblack21rnd.jpg', 'White Black Twenty One Round Cake', 'Elegant white round cake with black piping and bows. A sophisticated design for a 21st birthday celebration.', 'White, Black, Round, 21st Birthday')">
+                    <img src="images/whiteblack21rnd.jpg" alt="White black twenty one round cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openCakeModal('creamrose24hrt.jpg', 'Cream Rose 24 Heart Cake', 'Romantic two-tiered cream heart cake adorned with red roses. A beautiful way to celebrate a 24th birthday.', 'Cream, Heart, Roses, Birthday')">
+                    <img src="images/creamrose24hrt.jpg" alt="Cream rose 24 heart cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openCakeModal('ivorywedding2tier.jpg', 'Ivory Two-Tier Wedding Cake', 'Stunning two-tiered ivory wedding cake with elegant vintage-style piping and delicate swag details. A timeless choice for your special day.', 'Ivory, Wedding, Two-tier, Elegant')">
+                    <img src="images/ivorywedding2tier.jpg" alt="Ivory two-tier wedding cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openCakeModal('whitebride8rnd.jpg', 'White Bride To Be Round Cake', 'Elegant two-tiered white bridal shower cake with intricate piping and pearl accents. Perfect for celebrating the bride-to-be.', 'White, Round, Bridal Shower, Wedding')">
+                    <img src="images/whitebride8rnd.jpg" alt="White bride to be round cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openCakeModal('whitemarried2hrt.jpg', 'White Just Married Heart Cake', 'Romantic two-tiered white heart cake with elegant piping, perfect for newlyweds to celebrate their union.', 'White, Heart, Wedding, Just Married')">
+                    <img src="images/whitemarried2hrt.jpg" alt="White just married heart cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openCakeModal('whitemarriedtall8hrt.jpg', 'White Just Married Tall Heart Cake', 'Elegant tall two-tiered white heart cake with black ribbons and intricate piping. A sophisticated wedding celebration cake.', 'White, Heart, Wedding, Black Bows')">
+                    <img src="images/whitemarriedtall8hrt.jpg" alt="White just married tall heart cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openCakeModal('whitebaby8hrt.jpg', 'White Baby Shower Heart Cake', 'Sweet two-tiered white heart cake with pastel pink and blue rosettes. Perfect for celebrating a new arrival.', 'White, Heart, Baby Shower, Pastel')">
+                    <img src="images/whitebaby8hrt.jpg" alt="White baby shower heart cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+
                 <!-- Floral Cakes -->
                 <div class="gallery-item" onclick="openCakeModal('floral6hrt.JPG', 'Floral Heart Cake', 'An elegant heart-shaped cake adorned with a variety of small, delicate flowers and soft pink ribbon bows.')">
                     <img src="images/floral6hrt.JPG" alt="Floral Heart Cake" class="gallery-img" loading="lazy">
@@ -357,7 +569,45 @@
                         <p>Click to order similar</p>
                     </div>
                 </div>
-                
+                <div class="gallery-item" onclick="openCakeModal('tiniolder8hrt.jpg', 'A Tini Bit Older Heart Cake', 'Delicious two-tiered chocolate heart cake with coffee bean decorations and gold pearl accents. A sophisticated birthday design for coffee and chocolate lovers.', 'Chocolate, Heart, Coffee, Birthday')">
+                    <img src="images/tiniolder8hrt.jpg" alt="A tini bit older heart cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openCakeModal('tiramisu8hrt.jpg', 'Tiramisu Heart Cake', 'Beautiful two-tiered chocolate and pink heart cake inspired by tiramisu flavors. Perfect for coffee and chocolate lovers.', 'Chocolate, Pink, Heart, Tiramisu')">
+                    <img src="images/tiramisu8hrt.jpg" alt="Tiramisu heart cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openCakeModal('leopard23hrt.jpg', 'Leopard Print 23 Heart Cake', 'Bold leopard print heart cake with black piping and glittery cherries. A wild way to celebrate turning 23.', 'Leopard, Heart, Birthday, Bold')">
+                    <img src="images/leopard23hrt.jpg" alt="Leopard print 23 heart cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openCakeModal('tiniyear8hrt.jpg', 'One Year Anniversary Heart Cake', 'Elegant chocolate and white two-tiered heart cake with brown ribbons and gold pearls. Perfect for celebrating one year together.', 'Chocolate, White, Heart, Anniversary')">
+                    <img src="images/tiniyear8hrt.jpg" alt="One year anniversary heart cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+
+                <!-- Black Cakes -->
+                <div class="gallery-item" onclick="openCakeModal('blackwhite21hrt.jpg', 'Black White 21 Heart Cake', 'Stunning two-tiered black and white heart cake with elegant piping and black satin bows. A bold and sophisticated 21st birthday design.', 'Black, White, Heart, 21st Birthday')">
+                    <img src="images/blackwhite21hrt.jpg" alt="Black white 21 heart cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openCakeModal('blackscorpio8hrt.jpg', 'Black Scorpio Heart Cake', 'Dramatic all-black heart cake with white pearls and black ribbons. Perfect for Scorpio birthdays or those who love bold dark designs.', 'Black, Heart, Scorpio, Bold')">
+                    <img src="images/blackscorpio8hrt.jpg" alt="Black scorpio heart cake" class="gallery-img" loading="lazy">
+                    <div class="overlay">
+                        <p>Click to order similar</p>
+                    </div>
+                </div>
+
                 <!-- Yellow Cakes -->
                 <div class="gallery-item" onclick="openCakeModal('winnie6rnd.JPG', 'Hunny Bee Themed Cake', 'A sweet, honey-themed cake in a cheerful pastel yellow. It\'s decorated with frosting rosettes, gingham ribbons, and adorable bee and honey dipper accents, perfect for adding a character topper.')">
                     <img src="images/winnie6rnd.JPG" alt="Hunny Bee Themed Cake" class="gallery-img" loading="lazy">

@@ -84,18 +84,20 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playwrite+AU+NSW:wght@100..400&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <div class="nav-container">
             <div class="nav-logo">
-                <img src="images/word-logo.PNG" alt="Slice of Heaven Vintage Cakes" class="logo-img">
+                <a href="index.html">
+                    <img src="images/word-logo.PNG" alt="Slice of Heaven Vintage Cakes" class="logo-img">
+                </a>
             </div>
             <div class="nav-menu" id="nav-menu">
-                <a href="index.html" class="nav-link">Home</a>
                 <a href="gallery.html" class="nav-link">Gallery</a>
+                <a href="weddings.html" class="nav-link">Special Events</a>
                 <a href="contact.html" class="nav-link">Inquire</a>
                 <a href="order.html" class="nav-link order-btn">Order Now</a>
                 <div class="nav-socials">
@@ -124,7 +126,30 @@
         <div class="container">
             <h2>Place Your Order</h2>
             <p class="order-intro">Design your perfect cake with our custom order form. Get an instant price estimate!</p>
-            
+
+            <!-- Order Progress Indicator -->
+            <div class="order-progress" id="order-progress">
+                <div class="progress-step active" data-step="1">
+                    <span class="progress-icon">1</span>
+                    <span class="progress-label">Your Info</span>
+                </div>
+                <div class="progress-connector"></div>
+                <div class="progress-step" data-step="2">
+                    <span class="progress-icon">2</span>
+                    <span class="progress-label">Event Details</span>
+                </div>
+                <div class="progress-connector"></div>
+                <div class="progress-step" data-step="3">
+                    <span class="progress-icon">3</span>
+                    <span class="progress-label">Cake Design</span>
+                </div>
+                <div class="progress-connector"></div>
+                <div class="progress-step" data-step="4">
+                    <span class="progress-icon">4</span>
+                    <span class="progress-label">Extras</span>
+                </div>
+            </div>
+
             <form id="order-form" class="order-form">
                 <!-- 1. Customer Information -->
                 <div class="form-section">
@@ -137,6 +162,12 @@
                         <div class="form-group">
                             <label for="customer-phone">Phone Number *</label>
                             <input type="tel" id="customer-phone" name="phone" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label for="customer-email">Email * (for order confirmation)</label>
+                            <input type="email" id="customer-email" name="email" placeholder="your@email.com" required>
                         </div>
                     </div>
                 </div>
@@ -424,11 +455,62 @@
                         <li>I'll review your order and get back to you within 24 hours</li>
                         <li>A 50% non-refundable deposit will be required to secure your date</li>
                         <li>Final payment is due 24 hours before pickup</li>
+                        <li>Last minute orders may be subject to a rush charge</li>
                     </ul>
                 </div>
             </form>
         </div>
     </section>
+
+    <!-- Order Confirmation Modal -->
+    <div id="orderConfirmationModal" class="confirmation-modal">
+        <div class="confirmation-modal-content">
+            <div class="confirmation-header">
+                <div class="checkmark-circle">
+                    <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                        <circle class="checkmark-circle-bg" cx="26" cy="26" r="25" fill="none"/>
+                        <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                    </svg>
+                </div>
+                <h2>Order Received!</h2>
+                <p>Thank you for your order. We're excited to create something special for you!</p>
+            </div>
+            <div class="confirmation-details">
+                <h3>Order Summary</h3>
+                <div class="confirmation-info">
+                    <div class="info-row">
+                        <span class="info-label">Name:</span>
+                        <span class="info-value" id="confirm-name"></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Occasion:</span>
+                        <span class="info-value" id="confirm-occasion"></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Event Date:</span>
+                        <span class="info-value" id="confirm-date"></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Cake:</span>
+                        <span class="info-value" id="confirm-cake"></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Estimated Total:</span>
+                        <span class="info-value" id="confirm-total"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="confirmation-next-steps">
+                <h3>What's Next?</h3>
+                <ul>
+                    <li>I'll review your order and contact you within 24 hours</li>
+                    <li>A 50% deposit will be required to confirm your date</li>
+                    <li>Check your phone for a text or call from me!</li>
+                </ul>
+            </div>
+            <button class="confirmation-close-btn" onclick="closeConfirmationModal()">Got It!</button>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="footer">

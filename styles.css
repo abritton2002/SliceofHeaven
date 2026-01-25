@@ -6,22 +6,34 @@
 }
 
 :root {
+    /* Core brand colors */
+    --cream: #FDF8F3;
     --baby-blue: #E6F3FF;
     --white: #FFFFFF;
-    --black: #000000;
     --dark-blue: #206692;
-    --text-dark: #000000;
-    --text-light: #333333;
-    --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    --shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.15);
-    --border-radius: 12px;
+    --dark-blue-hover: #1a5276;
+
+    /* Text colors */
+    --text-primary: #2D2D2D;
+    --text-secondary: #666666;
+
+    /* Utility */
+    --border-soft: #E8E8E8;
+
+    /* Spacing system */
+    --space-xs: 0.5rem;
+    --space-sm: 1rem;
+    --space-md: 2rem;
+    --space-lg: 4rem;
+    --space-xl: 6rem;
 }
 
 body {
-    font-family: 'Open Sans', sans-serif;
-    line-height: 1.6;
-    color: var(--text-dark);
-    background-color: var(--baby-blue);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: var(--text-primary);
+    background-color: var(--cream);
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -37,95 +49,71 @@ h1, h2, h3, h4, h5, h6 {
     padding: 0 20px;
 }
 
-/* Navigation */
+/* Navigation - Minimal */
 .navbar {
     position: fixed;
     top: 0;
     width: 100%;
-    background: var(--white);
-    box-shadow: var(--shadow);
+    background: transparent;
     z-index: 1000;
-    transition: all 0.3s ease;
+    transition: background 0.3s ease;
+}
+
+.navbar.scrolled {
+    background: var(--cream);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .nav-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
+    width: 100%;
+    margin: 0;
+    padding: 0 40px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    height: 120px;
+    height: 100px;
 }
 
 .logo-img {
-    height: 100px;
+    height: 80px;
     width: auto;
-    max-width: 200px;
+    max-width: 180px;
     object-fit: contain;
-    transition: all 0.3s ease;
-}
-
-.logo-img:hover {
-    transform: scale(1.05);
 }
 
 .nav-menu {
     display: flex;
     align-items: center;
-    gap: 2rem;
+    gap: 2.5rem;
+    flex: 1;
+    margin-left: 3rem;
 }
 
 .nav-link {
     text-decoration: none;
-    color: var(--black);
-    font-weight: 600;
-    transition: color 0.3s ease;
-    position: relative;
-}
-
-.nav-link:hover {
-    color: var(--baby-blue);
-}
-
-.nav-link::after {
-    content: '';
-    position: absolute;
-    bottom: -5px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--baby-blue), var(--dark-blue));
-    transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    border-radius: 1px;
-}
-
-.nav-link:hover::after {
-    width: 100%;
+    color: var(--text-primary);
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.2s ease;
 }
 
 .nav-link:hover {
     color: var(--dark-blue);
-    transform: translateY(-2px);
-    text-shadow: 0 2px 4px rgba(32, 102, 146, 0.1);
 }
 
 .order-btn {
     background: var(--dark-blue);
     color: var(--white) !important;
-    padding: 10px 20px;
-    border-radius: var(--border-radius);
-    transition: all 0.3s ease;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0;
+    transition: background 0.2s ease;
+    margin-left: auto;
 }
 
 .order-btn:hover {
-    background: #2A7BB8;
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-hover);
-}
-
-.order-btn::after {
-    display: none;
+    background: var(--dark-blue-hover);
 }
 
 /* Navigation Social Icons */
@@ -133,7 +121,6 @@ h1, h2, h3, h4, h5, h6 {
     display: flex;
     align-items: center;
     gap: 1rem;
-    margin-left: 1rem;
 }
 
 .social-icon {
@@ -142,15 +129,12 @@ h1, h2, h3, h4, h5, h6 {
     justify-content: center;
     width: 32px;
     height: 32px;
-    color: var(--black);
-    transition: all 0.3s ease;
-    border-radius: 50%;
+    color: var(--text-secondary);
+    transition: color 0.2s ease;
 }
 
 .social-icon:hover {
-    color: var(--baby-blue);
-    transform: translateY(-2px);
-    background: rgba(230, 243, 255, 0.1);
+    color: var(--dark-blue);
 }
 
 .hamburger {
@@ -168,22 +152,21 @@ h1, h2, h3, h4, h5, h6 {
     border-radius: 2px;
 }
 
-/* Hero Section */
+/* Hero Section - Clean */
 .hero {
-    background: linear-gradient(rgba(230, 243, 255, 0.05), rgba(240, 248, 255, 0.1)), url('images/maybehero.png');
+    background: url('images/maybehero.png');
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
-    padding: 120px 20px 60px;
-    min-height: 100vh;
+    padding: 100px 20px 80px;
+    min-height: 90vh;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
-    overflow: hidden;
 }
 
-/* Blur effect for hero background */
+/* Simple overlay for readability */
 .hero::before {
     content: '';
     position: absolute;
@@ -191,89 +174,79 @@ h1, h2, h3, h4, h5, h6 {
     left: 0;
     right: 0;
     bottom: 0;
-    background: inherit;
-    background-size: cover;
-    background-position: center 70%;
-    background-repeat: no-repeat;
-    filter: blur(2px);
-    z-index: 0;
-}
-
-/* Vintage effect for hero background */
-.hero::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: 
-        linear-gradient(45deg, rgba(139, 69, 19, 0.1) 0%, transparent 50%),
-        linear-gradient(135deg, rgba(160, 82, 45, 0.08) 0%, transparent 50%),
-        radial-gradient(circle at 30% 70%, rgba(210, 180, 140, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 70% 30%, rgba(244, 164, 96, 0.08) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: 2;
-    filter: sepia(0.3) saturate(0.8) contrast(1.1) brightness(0.95) blur(0);
-}
-
-
-
-/* Hero Background Texture */
-.hero::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: 
-        radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-        radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
-    pointer-events: none;
+    background: rgba(253, 248, 243, 0.3);
     z-index: 1;
 }
 
 .hero-content {
-    max-width: 800px;
+    max-width: 700px;
     width: 100%;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     text-align: center;
     position: relative;
-    z-index: 4;
-    animation: fadeInUp 1s ease-out 0.3s both;
+    z-index: 2;
     padding: 0 20px;
-    box-sizing: border-box;
 }
 
-/* Welcome Section */
+/* Welcome Section - Clean */
 .welcome {
     background: var(--baby-blue);
-    background-image: 
-        radial-gradient(circle at 25% 25%, rgba(32, 102, 146, 0.15) 0%, transparent 50%),
-        radial-gradient(circle at 75% 75%, rgba(32, 102, 146, 0.15) 0%, transparent 50%),
-        linear-gradient(45deg, transparent 40%, rgba(32, 102, 146, 0.08) 50%, transparent 60%),
-        linear-gradient(-45deg, transparent 40%, rgba(32, 102, 146, 0.08) 50%, transparent 60%),
-        repeating-linear-gradient(90deg, transparent, transparent 20px, rgba(32, 102, 146, 0.06) 20px, rgba(32, 102, 146, 0.06) 21px),
-        repeating-linear-gradient(0deg, transparent, transparent 20px, rgba(32, 102, 146, 0.06) 20px, rgba(32, 102, 146, 0.06) 21px);
-    background-size: 100px 100px, 100px 100px, 200px 200px, 200px 200px, 40px 40px, 40px 40px;
-    background-position: 0 0, 50px 50px, 0 0, 0 0, 0 0, 0 0;
-    padding: 80px 0;
-    text-align: center;
+    padding: var(--space-xl) 0;
+}
+
+.welcome-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-lg);
+    align-items: center;
 }
 
 .welcome-content {
-    max-width: 800px;
-    margin: 0 auto;
     display: flex;
     flex-direction: column;
+    gap: var(--space-md);
+}
+
+.welcome-image {
+    display: flex;
+    justify-content: center;
     align-items: center;
-    gap: 2rem;
+    overflow: hidden;
+    border-radius: 50% / 50%;
+    max-width: 400px;
+    height: 500px;
+    margin-left: auto;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.welcome-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transform: scale(1.3);
+    filter: brightness(1.1) contrast(1.05) saturate(1.1);
+}
+
+@media (max-width: 768px) {
+    .welcome-layout {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .welcome-content {
+        align-items: center;
+    }
+
+    .welcome-image {
+        order: -1;
+        max-width: 300px;
+        height: 380px;
+        margin: 0 auto;
+    }
 }
 
 
@@ -281,45 +254,27 @@ h1, h2, h3, h4, h5, h6 {
 
 
 .hero-logo-accent {
-    margin-bottom: 2rem;
+    margin-bottom: var(--space-md);
     text-align: center;
 }
 
 .word-logo {
-    height: 80px;
+    height: 70px;
     width: auto;
-    opacity: 0.9;
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
-    transition: all 0.3s ease;
-}
-
-.word-logo:hover {
-    transform: scale(1.05);
-    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.3));
 }
 
 .hero-heading {
     font-size: 2.5rem;
     color: var(--dark-blue);
-    margin-bottom: 1rem;
+    margin-bottom: var(--space-sm);
     line-height: 1.2;
-    font-family: "Playwrite AU NSW", cursive;
-    font-optical-sizing: auto;
-    font-weight: 400;
-    font-style: normal;
-    text-align: center;
-    letter-spacing: -0.01em;
 }
 
 .hero-text h1 {
-    font-size: 3.5rem;
+    font-size: 3rem;
     color: var(--dark-blue);
     margin-bottom: 0;
     line-height: 1.2;
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    text-align: center;
 }
 
 .hero-logo-container {
@@ -330,96 +285,66 @@ h1, h2, h3, h4, h5, h6 {
     justify-content: center;
     align-items: center;
     width: 100%;
-    max-width: 600px;
+    max-width: 500px;
 }
 
 .hero-title-logo {
-    height: 20rem;
+    height: 18rem;
     width: auto;
     max-width: 100%;
     object-fit: contain;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-    transition: all 0.3s ease;
-}
-
-.hero-title-logo:hover {
-    transform: scale(1.05);
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
 }
 
 .tagline {
     font-size: 2.2rem;
-    color: var(--black);
-    font-style: italic;
-    margin-bottom: 0.5rem;
+    color: var(--dark-blue);
+    margin-bottom: var(--space-sm);
     font-family: "Playwrite AU NSW", cursive;
-    font-optical-sizing: auto;
-    font-weight: 600;
-    text-align: center;
+    font-weight: 400;
+    line-height: 1.3;
+    white-space: nowrap;
 }
 
 .main-message {
-    font-size: 1.3rem;
-    color: var(--text-light);
-    margin-bottom: 2.5rem;
-    font-weight: 400;
-    line-height: 1.8;
-    text-align: center;
-    font-style: italic;
+    font-size: 1.15rem;
+    color: var(--text-primary);
+    margin-bottom: var(--space-sm);
+    font-family: "Playwrite AU NSW", cursive;
+    font-weight: 300;
+    line-height: 2;
 }
-
 
 .hero-cta {
     display: flex;
-    gap: 1rem;
+    gap: var(--space-sm);
     justify-content: center;
 }
 
+/* Buttons - Clean editorial style */
 .cta-button {
     display: inline-block;
     background: var(--dark-blue);
     color: var(--white);
-    padding: 15px 30px;
+    padding: 1rem 2.5rem;
     text-decoration: none;
-    border-radius: var(--border-radius);
+    border-radius: 0;
+    font-family: 'Cormorant Garamond', serif;
     font-weight: 600;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 
-        0 4px 15px rgba(32, 102, 146, 0.3),
-        0 2px 8px rgba(32, 102, 146, 0.2);
-    font-size: 1rem;
-    position: relative;
-    overflow: hidden;
-}
-
-.cta-button::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s;
+    font-size: 0.9rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: background 0.2s ease;
+    border: none;
 }
 
 .cta-button:hover {
-    background: #2A7BB8;
-    transform: translateY(-4px) scale(1.05);
-    box-shadow: 
-        0 8px 25px rgba(32, 102, 146, 0.4),
-        0 4px 12px rgba(32, 102, 146, 0.3);
-}
-
-.cta-button:hover::before {
-    left: 100%;
+    background: var(--dark-blue-hover);
 }
 
 .cta-button.secondary {
-    background: rgba(230, 243, 255, 0.8);
+    background: transparent;
     color: var(--dark-blue);
-    border: 2px solid var(--dark-blue);
-    backdrop-filter: blur(10px);
+    border: 1px solid var(--dark-blue);
 }
 
 .cta-button.secondary:hover {
@@ -431,183 +356,106 @@ h1, h2, h3, h4, h5, h6 {
 
 
 
-/* Section Styling */
+/* Section Styling - Clean */
 section {
-    padding: 140px 0 80px;
+    padding: var(--space-xl) 0;
 }
 
 section h2 {
-    font-size: 2.8rem;
+    font-size: 2.2rem;
     text-align: center;
-    margin-bottom: 3rem;
-    color: var(--black);
+    margin-bottom: var(--space-lg);
+    color: var(--text-primary);
     font-family: "Playwrite AU NSW", cursive;
-    font-optical-sizing: auto;
     font-weight: 400;
-    font-style: normal;
-    letter-spacing: -0.01em;
 }
-
 
 /* Custom Orders Section */
 .custom-orders {
-    padding: 80px 0 60px;
+    padding: var(--space-xl) 0;
     background: var(--baby-blue);
 }
 
 .order-info {
-    max-width: 1000px;
+    max-width: 900px;
     margin: 0 auto;
 }
 
 .order-details h3 {
-    font-size: 2.2rem;
-    margin-bottom: 1rem;
-    color: var(--black);
+    font-size: 1.8rem;
+    margin-bottom: var(--space-sm);
+    color: var(--text-primary);
     text-align: center;
-    font-family: "Playwrite AU NSW", cursive;
-    font-optical-sizing: auto;
-    font-weight: 400;
-    font-style: normal;
 }
 
 .order-details > p {
-    font-size: 1.3rem;
-    color: var(--text-light);
+    font-size: 1.1rem;
+    color: var(--text-secondary);
     text-align: center;
-    margin-bottom: 4rem;
-    max-width: 800px;
+    margin-bottom: var(--space-lg);
+    max-width: 700px;
     margin-left: auto;
     margin-right: auto;
     line-height: 1.8;
-    font-weight: 400;
-    font-style: italic;
 }
 
 .order-process {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 2rem;
-    margin-bottom: 4rem;
-    position: relative;
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
 }
 
-/* Add connecting line between steps */
-.order-process::before {
-    content: '';
-    position: absolute;
-    top: 80px;
-    left: 15%;
-    right: 15%;
-    height: 2px;
-    background: linear-gradient(90deg, transparent 0%, var(--dark-blue) 20%, var(--dark-blue) 80%, transparent 100%);
-    z-index: 1;
-}
-
+/* Process Steps - Clean */
 .process-step {
     background: var(--white);
-    padding: 2.5rem 1.5rem;
-    border-radius: 20px;
-    box-shadow: 
-        0 8px 30px rgba(0, 0, 0, 0.1),
-        0 2px 8px rgba(0, 0, 0, 0.05);
+    padding: var(--space-md);
     text-align: center;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    position: relative;
-    z-index: 2;
-    border: 2px solid transparent;
-    backdrop-filter: blur(10px);
-}
-
-.process-step:hover {
-    transform: translateY(-12px) scale(1.03);
-    box-shadow: 
-        0 25px 50px rgba(0, 0, 0, 0.15),
-        0 10px 20px rgba(0, 0, 0, 0.1),
-        0 0 0 1px rgba(32, 102, 146, 0.2);
-    border-color: var(--dark-blue);
-    background: linear-gradient(135deg, var(--white) 0%, #fafafa 100%);
-}
-
-.process-step::before {
-    content: '';
-    position: absolute;
-    top: -15px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60px;
-    height: 60px;
-    background: var(--dark-blue);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: var(--white);
-}
-
-.process-step:nth-child(1)::before {
-    content: '1';
-}
-
-.process-step:nth-child(2)::before {
-    content: '2';
-}
-
-.process-step:nth-child(3)::before {
-    content: '3';
-}
-
-.process-step:nth-child(4)::before {
-    content: '4';
+    border: 1px solid var(--border-soft);
 }
 
 .process-step h4 {
-    color: var(--black);
-    font-size: 1.6rem;
-    margin-bottom: 1rem;
-    margin-top: 1rem;
+    color: var(--text-primary);
+    font-size: 1.2rem;
+    margin-bottom: var(--space-xs);
     font-family: "Playwrite AU NSW", cursive;
-    font-optical-sizing: auto;
     font-weight: 400;
-    font-style: normal;
-    letter-spacing: -0.01em;
 }
 
 .process-step p {
-    color: var(--text-light);
-    font-size: 1.1rem;
+    color: var(--text-secondary);
+    font-size: 1rem;
     line-height: 1.7;
-    font-weight: 400;
 }
 
 .pricing-note {
     background: var(--baby-blue);
-    padding: 2rem;
-    border-radius: var(--border-radius);
+    padding: var(--space-sm) var(--space-md);
     text-align: center;
-}
-
-.pricing-note p {
-    color: var(--black);
+    border-radius: 4px;
+    margin-bottom: var(--space-lg);
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    color: var(--text-secondary);
     font-style: italic;
+    font-size: 0.95rem;
+    line-height: 1.6;
 }
 
 
 
-/* Instagram Section */
+/* Instagram Section - Clean */
 .instagram-section {
-    background: var(--white);
-    padding: 80px 0 60px;
+    background: var(--cream);
+    padding: var(--space-xl) 0;
 }
 
 .instagram-content {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 3rem;
+    margin-top: var(--space-md);
     text-align: center;
 }
 
@@ -620,96 +468,55 @@ section h2 {
 }
 
 .instagram-embed iframe {
-    border-radius: var(--border-radius);
-    box-shadow: 
-        0 8px 30px rgba(0, 0, 0, 0.1),
-        0 2px 8px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease;
     width: 100%;
-}
-
-.instagram-embed iframe:hover {
-    transform: translateY(-5px);
-    box-shadow: 
-        0 15px 40px rgba(0, 0, 0, 0.15),
-        0 5px 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-soft);
 }
 
 .instagram-info {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: var(--space-sm);
     align-items: center;
     max-width: 600px;
 }
 
 .instagram-info h3 {
-    font-size: 2rem;
+    font-size: 1.6rem;
     color: var(--dark-blue);
-    margin-bottom: 1rem;
-    font-family: "Playwrite AU NSW", cursive;
-    font-optical-sizing: auto;
-    font-weight: 400;
-    font-style: normal;
-    letter-spacing: -0.01em;
+    margin-bottom: var(--space-xs);
 }
 
 .instagram-info p {
-    font-size: 1.2rem;
-    color: var(--text-light);
+    font-size: 1.1rem;
+    color: var(--text-secondary);
     line-height: 1.8;
-    font-style: italic;
-    margin-bottom: 1rem;
+    margin-bottom: var(--space-xs);
 }
 
 .instagram-follow-btn {
     display: inline-block;
-    background: linear-gradient(45deg, #833AB4, #FD1D1D, #F77737);
+    background: var(--dark-blue);
     color: var(--white);
-    padding: 15px 30px;
+    padding: 1rem 2.5rem;
     text-decoration: none;
-    border-radius: var(--border-radius);
+    border-radius: 0;
+    font-family: 'Cormorant Garamond', serif;
     font-weight: 600;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 
-        0 4px 15px rgba(131, 58, 180, 0.3),
-        0 2px 8px rgba(253, 29, 29, 0.2);
-    font-size: 1rem;
-    position: relative;
-    overflow: hidden;
-    align-self: flex-start;
-}
-
-.instagram-follow-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s;
+    font-size: 0.9rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: background 0.2s ease;
 }
 
 .instagram-follow-btn:hover {
-    transform: translateY(-4px) scale(1.05);
-    box-shadow: 
-        0 8px 25px rgba(131, 58, 180, 0.4),
-        0 4px 12px rgba(253, 29, 29, 0.3);
+    background: var(--dark-blue-hover);
 }
 
-.instagram-follow-btn:hover::before {
-    left: 100%;
-}
-
-/* Gallery Section */
+/* Gallery Section - Clean */
 .gallery {
-    background: var(--baby-blue);
-    padding: 140px 0 80px !important;
+    background: var(--white);
+    padding: calc(100px + var(--space-xl)) 0 var(--space-xl) 0 !important;
 }
-
-
-
 
 
 .gallery-grid {
@@ -758,33 +565,20 @@ section h2 {
 .gallery-intro {
     text-align: center;
     font-size: 1.1rem;
-    color: var(--text-light);
-    margin-bottom: 2rem;
-    font-style: italic;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-md);
 }
 
-/* Enhanced Gallery Item */
+/* Gallery Item - Clean */
 .gallery-item {
     position: relative;
     overflow: hidden;
-    border-radius: var(--border-radius);
-    box-shadow: 
-        0 4px 15px rgba(0, 0, 0, 0.1),
-        0 1px 3px rgba(0, 0, 0, 0.05);
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    background: var(--white);
     aspect-ratio: 1 / 1;
-    border: 1px solid rgba(255, 255, 255, 0.2);
     cursor: pointer;
 }
 
-.gallery-item:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 
-        0 20px 40px rgba(0, 0, 0, 0.15),
-        0 8px 16px rgba(0, 0, 0, 0.1),
-        0 0 0 1px rgba(255, 255, 255, 0.3);
-    border-color: rgba(255, 255, 255, 0.4);
+.gallery-item:hover .gallery-img {
+    transform: scale(1.03);
 }
 
 .gallery-img {
@@ -794,13 +588,7 @@ section h2 {
     height: 100%;
     object-fit: cover;
     object-position: center center;
-    transition: all 0.3s ease;
-    border-radius: inherit;
-}
-
-/* Special positioning for collection image */
-.gallery-img[alt*="collection"] {
-    object-position: center center;
+    transition: transform 0.3s ease;
 }
 
 .overlay {
@@ -809,25 +597,27 @@ section h2 {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.6);
     display: flex;
     justify-content: center;
     align-items: center;
     opacity: 0;
-    transition: all 0.3s ease;
+    transition: opacity 0.2s ease;
 }
 
 .overlay p {
     color: var(--white);
     font-weight: 600;
-    font-size: 1.2rem;
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
 }
 
 .gallery-item:hover .overlay {
     opacity: 1;
 }
 
-/* Cake Modal Styles */
+/* Cake Modal Styles - Clean */
 .cake-modal {
     display: none;
     position: fixed;
@@ -836,8 +626,7 @@ section h2 {
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(5px);
+    background-color: rgba(0, 0, 0, 0.85);
     justify-content: center;
     align-items: center;
     padding: 20px;
@@ -845,36 +634,19 @@ section h2 {
 
 .cake-modal-content {
     background: var(--white);
-    border-radius: var(--border-radius);
-    box-shadow: 
-        0 25px 50px rgba(0, 0, 0, 0.25),
-        0 10px 20px rgba(0, 0, 0, 0.15);
     max-width: 900px;
     width: 100%;
     max-height: 90vh;
     overflow: hidden;
     position: relative;
-    animation: modalSlideIn 0.3s ease-out;
-}
-
-@keyframes modalSlideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-50px) scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
 }
 
 .close-modal {
     position: absolute;
     top: 15px;
     right: 20px;
-    font-size: 2rem;
-    font-weight: bold;
-    color: var(--text-light);
+    font-size: 1.5rem;
+    color: var(--text-secondary);
     cursor: pointer;
     z-index: 10;
     width: 40px;
@@ -882,15 +654,12 @@ section h2 {
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.9);
-    transition: all 0.3s ease;
+    background: var(--cream);
+    transition: color 0.2s ease;
 }
 
 .close-modal:hover {
-    background: var(--dark-blue);
-    color: var(--white);
-    transform: scale(1.1);
+    color: var(--dark-blue);
 }
 
 .cake-modal-body {
@@ -927,7 +696,7 @@ section h2 {
 }
 
 .cake-details {
-    padding: 2rem;
+    padding: var(--space-md);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -936,20 +705,18 @@ section h2 {
 }
 
 .cake-details h3 {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     color: var(--dark-blue);
-    margin-bottom: 0.75rem;
-    font-family: "Playwrite AU NSW", cursive;
+    margin-bottom: var(--space-xs);
     text-align: center;
 }
 
 .cake-details p {
-    font-size: 1.1rem;
+    font-size: 1rem;
     line-height: 1.6;
-    color: var(--text-light);
-    margin-bottom: 1.5rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-sm);
     text-align: center;
-    font-style: italic;
 }
 
 .cake-actions {
@@ -958,9 +725,7 @@ section h2 {
 }
 
 .cake-actions .cta-button {
-    padding: 1rem 2rem;
-    font-size: 1.1rem;
-    min-width: 200px;
+    min-width: 180px;
     text-align: center;
 }
 
@@ -1018,16 +783,17 @@ section h2 {
     }
 }
 
-/* Contact Section */
+/* Contact Section - Clean */
 .contact {
-    padding: 140px 0 80px !important;
+    padding: var(--space-xl) 0 !important;
+    background: var(--cream);
 }
 
 .contact-content {
     display: grid;
     grid-template-columns: 2fr 1fr;
-    gap: 4rem;
-    margin-top: 2rem;
+    gap: var(--space-lg);
+    margin-top: var(--space-md);
 }
 
 .contact-content.single-column {
@@ -1039,62 +805,42 @@ section h2 {
 
 .contact-form {
     background: var(--white);
-    padding: 2.5rem;
-    border-radius: var(--border-radius);
-    box-shadow: 
-        0 8px 30px rgba(0, 0, 0, 0.1),
-        0 2px 8px rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
-}
-
-.contact-form:hover {
-    box-shadow: 
-        0 15px 40px rgba(0, 0, 0, 0.15),
-        0 5px 15px rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
+    padding: var(--space-lg);
+    border: 1px solid var(--border-soft);
 }
 
 .form-intro {
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: var(--space-md);
 }
 
 .form-intro h3 {
-    color: var(--black);
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    font-family: "Playwrite AU NSW", cursive;
-    font-optical-sizing: auto;
-    font-weight: 400;
-    font-style: normal;
-    letter-spacing: -0.01em;
+    color: var(--text-primary);
+    font-size: 1.6rem;
+    margin-bottom: var(--space-xs);
 }
 
 .form-intro p {
-    color: var(--text-light);
-    font-size: 1.1rem;
+    color: var(--text-secondary);
+    font-size: 1rem;
     line-height: 1.7;
-    font-style: italic;
 }
 
 .form-note {
-    margin-top: 2rem;
-    padding: 1rem;
-    background: var(--white);
-    border-radius: 8px;
+    margin-top: var(--space-md);
+    padding: var(--space-sm);
     text-align: center;
+    border-top: 1px solid var(--border-soft);
 }
 
 .form-note p {
-    color: var(--black);
+    color: var(--text-secondary);
     font-size: 0.9rem;
     margin: 0;
 }
 
 .form-note a {
-    color: var(--black);
+    color: var(--dark-blue);
     text-decoration: none;
     font-weight: 600;
 }
@@ -1104,141 +850,197 @@ section h2 {
 }
 
 .form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: var(--space-sm);
 }
 
 .form-group input,
 .form-group textarea {
     width: 100%;
-    padding: 15px;
-    border: 2px solid transparent;
-    border-radius: var(--border-radius);
-    font-family: 'Open Sans', sans-serif;
-    font-size: 1rem;
+    padding: 1rem;
+    border: 1px solid var(--border-soft);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
     background: var(--white);
-    transition: all 0.3s ease;
+    transition: border-color 0.2s ease;
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
     outline: none;
     border-color: var(--dark-blue);
-    box-shadow: 
-        0 0 0 3px rgba(32, 102, 146, 0.1),
-        0 2px 8px rgba(32, 102, 146, 0.1);
-    transform: translateY(-1px);
-    transition: all 0.3s ease;
 }
 
 .submit-btn {
-    background: var(--black);
+    background: var(--dark-blue);
     color: var(--white);
-    padding: 15px 30px;
+    padding: 1rem 2.5rem;
     border: none;
-    border-radius: var(--border-radius);
+    font-family: 'Cormorant Garamond', serif;
     font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
     cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 1rem;
+    transition: background 0.2s ease;
     width: 100%;
 }
 
 .submit-btn:hover {
-    background: var(--text-light);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-hover);
+    background: var(--dark-blue-hover);
 }
 
 .contact-info {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: var(--space-md);
 }
 
 .info-item {
     background: var(--white);
-    padding: 1.5rem;
-    border-radius: var(--border-radius);
-    box-shadow: 
-        0 4px 15px rgba(0, 0, 0, 0.1),
-        0 1px 3px rgba(0, 0, 0, 0.05);
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-}
-
-.info-item:hover {
-    transform: translateY(-6px) scale(1.02);
-    box-shadow: 
-        0 15px 35px rgba(0, 0, 0, 0.15),
-        0 5px 15px rgba(0, 0, 0, 0.1),
-        0 0 0 1px rgba(255, 255, 255, 0.3);
-    border-color: rgba(255, 255, 255, 0.4);
-    background: linear-gradient(135deg, var(--white) 0%, #fafafa 100%);
+    padding: var(--space-sm);
+    border: 1px solid var(--border-soft);
 }
 
 .info-item h4 {
-    color: var(--black);
-    margin-bottom: 0.5rem;
-    font-size: 1.1rem;
+    color: var(--text-primary);
+    margin-bottom: var(--space-xs);
+    font-size: 1rem;
 }
 
 .info-item p {
-    color: var(--black);
+    color: var(--text-secondary);
 }
 
 .instagram-link {
     display: inline-block;
-    color: var(--black);
+    color: var(--dark-blue);
     text-decoration: none;
     font-weight: 600;
-    margin-top: 0.5rem;
-    transition: all 0.3s ease;
+    margin-top: var(--space-xs);
 }
 
 .instagram-link:hover {
-    color: var(--text-light);
-    transform: translateY(-1px);
+    text-decoration: underline;
 }
 
-/* Order Section */
+/* Order Section - Clean */
 .order {
     background: var(--baby-blue);
-    padding: 140px 0 80px !important;
+    padding: var(--space-xl) 0 !important;
 }
 
-/* Force order section padding */
-section#order.order {
-    padding: 140px 0 80px !important;
-}
-
-/* Extra specific rule for order section */
+section#order.order,
 body section#order.order {
-    padding: 140px 0 80px !important;
+    padding: var(--space-xl) 0 !important;
 }
 
 .order h2 {
-    color: var(--black);
+    color: var(--text-primary);
     text-align: center;
-    margin-bottom: 2rem;
-    font-size: 2.2rem;
-    font-family: "Playwrite AU NSW", cursive;
-    font-optical-sizing: auto;
-    font-weight: 400;
-    font-style: normal;
-    letter-spacing: -0.01em;
+    margin-bottom: var(--space-md);
+    font-size: 2rem;
 }
 
 .order-intro {
     text-align: center;
-    color: var(--text-light);
+    color: var(--text-secondary);
     font-size: 1.1rem;
-    margin-bottom: 2rem;
+    margin-bottom: var(--space-md);
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
-    font-style: italic;
-    line-height: 1.6;
+    line-height: 1.7;
+}
+
+/* Order Progress Indicator */
+.order-progress {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 2.5rem;
+    padding: 1.5rem;
+    background: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    flex-wrap: wrap;
+}
+
+.progress-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    opacity: 0.5;
+    transition: all 0.3s ease;
+}
+
+.progress-step.active {
+    opacity: 1;
+}
+
+.progress-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--baby-blue);
+    color: var(--dark-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1rem;
+    border: 2px solid var(--dark-blue);
+    transition: all 0.3s ease;
+}
+
+.progress-step.active .progress-icon {
+    background: var(--dark-blue);
+    color: var(--white);
+}
+
+.progress-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    text-align: center;
+    white-space: nowrap;
+}
+
+.progress-connector {
+    width: 40px;
+    height: 2px;
+    background: var(--dark-blue);
+    opacity: 0.3;
+}
+
+@media (max-width: 600px) {
+    .order-progress {
+        gap: 0.5rem;
+        padding: 1rem;
+    }
+
+    .progress-step {
+        padding: 0.25rem 0.5rem;
+    }
+
+    .progress-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 0.9rem;
+    }
+
+    .progress-label {
+        font-size: 0.7rem;
+    }
+
+    .progress-connector {
+        width: 20px;
+    }
 }
 
 /* Order Form Styles */
@@ -1274,13 +1076,12 @@ body section#order.order {
 .form-group input,
 .form-group select,
 .form-group textarea {
-    padding: 12px 15px;
-    border: 2px solid #e0e0e0;
-    border-radius: var(--border-radius);
-    font-family: 'Open Sans', sans-serif;
-    font-size: 1rem;
-    transition: all 0.3s ease;
+    padding: 1rem;
+    border: 1px solid var(--border-soft);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
     background: var(--white);
+    transition: border-color 0.2s ease;
 }
 
 .form-group input:focus,
@@ -1288,11 +1089,6 @@ body section#order.order {
 .form-group textarea:focus {
     outline: none;
     border-color: var(--dark-blue);
-    box-shadow: 
-        0 0 0 3px rgba(32, 102, 146, 0.1),
-        0 2px 8px rgba(32, 102, 146, 0.1);
-    transform: translateY(-1px);
-    transition: all 0.3s ease;
 }
 
 .form-group input[type="date"] {
@@ -1470,6 +1266,234 @@ body section#order.order {
     left: 0;
 }
 
+/* Order Confirmation Modal */
+.confirmation-modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    overflow-y: auto;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.confirmation-modal.show {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.confirmation-modal-content {
+    background: var(--white);
+    padding: 3rem;
+    border-radius: var(--border-radius);
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.4s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.confirmation-header {
+    margin-bottom: 2rem;
+}
+
+.checkmark-circle {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+}
+
+.checkmark {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: block;
+    stroke-width: 2;
+    stroke: var(--dark-blue);
+    stroke-miterlimit: 10;
+}
+
+.checkmark-circle-bg {
+    stroke: var(--dark-blue);
+    stroke-width: 2;
+    fill: var(--baby-blue);
+    animation: circleGrow 0.4s ease-out;
+}
+
+.checkmark-check {
+    stroke: var(--dark-blue);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    animation: checkDraw 0.5s ease-out 0.3s forwards;
+}
+
+@keyframes circleGrow {
+    from {
+        transform: scale(0);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes checkDraw {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+.confirmation-header h2 {
+    color: var(--dark-blue);
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    font-family: "Playwrite AU NSW", cursive;
+}
+
+.confirmation-header p {
+    color: var(--text-light);
+    font-size: 1.1rem;
+}
+
+.confirmation-details {
+    background: var(--baby-blue);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+.confirmation-details h3 {
+    color: var(--black);
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    font-family: "Playwrite AU NSW", cursive;
+    text-align: center;
+}
+
+.confirmation-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.info-row:last-child {
+    border-bottom: none;
+    font-weight: 600;
+}
+
+.info-label {
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+.info-value {
+    color: var(--black);
+    font-weight: 600;
+}
+
+.confirmation-next-steps {
+    text-align: left;
+    margin-bottom: 2rem;
+}
+
+.confirmation-next-steps h3 {
+    color: var(--black);
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+    font-family: "Playwrite AU NSW", cursive;
+}
+
+.confirmation-next-steps ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.confirmation-next-steps li {
+    color: var(--text-light);
+    padding: 0.5rem 0 0.5rem 1.5rem;
+    position: relative;
+    font-size: 0.95rem;
+}
+
+.confirmation-next-steps li:before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--dark-blue);
+    font-weight: bold;
+}
+
+.confirmation-close-btn {
+    background: var(--black);
+    color: var(--white);
+    border: none;
+    padding: 1rem 3rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.confirmation-close-btn:hover {
+    background: var(--dark-blue);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+@media (max-width: 600px) {
+    .confirmation-modal-content {
+        padding: 2rem 1.5rem;
+        margin: 1rem;
+    }
+
+    .checkmark-circle {
+        width: 60px;
+        height: 60px;
+    }
+
+    .checkmark {
+        width: 60px;
+        height: 60px;
+    }
+
+    .confirmation-header h2 {
+        font-size: 1.5rem;
+    }
+}
+
 /* Mobile Responsive Design for Order Form */
 @media (max-width: 768px) {
     .order-form {
@@ -1540,39 +1564,39 @@ body section#order.order {
 
 
 
-/* Footer */
+/* Footer - Clean */
 .footer {
     background: var(--dark-blue);
     color: var(--white);
-    padding: 3rem 0 1.5rem;
+    padding: var(--space-lg) 0 var(--space-md);
 }
 
 .footer-content {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
-    margin-bottom: 2rem;
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
 }
 
 .footer-section h3 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-    font-family: "Playwrite AU NSW", cursive;
-    font-optical-sizing: auto;
-    font-weight: 400;
-    font-style: normal;
+    font-size: 1.3rem;
+    margin-bottom: var(--space-sm);
 }
 
 .footer-section h4 {
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
+    font-size: 1rem;
+    margin-bottom: var(--space-sm);
     color: var(--baby-blue);
+    font-family: 'Cormorant Garamond', serif;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
 }
 
 .footer-section p {
-    line-height: 1.6;
-    margin-bottom: 1rem;
+    line-height: 1.7;
+    margin-bottom: var(--space-sm);
     opacity: 0.9;
+    font-size: 0.95rem;
 }
 
 .footer-section ul {
@@ -1581,52 +1605,49 @@ body section#order.order {
 }
 
 .footer-section ul li {
-    margin-bottom: 0.5rem;
+    margin-bottom: var(--space-xs);
 }
 
 .footer-section ul li a {
     color: var(--white);
     text-decoration: none;
-    transition: color 0.3s ease;
     opacity: 0.9;
+    transition: opacity 0.2s ease;
 }
 
 .footer-section ul li a:hover {
-    color: var(--baby-blue);
     opacity: 1;
 }
 
 .footer-socials {
     display: flex;
-    gap: 1rem;
+    gap: var(--space-sm);
 }
 
 .footer-socials a {
     color: var(--white);
     text-decoration: none;
-    padding: 0.5rem 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 20px;
-    transition: all 0.3s ease;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    opacity: 0.9;
+    transition: opacity 0.2s ease;
 }
 
 .footer-socials a:hover {
-    background: var(--white);
-    color: var(--dark-blue);
-    border-color: var(--white);
+    opacity: 1;
 }
 
 .footer-bottom {
     text-align: center;
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
-    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    padding-top: var(--space-md);
 }
 
 .footer-bottom p {
     margin: 0;
-    font-size: 0.9rem;
-    opacity: 0.9;
+    font-size: 0.85rem;
+    opacity: 0.8;
 }
 
 /* Mobile Responsive Design */
@@ -1669,12 +1690,12 @@ body section#order.order {
         left: -100%;
         width: 100%;
         height: calc(100vh - 80px);
-        background: var(--white);
+        background: var(--cream);
         flex-direction: column;
         justify-content: flex-start;
-        padding-top: 2rem;
+        padding-top: var(--space-md);
         transition: left 0.3s ease;
-        box-shadow: var(--shadow);
+        border-top: 1px solid var(--border-soft);
     }
 
     .nav-socials {
@@ -2290,5 +2311,479 @@ html {
         width: 20px;
         height: 20px;
         font-size: 14px;
+    }
+}
+
+/* =============================================
+   WEDDING PAGE STYLES
+   ============================================= */
+
+/* Wedding Hero Section */
+.wedding-hero {
+    background: var(--baby-blue);
+    padding: 180px 20px 80px;
+    text-align: center;
+}
+
+.wedding-hero-content {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.wedding-hero h1 {
+    font-size: 3.5rem;
+    color: var(--dark-blue);
+    margin-bottom: 1rem;
+    font-family: "Playwrite AU NSW", cursive;
+}
+
+.wedding-tagline {
+    font-size: 1.5rem;
+    color: var(--text-light);
+    font-style: italic;
+    font-family: "Playwrite AU NSW", cursive;
+}
+
+/* Wedding Services Section */
+.wedding-services {
+    background: var(--white);
+    padding: 80px 20px;
+    text-align: center;
+}
+
+.section-intro {
+    max-width: 600px;
+    margin: 0 auto 3rem;
+    font-size: 1.2rem;
+    color: var(--text-light);
+    line-height: 1.8;
+    font-style: italic;
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.service-card {
+    background: var(--baby-blue);
+    padding: 2.5rem 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    text-align: center;
+}
+
+.service-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-hover);
+}
+
+.service-icon {
+    color: var(--dark-blue);
+    margin-bottom: 1.5rem;
+}
+
+.service-card h3 {
+    font-size: 1.5rem;
+    color: var(--black);
+    margin-bottom: 1rem;
+    font-family: "Playwrite AU NSW", cursive;
+}
+
+.service-card p {
+    color: var(--text-light);
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* Wedding Gallery Preview */
+.wedding-gallery-preview {
+    background: var(--baby-blue);
+    padding: 80px 20px;
+    text-align: center;
+}
+
+.wedding-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    max-width: 1000px;
+    margin: 0 auto 3rem;
+}
+
+.wedding-gallery-item {
+    aspect-ratio: 1;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.wedding-gallery-item:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: var(--shadow-hover);
+}
+
+.wedding-gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.wedding-gallery-item:hover img {
+    transform: scale(1.05);
+}
+
+.gallery-cta {
+    margin-top: 2rem;
+}
+
+/* Wedding Process Section */
+.wedding-process {
+    background: var(--white);
+    padding: 80px 20px;
+    text-align: center;
+}
+
+.wedding-timeline {
+    max-width: 700px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.timeline-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    text-align: left;
+    padding: 2rem;
+    background: var(--baby-blue);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.timeline-step:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+}
+
+.step-number {
+    flex-shrink: 0;
+    width: 50px;
+    height: 50px;
+    background: var(--dark-blue);
+    color: var(--white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(32, 102, 146, 0.3);
+}
+
+.step-content h4 {
+    font-size: 1.4rem;
+    color: var(--black);
+    margin-bottom: 0.5rem;
+    font-family: "Playwrite AU NSW", cursive;
+}
+
+.step-content p {
+    color: var(--text-light);
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* Wedding CTA Section */
+.wedding-cta-section {
+    background: var(--dark-blue);
+    padding: 80px 20px;
+    text-align: center;
+}
+
+.wedding-cta-content {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.wedding-cta-section h2 {
+    color: var(--white);
+    margin-bottom: 1rem;
+}
+
+.wedding-cta-section p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    line-height: 1.7;
+}
+
+.cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.wedding-cta-section .cta-button {
+    background: var(--white);
+    color: var(--dark-blue);
+}
+
+.wedding-cta-section .cta-button:hover {
+    background: var(--baby-blue);
+    color: var(--dark-blue);
+}
+
+.wedding-cta-section .cta-button.secondary {
+    background: transparent;
+    color: var(--white);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+.wedding-cta-section .cta-button.secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--white);
+}
+
+/* Wedding Page Responsive */
+@media (max-width: 1024px) {
+    .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .wedding-gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .wedding-hero {
+        padding: 140px 20px 60px;
+    }
+
+    .wedding-hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .wedding-tagline {
+        font-size: 1.2rem;
+    }
+
+    .services-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .wedding-gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    .timeline-step {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .step-content {
+        text-align: center;
+    }
+
+    .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .cta-buttons .cta-button {
+        width: 100%;
+        max-width: 280px;
+    }
+}
+
+@media (max-width: 480px) {
+    .wedding-hero h1 {
+        font-size: 2rem;
+    }
+
+    .wedding-gallery-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =============================================
+   WEDDINGS & SPECIAL EVENTS PAGE - SIMPLIFIED
+   ============================================= */
+
+/* Special Events Hero - Clean */
+.special-events-hero {
+    position: relative;
+    min-height: 50vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: url('images/daltonwedding.JPG') center center / cover no-repeat;
+    margin-top: 100px;
+}
+
+.special-events-hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(253, 248, 243, 0.85);
+}
+
+.special-events-hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: var(--space-lg) var(--space-md);
+}
+
+.special-events-hero h1 {
+    font-size: 2.8rem;
+    color: var(--dark-blue);
+    margin-bottom: var(--space-xs);
+}
+
+.hero-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+}
+
+/* Special Events Gallery - Clean */
+.special-events-gallery {
+    background: var(--white);
+    padding: var(--space-xl) 20px;
+    text-align: center;
+}
+
+.special-events-gallery .section-intro {
+    max-width: 650px;
+    margin: 0 auto var(--space-lg);
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--text-secondary);
+}
+
+.events-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-sm);
+    max-width: 900px;
+    margin: 0 auto var(--space-md);
+}
+
+.events-gallery-item {
+    aspect-ratio: 1;
+    overflow: hidden;
+}
+
+.events-gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.events-gallery-item:hover img {
+    transform: scale(1.03);
+}
+
+/* Special Events CTA - Clean */
+.special-events-cta {
+    background: var(--cream);
+    padding: var(--space-xl) 20px;
+    text-align: center;
+}
+
+.special-events-cta .cta-content {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.special-events-cta h2 {
+    color: var(--dark-blue);
+    font-size: 1.8rem;
+    margin-bottom: var(--space-xs);
+}
+
+.special-events-cta p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    margin-bottom: var(--space-md);
+}
+
+.special-events-cta .cta-button:hover {
+    background: var(--dark-blue-hover);
+}
+
+.special-events-cta .cta-button.secondary {
+    background: transparent;
+    color: var(--dark-blue);
+    border: 1px solid var(--dark-blue);
+}
+
+.special-events-cta .cta-button.secondary:hover {
+    background: var(--dark-blue);
+    color: var(--white);
+}
+
+/* Responsive - Special Events */
+@media (max-width: 768px) {
+    .special-events-hero {
+        min-height: 40vh;
+        margin-top: 80px;
+    }
+
+    .special-events-hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.1rem;
+    }
+
+    .events-gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    .special-events-gallery {
+        padding: 40px 20px;
+    }
+
+    .special-events-cta {
+        padding: 50px 20px;
+    }
+
+    .special-events-cta h2 {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .special-events-hero h1 {
+        font-size: 2rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+
+    .events-gallery-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
     }
 }
