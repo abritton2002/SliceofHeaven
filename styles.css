@@ -1718,6 +1718,13 @@ body section#order.order {
         padding-top: var(--space-md);
         transition: left 0.3s ease;
         border-top: 1px solid var(--border-soft);
+        flex: none;
+        margin-left: 0;
+        gap: 1.5rem;
+    }
+
+    .order-btn {
+        margin-left: 0;
     }
 
     .nav-socials {
