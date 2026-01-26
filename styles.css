@@ -245,11 +245,16 @@ h1, h2, h3, h4, h5, h6 {
         grid-template-columns: 1fr;
         text-align: center;
         gap: 2rem;
+        justify-items: center;
     }
 
     .welcome-content {
         align-items: center;
         padding: 0 10px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
 
     .welcome-image {
@@ -263,17 +268,22 @@ h1, h2, h3, h4, h5, h6 {
         font-size: 1.2rem;
         white-space: normal;
         line-height: 1.4;
+        text-align: center;
+        width: 100%;
     }
 
     .main-message {
         font-size: 0.85rem;
         line-height: 1.7;
+        text-align: center;
+        width: 100%;
     }
 
     .hero-cta {
         flex-direction: column;
         align-items: center;
         width: 100%;
+        justify-content: center;
     }
 
     .cta-button {
