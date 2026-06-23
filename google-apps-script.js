@@ -1,3 +1,144 @@
+const SPREADSHEET_ID = '1trxugWBoe89HKANnnHhqi14tiLrx5Q37EBo4xdoKqLY';
+const ORDER_SHEET_NAME = 'Form Responses 1';
+const CONTACT_SHEET_NAME = 'Contact Form Responses';
+const ADMIN_KEY_PROPERTY = 'ADMIN_KEY';
+const ADMIN_HEADERS = ['Request Type', 'Pipeline Status', 'Status Updated', 'Status Note', 'Quoted Price'];
+const ADMIN_START_COLUMN = 21;
+
+function jsonResponse(payload) {
+  return ContentService
+    .createTextOutput(JSON.stringify(payload))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function getOrderSheet() {
+  const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
+  return spreadsheet.getSheetByName(ORDER_SHEET_NAME) || spreadsheet.getActiveSheet();
+}
+
+function ensureAdminColumns(sheet) {
+  const headerRange = sheet.getRange(1, ADMIN_START_COLUMN, 1, ADMIN_HEADERS.length);
+  const currentHeaders = headerRange.getValues()[0];
+  const needsHeaders = ADMIN_HEADERS.some((header, index) => currentHeaders[index] !== header);
+
+  if (needsHeaders) {
+    headerRange.setValues([ADMIN_HEADERS]);
+  }
+}
+
+function requireAdminKey(data) {
+  const configuredKey = PropertiesService.getScriptProperties().getProperty(ADMIN_KEY_PROPERTY);
+  if (!configuredKey) {
+    throw new Error('Admin key is not configured. Set the ADMIN_KEY script property in Apps Script.');
+  }
+
+  if (!data || data.key !== configuredKey) {
+    throw new Error('Unauthorized');
+  }
+}
+
+function dateToIso(value) {
+  if (!value) return '';
+
+  if (Object.prototype.toString.call(value) === '[object Date]' && !isNaN(value.getTime())) {
+    return Utilities.formatDate(value, Session.getScriptTimeZone(), 'yyyy-MM-dd');
+  }
+
+  const parsed = new Date(value);
+  if (!isNaN(parsed.getTime())) {
+    return Utilities.formatDate(parsed, Session.getScriptTimeZone(), 'yyyy-MM-dd');
+  }
+
+  return '';
+}
+
+function displayValue(value) {
+  if (!value) return '';
+
+  if (Object.prototype.toString.call(value) === '[object Date]' && !isNaN(value.getTime())) {
+    return Utilities.formatDate(value, Session.getScriptTimeZone(), 'M/d/yyyy h:mm a');
+  }
+
+  return String(value);
+}
+
+function listOrderRequests(data) {
+  requireAdminKey(data);
+
+  const sheet = getOrderSheet();
+  ensureAdminColumns(sheet);
+
+  const values = sheet.getDataRange().getValues();
+  const requests = [];
+
+  for (let i = 1; i < values.length; i++) {
+    const row = values[i];
+    if (!row[0] && !row[1] && !row[2]) continue;
+
+    requests.push({
+      rowNumber: i + 1,
+      timestamp: displayValue(row[0]),
+      name: displayValue(row[1]),
+      email: displayValue(row[2]),
+      phone: displayValue(row[3]),
+      shape: displayValue(row[4]),
+      layers: displayValue(row[5]),
+      size: displayValue(row[6]),
+      servings: displayValue(row[7]),
+      flavors: displayValue(row[8]),
+      extras: displayValue(row[9]),
+      colors: displayValue(row[10]),
+      message: displayValue(row[11]),
+      occasion: displayValue(row[12]),
+      eventDate: displayValue(row[14]),
+      eventDateIso: dateToIso(row[14]),
+      pickupTime: displayValue(row[15]),
+      delivery: displayValue(row[16]),
+      allergies: displayValue(row[19]),
+      requestType: displayValue(row[20]) || 'Order Request',
+      status: displayValue(row[21]) || 'New',
+      statusUpdated: displayValue(row[22]),
+      statusNote: displayValue(row[23]),
+      quotedPrice: displayValue(row[24])
+    });
+  }
+
+  return jsonResponse({status: 'success', requests: requests});
+}
+
+function updateOrderStatus(data) {
+  requireAdminKey(data);
+
+  const rowNumber = parseInt(data.rowNumber, 10);
+  if (!rowNumber || rowNumber < 2) {
+    throw new Error('Invalid row number.');
+  }
+
+  const sheet = getOrderSheet();
+  ensureAdminColumns(sheet);
+
+  if (rowNumber > sheet.getLastRow()) {
+    throw new Error('Request row not found.');
+  }
+
+  sheet.getRange(rowNumber, 22, 1, 4).setValues([[
+    data.status || 'New',
+    new Date(),
+    data.note || '',
+    data.quotedPrice || ''
+  ]]);
+
+  return jsonResponse({status: 'success', message: 'Status updated.'});
+}
+
+function setAdminKey(key) {
+  const generatedKey = Utilities.getUuid().replace(/-/g, '') + Utilities.getUuid().replace(/-/g, '').slice(0, 8);
+  const adminKey = key || generatedKey;
+
+  PropertiesService.getScriptProperties().setProperty(ADMIN_KEY_PROPERTY, String(adminKey));
+  return adminKey;
+}
+
 // Helper function to format date from YYYY-MM-DD to M/D/YYYY
 function formatDate(dateString) {
   if (!dateString) return '';
@@ -16,6 +157,9 @@ function formatTime(timeString) {
   try {
     // Handle both "1:30 PM" and "13:30" formats
     let time = timeString.trim();
+    if (!time.includes(':')) {
+      return timeString;
+    }
     
     // If it already has AM/PM, just add :00 seconds if missing
     if (time.includes('AM') || time.includes('PM')) {
@@ -39,13 +183,22 @@ function formatTime(timeString) {
 
 // Required doGet function for Google Apps Script web apps
 function doGet(e) {
-  return ContentService
-    .createTextOutput(JSON.stringify({
+  try {
+    const data = e.parameter || {};
+
+    if (data.action === 'adminList') {
+      return listOrderRequests(data);
+    }
+
+    return jsonResponse({
       status: 'success', 
       message: 'Slice of Heaven Cakes API is running',
       timestamp: new Date().toISOString()
-    }))
-    .setMimeType(ContentService.MimeType.JSON);
+    });
+  } catch (error) {
+    console.error('Error in doGet:', error);
+    return jsonResponse({status: 'error', message: error.toString()});
+  }
 }
 
 function doPost(e) {
@@ -53,7 +206,11 @@ function doPost(e) {
       // Parse the form data
       const data = e.parameter;
       const formType = data.formType || 'order'; // Default to order if not specified
-      
+
+      if (data.action === 'updateStatus') {
+        return updateOrderStatus(data);
+      }
+
       console.log('Form type received:', formType);
       console.log('Data received:', data);
       console.log('Raw post data:', e.postData);
@@ -78,18 +235,15 @@ function doPost(e) {
     } catch (error) {
       console.error('Error in doPost:', error);
       // Return error response
-      return ContentService
-        .createTextOutput(JSON.stringify({status: 'error', message: error.toString()}))
-        .setMimeType(ContentService.MimeType.JSON);
+      return jsonResponse({status: 'error', message: error.toString()});
     }
 }
 
 function handleOrderForm(data, e) {
-  // Your actual Google Sheet ID for orders
-  const sheet = SpreadsheetApp.openById('1trxugWBoe89HKANnnHhqi14tiLrx5Q37EBo4xdoKqLY').getSheetByName('Form Responses 1');
-
-  // If the sheet doesn't exist, get the active sheet
-  const targetSheet = sheet || SpreadsheetApp.openById('1trxugWBoe89HKANnnHhqi14tiLrx5Q37EBo4xdoKqLY').getActiveSheet();
+  const targetSheet = getOrderSheet();
+  ensureAdminColumns(targetSheet);
+  const requestType = data.requestIntent === 'order' ? 'Order Request' : 'Quote Request';
+  const initialStatus = data.requestIntent === 'order' ? 'New Order' : 'New Quote';
 
   // Create a row with the form data matching Google Sheet column order based on Odalys's correct data
   const row = [
@@ -112,16 +266,21 @@ function handleOrderForm(data, e) {
     data.delivery || '', // Will you need it delivered?
     data.pricingAck || '', // Pricing acknowledgment
     data.termsAck || '', // Terms acknowledgment
-    data.allergies || '' // Allergies / Dietary Restrictions
+    data.allergies || '', // Allergies / Dietary Restrictions
+    requestType, // Request Type
+    initialStatus, // Pipeline Status
+    new Date(), // Status Updated
+    '', // Status Note
+    '' // Quoted Price
   ];
 
   // Add the row to the sheet
   targetSheet.appendRow(row);
 
   // Send email notification
-  const emailSubject = `🍰 New Cake Order - ${data.name}`;
+  const emailSubject = `${requestType} - ${data.name}`;
   const emailBody = `
-    <h2>🍰 NEW ORDER ALERT!</h2>
+    <h2>NEW ${requestType.toUpperCase()}!</h2>
     
     <h3>👤 CUSTOMER INFO:</h3>
     <p><strong>Name:</strong> ${data.name}</p>
@@ -162,7 +321,7 @@ function handleOrderForm(data, e) {
 
   // Send confirmation email to customer
   if (data.email) {
-    const customerEmailSubject = `Order Received - Slice of Heaven Vintage Cakes`;
+    const customerEmailSubject = `${data.requestIntent === 'order' ? 'Order Request' : 'Quote Request'} Received - Slice of Heaven Vintage Cakes`;
     const customerEmailBody = `
       <div style="font-family: 'Georgia', serif; max-width: 600px; margin: 0 auto; padding: 20px;">
         <div style="text-align: center; padding: 20px 0; border-bottom: 2px solid #E6F3FF;">
@@ -173,8 +332,8 @@ function handleOrderForm(data, e) {
         <div style="padding: 30px 0;">
           <h2 style="color: #333; margin-bottom: 20px;">Thank You, ${data.name}!</h2>
           <p style="color: #555; font-size: 16px; line-height: 1.6;">
-            I've received your cake order and I'm so excited to create something special for you!
-            I'll review your order details and get back to you within <strong>24 hours</strong>.
+            I've received your ${data.requestIntent === 'order' ? 'cake order request' : 'cake quote request'} and I'm excited to create something special for you.
+            I'll review your details and get back to you within <strong>24 hours</strong>.
           </p>
         </div>
 
@@ -215,8 +374,8 @@ function handleOrderForm(data, e) {
         <div style="padding: 20px 0; border-top: 1px solid #eee;">
           <h3 style="color: #333; margin-bottom: 15px;">What's Next?</h3>
           <ul style="color: #555; line-height: 1.8; padding-left: 20px;">
-            <li>I'll review your order and contact you within 24 hours</li>
-            <li>A 50% non-refundable deposit will be required to secure your date</li>
+            <li>I'll review your details and contact you within 24 hours</li>
+            <li>If you are ready to book, a 50% non-refundable deposit will be required to secure your date</li>
             <li>Final payment is due 24 hours before pickup</li>
           </ul>
         </div>
@@ -240,8 +399,8 @@ function handleOrderForm(data, e) {
     });
   }
 
-  // Create calendar event
-  if (data.eventDate && data.pickupTime) {
+  // Create calendar event for order requests only. Quote requests stay visible in the admin dashboard calendar.
+  if (data.requestIntent === 'order' && data.eventDate && data.pickupTime && data.pickupTime !== 'Not sure yet') {
     try {
       // Get the default calendar
       const calendar = CalendarApp.getDefaultCalendar();
@@ -310,21 +469,19 @@ Order received: ${new Date().toLocaleString()}
   }
 
   // Return success response
-  return ContentService
-    .createTextOutput(JSON.stringify({status: 'success', message: 'Order submitted successfully!'}))
-    .setMimeType(ContentService.MimeType.JSON);
+  return jsonResponse({status: 'success', message: `${requestType} submitted successfully!`});
 }
 
 function handleContactForm(data) {
   // You'll need to create a separate sheet for contact form responses
   // For now, let's use the same sheet but add a prefix to distinguish
-  const sheet = SpreadsheetApp.openById('1trxugWBoe89HKANnnHhqi14tiLrx5Q37EBo4xdoKqLY').getSheetByName('Contact Form Responses');
+  const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(CONTACT_SHEET_NAME);
   
   // If contact sheet doesn't exist, create it
   let targetSheet = sheet;
   if (!targetSheet) {
-    const spreadsheet = SpreadsheetApp.openById('1trxugWBoe89HKANnnHhqi14tiLrx5Q37EBo4xdoKqLY');
-    targetSheet = spreadsheet.insertSheet('Contact Form Responses');
+    const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
+    targetSheet = spreadsheet.insertSheet(CONTACT_SHEET_NAME);
     
     // Add headers for contact form
     const headers = [
@@ -389,7 +546,5 @@ function handleContactForm(data) {
   });
 
   // Return success response
-  return ContentService
-    .createTextOutput(JSON.stringify({status: 'success', message: 'Inquiry submitted successfully!'}))
-    .setMimeType(ContentService.MimeType.JSON);
+  return jsonResponse({status: 'success', message: 'Inquiry submitted successfully!'});
 }

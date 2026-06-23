@@ -123,12 +123,12 @@
     <!-- Order Section -->
     <section id="order" class="order">
         <div class="container">
-            <h1>Place Your Order</h1>
-            <p class="order-intro">Design your perfect cake with our custom order form. Get an instant price estimate!</p>
+            <h1>Request a Quote</h1>
+            <p class="order-intro">Share as much as you know about your cake. This is the correct form for pricing, even if a few details are still flexible.</p>
 
             <div class="delivery-notice">
                 <span class="delivery-notice-icon">&#9888;</span>
-                <p><strong>Delivery Notice:</strong> Deliveries are very limited and not guaranteed. Please reach out via the <a href="contact.html">inquiry form</a> to confirm delivery availability for your date before placing an order.</p>
+                <p><strong>Need a price?</strong> Please use this quote form instead of the inquiry form. The inquiry form is only for general questions that do not require pricing.</p>
             </div>
 
             <!-- Order Progress Indicator -->
@@ -155,6 +155,26 @@
             </div>
 
             <form id="order-form" class="order-form">
+                <div class="form-section quote-intent-section">
+                    <h3 class="section-title">What do you need?</h3>
+                    <div class="intent-options" role="radiogroup" aria-label="Request type">
+                        <label class="intent-option">
+                            <input type="radio" name="requestIntent" value="quote" checked>
+                            <span>
+                                <strong>Price Quote</strong>
+                                <small>I need pricing before I commit.</small>
+                            </span>
+                        </label>
+                        <label class="intent-option">
+                            <input type="radio" name="requestIntent" value="order">
+                            <span>
+                                <strong>Ready to Order</strong>
+                                <small>I know the details and want to book.</small>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
                 <!-- 1. Customer Information -->
                 <div class="form-section">
                     <h3 class="section-title">Customer Information</h3>
@@ -192,8 +212,8 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="event-date">Date Needed *</label>
-                            <input type="date" id="event-date" name="eventDate" required>
+                            <label for="event-date">Date Needed <span class="optional-label">(if known)</span></label>
+                            <input type="date" id="event-date" name="eventDate">
                         </div>
                     </div>
                     <div class="form-row">
@@ -201,6 +221,7 @@
                             <label for="pickup-time">Preferred Pick-Up Time *</label>
                             <select id="pickup-time" name="pickupTime" required>
                                 <option value="">Select time</option>
+                                <option value="Not sure yet">Not sure yet</option>
                                 <option value="8:00 AM">8:00 AM</option>
                                 <option value="8:30 AM">8:30 AM</option>
                                 <option value="9:00 AM">9:00 AM</option>
@@ -234,6 +255,7 @@
                                 <option value="">Select option</option>
                                 <option value="Yes (additional fee with be calculated based on mileage)">Yes (additional fee calculated by mileage)</option>
                                 <option value="No">No</option>
+                                <option value="Not sure yet">Not sure yet</option>
                             </select>
                             <p class="delivery-field-note">Note: Deliveries are very limited and not guaranteed. Please confirm availability before ordering.</p>
                         </div>
@@ -251,6 +273,7 @@
                                 <option value="">Select shape</option>
                                 <option value="Heart">Heart</option>
                                 <option value="Round">Round</option>
+                                <option value="Not sure yet">Not sure yet</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -264,6 +287,7 @@
                             <label for="cake-layers">Number of Layers *</label>
                             <select id="cake-layers" name="layers" required>
                                 <option value="">Select layers</option>
+                                <option value="Not sure yet">Not sure yet</option>
                                 <option value="2">2</option>
                                 <option value="3">3</option>
                                 <option value="4">4</option>
@@ -273,6 +297,7 @@
                             <label for="cake-size">Cake Size *</label>
                             <select id="cake-size" name="size" required>
                                 <option value="">Select size</option>
+                                <option value="Not sure yet">Not sure yet</option>
                                 <option value="6 inch">6 inch</option>
                                 <option value="8 inch">8 inch</option>
                                 <option value="10 inch">10 inch</option>
@@ -393,12 +418,12 @@
                     <h3 class="section-title">Design Specifications</h3>
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="cake-colors">Cake Colors *</label>
-                            <input type="text" id="cake-colors" name="colors" placeholder="Specify what colors you'd like" required>
+                            <label for="cake-colors">Cake Colors * <span class="optional-label">(write "not sure" if flexible)</span></label>
+                            <input type="text" id="cake-colors" name="colors" placeholder="Specify colors, theme, or not sure" required>
                         </div>
                         <div class="form-group">
-                            <label for="cake-message">What would you like your cake to say? *</label>
-                            <input type="text" id="cake-message" name="message" placeholder="Standard Writing – Included" required>
+                            <label for="cake-message">What would you like your cake to say? * <span class="optional-label">(write "not sure" if undecided)</span></label>
+                            <input type="text" id="cake-message" name="message" placeholder="Cake message, no writing, or not sure" required>
                         </div>
                     </div>
                 </div>
@@ -457,15 +482,15 @@
                     </div>
                 </div>
 
-                <button type="submit" class="submit-order-btn">Submit Order Request</button>
+                <button type="submit" class="submit-order-btn">Submit Quote Request</button>
                 
                 <div class="order-disclaimer">
                     <p><strong>Next Steps:</strong></p>
                     <ul>
-                        <li>I'll review your order and get back to you within 24 hours</li>
-                        <li>A 50% non-refundable deposit will be required to secure your date</li>
+                        <li>I'll review your details and get back to you within 24 hours</li>
+                        <li>If you selected Price Quote, this does not reserve your date yet</li>
+                        <li>If you selected Ready to Order, a 50% non-refundable deposit will be required to secure your date</li>
                         <li>Final payment is due 24 hours before pickup</li>
-                        <li>Last minute orders may be subject to a rush charge</li>
                     </ul>
                 </div>
             </form>
@@ -482,8 +507,8 @@
                         <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
                     </svg>
                 </div>
-                <h2>Order Received!</h2>
-                <p>Thank you for your order. We're excited to create something special for you!</p>
+                <h2 id="confirmation-title">Request Received!</h2>
+                <p id="confirmation-message">Thank you. I'll review your details and follow up soon.</p>
             </div>
             <div class="confirmation-details">
                 <h3>Order Summary</h3>

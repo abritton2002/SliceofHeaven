@@ -122,8 +122,8 @@
                 <div class="contact-form">
                     <div class="form-intro">
                         <h3 id="formTitle">Questions? Ask Away!</h3>
-                        <p id="formDescription">This form is for questions only - availability, pricing, design ideas, etc. I'll get back to you within 24 hours!</p>
-                        <p style="margin-top: 1rem; padding: 1rem; background: var(--baby-blue); border-radius: 8px; font-weight: 600;"><strong>Ready to place an order?</strong> Use the <a href="order.html" style="color: var(--dark-blue);">Order Now</a> button instead!</p>
+                        <p id="formDescription">This form is for general questions only. If you need pricing, please submit a quote request so I have the cake details needed to price it accurately.</p>
+                        <p class="quote-routing-note"><strong>Need a price?</strong> Use the <a href="order.html">quote form</a> even if you are not sure about every detail yet.</p>
                     </div>
                     
                     <!-- Cake Image Display -->
@@ -149,9 +149,9 @@
                         <div class="form-group">
                             <select id="inquiry-type" name="inquiry-type" required>
                                 <option value="">What can I help you with? *</option>
-                                <option value="availability">Check Availability</option>
-                                <option value="pricing-question">Pricing Questions</option>
-                                <option value="design-consultation">Design Consultation</option>
+                                <option value="availability">Availability Question</option>
+                                <option value="design-consultation">Design Question</option>
+                                <option value="delivery-question">Delivery Question</option>
                                 <option value="general-question">General Question</option>
                             </select>
                         </div>
@@ -162,7 +162,7 @@
                     </form>
                     
                     <div class="form-note">
-                        <p><strong>Ready to place an order?</strong> <a href="order.html">Click here to order your cake</a> | <strong>Prefer social media?</strong> Reach me on <a href="https://www.instagram.com/_sliceofheavencakes_/" target="_blank" rel="noopener noreferrer">Instagram</a> or <a href="https://www.tiktok.com/@_sliceofheavencakes_?_t=ZP-8uFQIb0Fr7n&_r=1" target="_blank" rel="noopener noreferrer">TikTok</a></p>
+                        <p><strong>Need pricing?</strong> <a href="order.html">Start a quote request</a> | <strong>Prefer social media?</strong> Reach me on <a href="https://www.instagram.com/_sliceofheavencakes_/" target="_blank" rel="noopener noreferrer">Instagram</a> or <a href="https://www.tiktok.com/@_sliceofheavencakes_?_t=ZP-8uFQIb0Fr7n&_r=1" target="_blank" rel="noopener noreferrer">TikTok</a></p>
                     </div>
                 </div>
 
@@ -190,7 +190,7 @@
             if (cakeImage && cakeTitle) {
                 // Update form title and description
                 document.getElementById('formTitle').textContent = 'Inquire About This Cake';
-                document.getElementById('formDescription').textContent = 'Tell me about the modifications you\'d like for this cake!';
+                document.getElementById('formDescription').textContent = 'If you want pricing for a similar cake, please use the quote form. Use this page only for questions about the design before submitting a quote.';
                 
                 // Show and populate cake image
                 const cakeContainer = document.getElementById('cakeImageContainer');

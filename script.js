@@ -486,6 +486,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const fillingsPriceElement = document.getElementById('fillings-price');
     const extrasPriceElement = document.getElementById('extras-price');
     const totalPriceElement = document.getElementById('total-price');
+    const submitOrderBtn = orderForm ? orderForm.querySelector('.submit-order-btn') : null;
 
     // Pricing structure based on your menu
     const basePrices = {
@@ -539,19 +540,49 @@ document.addEventListener('DOMContentLoaded', function() {
         checkbox.addEventListener('change', updatePricing);
     });
 
+    function getRequestIntent() {
+        return orderForm?.querySelector('input[name="requestIntent"]:checked')?.value || 'quote';
+    }
+
+    function updateRequestIntentCopy() {
+        if (!submitOrderBtn) return;
+
+        submitOrderBtn.textContent = getRequestIntent() === 'order'
+            ? 'Submit Order Request'
+            : 'Submit Quote Request';
+    }
+
+    document.querySelectorAll('input[name="requestIntent"]').forEach(radio => {
+        radio.addEventListener('change', updateRequestIntentCopy);
+    });
+
     // Form submission handling
     if (orderForm) {
         orderForm.addEventListener('submit', async function(e) {
             e.preventDefault();
+            const requestIntent = getRequestIntent();
             
             // Basic form validation for required fields
-            const requiredFields = ['name', 'phone', 'layers', 'size', 'colors', 'message', 'occasion', 'eventDate', 'pickupTime', 'delivery', 'pricingAck', 'termsAck'];
+            const requiredFields = ['name', 'phone', 'email', 'shape', 'servings', 'layers', 'size', 'colors', 'message', 'occasion', 'pickupTime', 'delivery', 'pricingAck', 'termsAck'];
 
             // Check if all required fields are filled
             for (let fieldName of requiredFields) {
                 const field = orderForm.querySelector(`[name="${fieldName}"]`);
                 if (!field || !field.value.trim()) {
                     showNotification('Please fill in all required fields.', 'error');
+                    return;
+                }
+            }
+
+            if (requestIntent === 'order') {
+                const fieldsThatMustBeFinal = ['shape', 'layers', 'size', 'pickupTime', 'delivery'];
+                const hasUncertainOrderDetail = fieldsThatMustBeFinal.some(fieldName => {
+                    const field = orderForm.querySelector(`[name="${fieldName}"]`);
+                    return field && field.value === 'Not sure yet';
+                });
+
+                if (hasUncertainOrderDetail || !orderForm.querySelector('[name="eventDate"]').value) {
+                    showNotification('For order requests, please choose final details and an event date. Use Price Quote if anything is still flexible.', 'error');
                     return;
                 }
             }
@@ -565,29 +596,31 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Validate event date (should be in the future)
             const eventDateField = orderForm.querySelector('[name="eventDate"]');
-            const eventDate = new Date(eventDateField.value);
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            
-            if (eventDate < today) {
-                showNotification('Event date must be in the future.', 'error');
-                return;
-            }
+            if (eventDateField.value) {
+                const eventDate = new Date(eventDateField.value);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
 
-            // Check if event date is within reasonable timeframe (at least 3 days from now)
-            const minDate = new Date();
-            minDate.setDate(minDate.getDate() + 3);
-            minDate.setHours(0, 0, 0, 0);
-            
-            if (eventDate < minDate) {
-                showNotification('Please allow at least 3 days for cake preparation.', 'error');
-                return;
+                if (eventDate < today) {
+                    showNotification('Event date must be in the future.', 'error');
+                    return;
+                }
+
+                // Check if event date is within reasonable timeframe (at least 3 days from now)
+                const minDate = new Date();
+                minDate.setDate(minDate.getDate() + 3);
+                minDate.setHours(0, 0, 0, 0);
+
+                if (requestIntent === 'order' && eventDate < minDate) {
+                    showNotification('Please allow at least 3 days for cake preparation.', 'error');
+                    return;
+                }
             }
 
             // Collect form data
             const submitBtn = orderForm.querySelector('.submit-order-btn');
             const originalText = submitBtn.textContent;
-            submitBtn.textContent = 'Processing Files...';
+            submitBtn.textContent = requestIntent === 'order' ? 'Submitting Order...' : 'Submitting Quote...';
             submitBtn.disabled = true;
 
             try {
@@ -608,6 +641,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 formData.append('flavors', flavors);
                 formData.append('extras', extras);
                 formData.append('formType', 'order');
+                formData.set('requestIntent', requestIntent);
 
                 // Submit to Google Apps Script with base64 encoded files
                 const response = await fetch('https://script.google.com/macros/s/AKfycbzJgHWxhgSIaLeP0xLaTwBRww5A2lCeH-D9zcyQJiUp3KkxzNk5St9jaonRLUWG7BHS/exec', {
@@ -636,6 +670,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     // Show confirmation modal
                     showOrderConfirmation({
+                        requestIntent: requestIntent,
                         name: customerName,
                         occasion: occasion,
                         date: eventDate,
@@ -646,6 +681,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Reset form
                     orderForm.reset();
                     updatePricing(); // Reset pricing display
+                    updateRequestIntentCopy();
                 } else {
                     throw new Error(result.message || 'Submission failed');
                 }
@@ -665,6 +701,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize pricing display
     updatePricing();
+    updateRequestIntentCopy();
 });
 
 // Contact Form Functionality
@@ -844,6 +881,16 @@ function initOrderProgress() {
 function showOrderConfirmation(orderDetails) {
     const modal = document.getElementById('orderConfirmationModal');
     if (!modal) return;
+
+    const isOrder = orderDetails.requestIntent === 'order';
+    const title = document.getElementById('confirmation-title');
+    const message = document.getElementById('confirmation-message');
+    if (title) title.textContent = isOrder ? 'Order Request Received!' : 'Quote Request Received!';
+    if (message) {
+        message.textContent = isOrder
+            ? 'Thank you for your order request. I will review it and follow up about your deposit.'
+            : 'Thank you for your quote request. I will review the details and follow up with pricing.';
+    }
 
     // Populate order details
     document.getElementById('confirm-name').textContent = orderDetails.name || 'N/A';
