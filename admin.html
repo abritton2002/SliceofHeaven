@@ -80,15 +80,59 @@
         </section>
     </main>
 
+    <div class="admin-quote-modal" id="quoteModal" hidden>
+        <div class="admin-quote-panel" role="dialog" aria-modal="true" aria-labelledby="quoteModalTitle">
+            <section class="admin-quote-editor">
+                <div class="admin-quote-editor-header">
+                    <div>
+                        <p class="admin-kicker">Quote Builder</p>
+                        <h2 id="quoteModalTitle">Custom Quote</h2>
+                    </div>
+                    <button type="button" class="admin-secondary-btn" id="closeQuoteBtn">Close</button>
+                </div>
+
+                <form id="quoteForm" class="admin-quote-form">
+                    <label>For<input type="text" name="customerName" autocomplete="off"></label>
+                    <label>Quote title<input type="text" name="cakeTitle" autocomplete="off"></label>
+                    <label>Cake details line<input type="text" name="cakeDetails" autocomplete="off"></label>
+                    <label>Flavor line<textarea name="flavorLine" rows="2"></textarea></label>
+                    <label>Quote total<input type="number" name="quoteTotal" min="0" step="1" inputmode="decimal"></label>
+                    <label>Booking deposit<input type="number" name="deposit" min="0" step="1" inputmode="decimal"></label>
+                    <label class="admin-quote-wide">Includes line<textarea name="includesLine" rows="3"></textarea></label>
+                    <label>Pick-up date<input type="text" name="pickupDate" autocomplete="off"></label>
+                    <label>Thank-you name<input type="text" name="thankYouName" autocomplete="off"></label>
+                    <label>Apple Cash<input type="text" name="appleCash" autocomplete="off"></label>
+                    <label>Venmo<input type="text" name="venmo" autocomplete="off"></label>
+                    <label>Zelle<input type="text" name="zelle" autocomplete="off"></label>
+                </form>
+
+                <div class="admin-quote-actions">
+                    <button type="button" class="admin-secondary-btn" id="printQuoteBtn">Save PDF</button>
+                    <button type="button" class="admin-primary-btn" id="saveQuoteBtn">Save Total</button>
+                </div>
+            </section>
+
+            <section class="admin-quote-preview" aria-label="Generated quote preview">
+                <div class="quote-sheet" id="quoteSheet"></div>
+            </section>
+        </div>
+    </div>
+
     <script>
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzJgHWxhgSIaLeP0xLaTwBRww5A2lCeH-D9zcyQJiUp3KkxzNk5St9jaonRLUWG7BHS/exec';
         const STATUSES = ['New', 'New Quote', 'New Order', 'Quoted', 'Booked', 'Completed', 'Backed Out'];
         const STORAGE_KEY = 'sliceAdminKey';
+        const PAYMENT_DEFAULTS = {
+            appleCash: '407-417-1226',
+            venmo: '@IverryOrtiz',
+            zelle: 'sliceofheaven'
+        };
 
         let adminKey = '';
         let requests = [];
         let activeView = 'list';
         let calendarMonth = new Date();
+        let activeQuoteRequest = null;
 
         const authPanel = document.getElementById('authPanel');
         const dashboard = document.getElementById('dashboard');
@@ -105,6 +149,12 @@
         const calendarView = document.getElementById('calendarView');
         const calendarGrid = document.getElementById('calendarGrid');
         const calendarTitle = document.getElementById('calendarTitle');
+        const quoteModal = document.getElementById('quoteModal');
+        const quoteForm = document.getElementById('quoteForm');
+        const quoteSheet = document.getElementById('quoteSheet');
+        const closeQuoteBtn = document.getElementById('closeQuoteBtn');
+        const printQuoteBtn = document.getElementById('printQuoteBtn');
+        const saveQuoteBtn = document.getElementById('saveQuoteBtn');
 
         function getInitialKey() {
             const params = new URLSearchParams(window.location.search);
@@ -174,7 +224,7 @@
                 authPanel.hidden = true;
                 dashboard.hidden = false;
                 sessionStorage.setItem(STORAGE_KEY, adminKey);
-                setCalendarToNextRequest();
+                setCalendarToNextRequest(requests);
                 render();
             } catch (error) {
                 dashboard.hidden = true;
@@ -192,7 +242,7 @@
             const type = typeFilter.value;
 
             return requests.filter(request => {
-                const matchesStatus = status === 'all' || request.status === status;
+                const matchesStatus = status === 'all' || normalizeStatus(request.status) === status;
                 const matchesType = type === 'all' || request.requestType === type;
                 const searchable = [
                     request.name,
@@ -214,6 +264,10 @@
             const parts = isoDate.split('-').map(Number);
             if (parts.length !== 3 || parts.some(Number.isNaN)) return null;
             return new Date(parts[0], parts[1] - 1, parts[2]);
+        }
+
+        function normalizeStatus(status) {
+            return String(status || 'New').trim();
         }
 
         function pickupTimeSortValue(value) {
@@ -243,25 +297,15 @@
             });
         }
 
-        function dateBadge(request) {
+        function formatQuoteDate(request) {
             const date = parseIsoDate(request.eventDateIso);
-            if (!date) {
-                return `
-                    <div class="admin-date-tile no-date">
-                        <span>Date</span>
-                        <strong>?</strong>
-                        <small>${escapeHtml(request.pickupTime || 'TBD')}</small>
-                    </div>
-                `;
-            }
+            if (!date) return request.eventDate || '';
 
-            return `
-                <div class="admin-date-tile">
-                    <span>${date.toLocaleDateString('en-US', { month: 'short' })}</span>
-                    <strong>${date.getDate()}</strong>
-                    <small>${escapeHtml(request.pickupTime || 'TBD')}</small>
-                </div>
-            `;
+            return date.toLocaleDateString('en-US', {
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric'
+            });
         }
 
         function statusClass(status) {
@@ -277,8 +321,8 @@
             ].filter(Boolean).join(' · ') || 'Cake details pending';
         }
 
-        function setCalendarToNextRequest() {
-            const datedRequests = requests
+        function setCalendarToNextRequest(sourceRequests = requests) {
+            const datedRequests = sourceRequests
                 .map(request => parseIsoDate(request.eventDateIso))
                 .filter(Boolean)
                 .sort((a, b) => a - b);
@@ -301,12 +345,49 @@
             }[character]));
         }
 
+        function preserveLineBreaks(value) {
+            return escapeHtml(value).replace(/\n/g, '<br>');
+        }
+
+        function parseMoneyValue(value) {
+            const amount = Number(String(value || '').replace(/[^0-9.]/g, ''));
+            return Number.isFinite(amount) && amount > 0 ? amount : '';
+        }
+
+        function moneyDisplay(value) {
+            const amount = parseMoneyValue(value);
+            if (!amount) return '$0';
+            return `$${amount % 1 === 0 ? amount.toFixed(0) : amount.toFixed(2)}`;
+        }
+
+        function defaultCakeTitle(request) {
+            if (request.colors) return `${request.colors} Cake`;
+            if (request.occasion) return `${request.occasion} Cake`;
+            return 'Custom Cake';
+        }
+
+        function defaultCakeDetails(request) {
+            const layers = request.layers ? `${request.layers} Layers` : 'Custom Layers';
+            const sizeShape = [request.size, request.shape].filter(Boolean).join(' - ');
+            return sizeShape ? `${layers} (${sizeShape})` : layers;
+        }
+
+        function defaultIncludesLine(request) {
+            const pieces = [];
+            if (request.colors) pieces.push(`${request.colors} vintage piping`);
+            if (request.extras) pieces.push(request.extras);
+            if (request.message) pieces.push(`message: "${request.message}"`);
+            return pieces.length
+                ? `Includes ${pieces.join(', ')}`
+                : 'Includes custom vintage piping and decorations as discussed';
+        }
+
         function renderStats(filtered) {
             const counts = {
                 total: filtered.length,
                 quotes: filtered.filter(item => item.requestType === 'Quote Request').length,
                 orders: filtered.filter(item => item.requestType === 'Order Request').length,
-                open: filtered.filter(item => !['Completed', 'Backed Out'].includes(item.status)).length
+                open: filtered.filter(item => !['Completed', 'Backed Out'].includes(normalizeStatus(item.status))).length
             };
 
             statsEl.innerHTML = `
@@ -318,10 +399,10 @@
         }
 
         function requestCard(request) {
-            const status = request.status || 'New';
+            const status = normalizeStatus(request.status);
             const currentStatusClass = statusClass(status);
             const statusOptions = STATUSES.map(status => (
-                `<option value="${escapeHtml(status)}" ${request.status === status ? 'selected' : ''}>${escapeHtml(status)}</option>`
+                `<option value="${escapeHtml(status)}" ${normalizeStatus(request.status) === status ? 'selected' : ''}>${escapeHtml(status)}</option>`
             )).join('');
 
             return `
@@ -351,6 +432,7 @@
                             <input type="text" name="quotedPrice" placeholder="Quoted price" value="${escapeHtml(request.quotedPrice || '')}">
                             <input type="text" name="note" placeholder="Note" value="${escapeHtml(request.statusNote || '')}">
                             <button type="submit" class="admin-primary-btn">Save</button>
+                            <button type="button" class="admin-secondary-btn admin-quote-btn" data-row="${request.rowNumber}">Quote</button>
                         </form>
                     </div>
 
@@ -423,7 +505,7 @@
                             <button type="button" data-row="${request.rowNumber}" class="status-${escapeHtml(statusClass(request.status))}">
                                 <span>${escapeHtml(request.pickupTime || 'TBD')}</span>
                                 ${escapeHtml(request.name || 'Request')}
-                                <small>${escapeHtml(request.status)} · ${escapeHtml(request.requestType || '')}</small>
+                                <small>${escapeHtml(normalizeStatus(request.status))} · ${escapeHtml(request.requestType || '')}</small>
                             </button>
                         `).join('')}
                     </div>
@@ -440,6 +522,98 @@
             renderCalendar(filtered);
             listView.hidden = activeView !== 'list';
             calendarView.hidden = activeView !== 'calendar';
+        }
+
+        function fillQuoteForm(request) {
+            const total = parseMoneyValue(request.quotedPrice);
+            const deposit = total ? Math.ceil(total / 2) : '';
+
+            quoteForm.elements.customerName.value = request.name || '';
+            quoteForm.elements.cakeTitle.value = defaultCakeTitle(request);
+            quoteForm.elements.cakeDetails.value = defaultCakeDetails(request);
+            quoteForm.elements.flavorLine.value = request.flavors ? `Flavor: ${request.flavors}` : 'Flavor:';
+            quoteForm.elements.quoteTotal.value = total;
+            quoteForm.elements.deposit.value = deposit;
+            quoteForm.elements.includesLine.value = defaultIncludesLine(request);
+            quoteForm.elements.pickupDate.value = formatQuoteDate(request);
+            quoteForm.elements.thankYouName.value = request.name || '';
+            quoteForm.elements.appleCash.value = PAYMENT_DEFAULTS.appleCash;
+            quoteForm.elements.venmo.value = PAYMENT_DEFAULTS.venmo;
+            quoteForm.elements.zelle.value = PAYMENT_DEFAULTS.zelle;
+        }
+
+        function updateQuotePreview() {
+            const values = Object.fromEntries(new FormData(quoteForm).entries());
+
+            quoteSheet.innerHTML = `
+                <div class="quote-page">
+                    <h1>Custom Quote</h1>
+                    <div class="quote-border">
+                        <div class="quote-content">
+                            <div class="quote-recipient">
+                                <h2>For: ${escapeHtml(values.customerName || 'Customer')}</h2>
+                                <p>${escapeHtml(values.cakeTitle || 'Custom Cake')}</p>
+                            </div>
+
+                            <div class="quote-section">
+                                <h3>Cake Details:</h3>
+                                <p>${escapeHtml(values.cakeDetails || 'Custom cake')}</p>
+                                <p>${preserveLineBreaks(values.flavorLine || 'Flavor:')}</p>
+                            </div>
+
+                            <div class="quote-section quote-money">
+                                <p>Quote Total: <span>${moneyDisplay(values.quoteTotal)}</span></p>
+                                <p class="quote-includes">*${preserveLineBreaks(values.includesLine || 'Includes custom details as discussed')}*</p>
+                            </div>
+
+                            <div class="quote-section quote-money">
+                                <p>Booking Deposit: <span>${moneyDisplay(values.deposit)}</span></p>
+                                <p>(non-refundable &amp; required to secure your order)</p>
+                            </div>
+
+                            <div class="quote-section quote-payment">
+                                <h3>Payment Options:</h3>
+                                <p>Apple Cash: <span>${escapeHtml(values.appleCash || PAYMENT_DEFAULTS.appleCash)}</span></p>
+                                <p>Venmo: ${escapeHtml(values.venmo || PAYMENT_DEFAULTS.venmo)}</p>
+                                <p>Zelle: ${escapeHtml(values.zelle || PAYMENT_DEFAULTS.zelle)}</p>
+                                <p>(If doing this option, please <span>DO NOT</span> tag as a good or service<br>as they take a %)</p>
+                            </div>
+
+                            <div class="quote-section">
+                                <p>Final Payment Due: Upon Pick-Up.</p>
+                            </div>
+
+                            <div class="quote-section quote-pickup">
+                                <h3>Pick-Up Date:</h3>
+                                <p>${escapeHtml(values.pickupDate || 'TBD')}</p>
+                            </div>
+
+                            <p class="quote-thanks">Thank you, ${escapeHtml(values.thankYouName || values.customerName || 'Customer')}!</p>
+                        </div>
+                        <div class="quote-logo">
+                            <img src="images/word2-logo.PNG" alt="Slice of Heaven Cakes">
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openQuoteModal(rowNumber) {
+            const request = requests.find(item => String(item.rowNumber) === String(rowNumber));
+            if (!request) return;
+
+            activeQuoteRequest = request;
+            fillQuoteForm(request);
+            updateQuotePreview();
+            quoteModal.hidden = false;
+            document.body.classList.add('quote-modal-open');
+            quoteForm.elements.quoteTotal.focus();
+        }
+
+        function closeQuoteModal() {
+            quoteModal.hidden = true;
+            document.body.classList.remove('quote-modal-open');
+            activeQuoteRequest = null;
         }
 
         authForm.addEventListener('submit', event => {
@@ -459,8 +633,13 @@
         });
 
         [searchInput, statusFilter, typeFilter].forEach(control => {
-            control.addEventListener('input', render);
-            control.addEventListener('change', render);
+            const applyFilters = () => {
+                const filtered = getFilteredRequests();
+                setCalendarToNextRequest(filtered);
+                render();
+            };
+            control.addEventListener('input', applyFilters);
+            control.addEventListener('change', applyFilters);
         });
 
         document.querySelectorAll('.admin-view-toggle button').forEach(button => {
@@ -520,6 +699,12 @@
             }
         });
 
+        listView.addEventListener('click', event => {
+            const button = event.target.closest('.admin-quote-btn');
+            if (!button) return;
+            openQuoteModal(button.dataset.row);
+        });
+
         calendarGrid.addEventListener('click', event => {
             const button = event.target.closest('button[data-row]');
             if (!button) return;
@@ -530,6 +715,69 @@
             });
             render();
             document.querySelector(`[data-row="${button.dataset.row}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+
+        quoteForm.addEventListener('input', event => {
+            if (event.target.name === 'quoteTotal') {
+                const total = parseMoneyValue(event.target.value);
+                if (total) quoteForm.elements.deposit.value = Math.ceil(total / 2);
+            }
+            updateQuotePreview();
+        });
+
+        closeQuoteBtn.addEventListener('click', closeQuoteModal);
+
+        quoteModal.addEventListener('click', event => {
+            if (event.target === quoteModal) closeQuoteModal();
+        });
+
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape' && !quoteModal.hidden) closeQuoteModal();
+        });
+
+        printQuoteBtn.addEventListener('click', () => {
+            const originalTitle = document.title;
+            const values = Object.fromEntries(new FormData(quoteForm).entries());
+            const customerName = String(values.customerName || 'Customer').trim().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
+            document.body.classList.add('quote-printing');
+            document.title = `Slice-of-Heaven-Quote-${customerName || 'Customer'}`;
+            window.print();
+            window.setTimeout(() => {
+                document.body.classList.remove('quote-printing');
+                document.title = originalTitle;
+            }, 300);
+        });
+
+        saveQuoteBtn.addEventListener('click', async () => {
+            if (!activeQuoteRequest) return;
+
+            const values = Object.fromEntries(new FormData(quoteForm).entries());
+            const currentStatus = normalizeStatus(activeQuoteRequest.status);
+            const nextStatus = ['Booked', 'Completed', 'Backed Out'].includes(currentStatus) ? currentStatus : 'Quoted';
+            saveQuoteBtn.disabled = true;
+            saveQuoteBtn.textContent = 'Saving...';
+
+            try {
+                const result = await apiRequest('updateStatus', {
+                    rowNumber: activeQuoteRequest.rowNumber,
+                    status: nextStatus,
+                    quotedPrice: moneyDisplay(values.quoteTotal),
+                    note: activeQuoteRequest.statusNote || ''
+                });
+
+                if (result.request) {
+                    requests = requests.map(request => (
+                        String(request.rowNumber) === String(result.request.rowNumber) ? result.request : request
+                    ));
+                    activeQuoteRequest = result.request;
+                    render();
+                }
+            } catch (error) {
+                alert(error.message);
+            } finally {
+                saveQuoteBtn.disabled = false;
+                saveQuoteBtn.textContent = 'Save Total';
+            }
         });
 
         adminKey = getInitialKey();

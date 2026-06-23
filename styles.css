@@ -2673,7 +2673,7 @@ html {
 
 .admin-request-row {
     display: grid;
-    grid-template-columns: minmax(420px, 1.4fr) minmax(190px, 0.55fr) minmax(510px, 1fr);
+    grid-template-columns: minmax(420px, 1.35fr) minmax(190px, 0.55fr) minmax(540px, 1fr);
     gap: 10px;
     align-items: center;
     min-height: 58px;
@@ -2802,7 +2802,7 @@ html {
 
 .admin-status-form {
     display: grid;
-    grid-template-columns: 132px 96px minmax(150px, 1fr) 58px;
+    grid-template-columns: 132px 96px minmax(150px, 1fr) 58px 68px;
     gap: 6px;
     align-self: center;
     align-items: center;
@@ -2810,14 +2810,16 @@ html {
 
 .admin-status-form select,
 .admin-status-form input,
-.admin-status-form .admin-primary-btn {
+.admin-status-form .admin-primary-btn,
+.admin-status-form .admin-secondary-btn {
     min-height: 34px;
     height: 34px;
     padding: 0.38rem 0.5rem;
     font-size: 0.86rem;
 }
 
-.admin-status-form .admin-primary-btn {
+.admin-status-form .admin-primary-btn,
+.admin-status-form .admin-secondary-btn {
     width: 100%;
     font-size: 0.78rem;
     letter-spacing: 0.02em;
@@ -2998,6 +3000,228 @@ html {
     font-weight: 600;
 }
 
+.quote-modal-open {
+    overflow: hidden;
+}
+
+.admin-quote-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    overflow: auto;
+    background: rgba(31, 41, 55, 0.72);
+    padding: 18px;
+}
+
+.admin-quote-panel {
+    display: grid;
+    grid-template-columns: minmax(360px, 440px) minmax(560px, 1fr);
+    gap: 18px;
+    width: min(1320px, 100%);
+    margin: 0 auto;
+}
+
+.admin-quote-editor,
+.admin-quote-preview {
+    background: var(--white);
+    border: 1px solid var(--border-soft);
+}
+
+.admin-quote-editor {
+    position: sticky;
+    top: 18px;
+    align-self: start;
+    padding: 16px;
+}
+
+.admin-quote-editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.admin-quote-editor-header h2 {
+    margin: 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.55rem;
+}
+
+.admin-quote-form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.admin-quote-form label {
+    display: grid;
+    gap: 4px;
+    color: var(--text-secondary);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+}
+
+.admin-quote-form input,
+.admin-quote-form textarea {
+    width: 100%;
+    border: 1px solid var(--border-soft);
+    padding: 0.5rem 0.6rem;
+    color: var(--text-primary);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.98rem;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.admin-quote-form textarea {
+    resize: vertical;
+}
+
+.admin-quote-wide {
+    grid-column: 1 / -1;
+}
+
+.admin-quote-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.admin-quote-actions button {
+    flex: 1;
+}
+
+.admin-quote-preview {
+    min-height: 100%;
+    padding: 18px;
+    overflow: auto;
+}
+
+.quote-sheet {
+    width: min(780px, 100%);
+    margin: 0 auto;
+}
+
+.quote-page {
+    position: relative;
+    aspect-ratio: 4 / 5.2;
+    min-height: 980px;
+    background: #e7f7fd;
+    padding: 26px 40px 38px;
+    color: #223746;
+    font-family: 'Cormorant Garamond', serif;
+    text-align: center;
+}
+
+.quote-page h1 {
+    margin: 0 0 18px;
+    color: #233949;
+    font-family: "Playwrite AU NSW", cursive;
+    font-size: 3.05rem;
+    font-weight: 400;
+    line-height: 1;
+}
+
+.quote-border {
+    position: relative;
+    display: flex;
+    min-height: calc(100% - 84px);
+    border: 5px solid #2f627a;
+    border-radius: 48px;
+    background: #fffef9;
+    padding: 28px 36px 34px;
+}
+
+.quote-content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 18px;
+    min-width: 0;
+    padding-bottom: 10px;
+}
+
+.quote-recipient h2,
+.quote-section h3,
+.quote-pickup h3 {
+    margin: 0 0 6px;
+    color: #243a4a;
+    font-family: "Playwrite AU NSW", cursive;
+    font-size: 1.56rem;
+    font-weight: 400;
+    line-height: 1.1;
+}
+
+.quote-recipient p,
+.quote-section p {
+    margin: 0;
+    font-size: 1.42rem;
+    line-height: 1.22;
+}
+
+.quote-section {
+    display: grid;
+    gap: 5px;
+}
+
+.quote-money span,
+.quote-payment span {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.quote-money > p:first-child {
+    font-size: 1.58rem;
+}
+
+.quote-money > p:first-child span {
+    font-size: 1.72rem;
+    font-weight: 600;
+}
+
+.quote-includes {
+    max-width: 92%;
+    margin: 0 auto !important;
+}
+
+.quote-payment h3 {
+    margin-bottom: 2px;
+}
+
+.quote-pickup {
+    margin-top: 4px;
+}
+
+.quote-thanks {
+    margin: 4px 0 0;
+    font-family: "Playwrite AU NSW", cursive;
+    font-size: 1rem;
+}
+
+.quote-logo {
+    position: absolute;
+    right: -42px;
+    bottom: -34px;
+    display: grid;
+    place-items: center;
+    width: 144px;
+    height: 144px;
+    border: 4px solid #9fc9dc;
+    border-radius: 50%;
+    background: #fffef9;
+    overflow: hidden;
+}
+
+.quote-logo img {
+    width: 82%;
+    height: 82%;
+    object-fit: contain;
+}
+
 @media (max-width: 1200px) {
     .admin-request-row {
         grid-template-columns: minmax(320px, 1fr) minmax(180px, 0.55fr);
@@ -3005,6 +3229,14 @@ html {
 
     .admin-status-form {
         grid-column: 1 / -1;
+    }
+
+    .admin-quote-panel {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-quote-editor {
+        position: static;
     }
 
     .admin-request-details dl {
@@ -3061,6 +3293,37 @@ html {
         grid-template-columns: 1fr;
     }
 
+    .quote-page {
+        min-height: 760px;
+        padding: 18px 22px 30px;
+    }
+
+    .quote-page h1 {
+        font-size: 2.2rem;
+    }
+
+    .quote-border {
+        border-width: 4px;
+        border-radius: 34px;
+        padding: 22px 24px 34px;
+    }
+
+    .quote-recipient h2,
+    .quote-section h3,
+    .quote-pickup h3 {
+        font-size: 1.18rem;
+    }
+
+    .quote-recipient p,
+    .quote-section p {
+        font-size: 1.05rem;
+    }
+
+    .quote-money > p:first-child,
+    .quote-money > p:first-child span {
+        font-size: 1.18rem;
+    }
+
     .admin-calendar-grid {
         display: block;
     }
@@ -3100,6 +3363,33 @@ html {
 
     .admin-calendar-day.muted {
         display: none;
+    }
+}
+
+@media print {
+    body.quote-printing * {
+        visibility: hidden !important;
+    }
+
+    body.quote-printing .quote-sheet,
+    body.quote-printing .quote-sheet * {
+        visibility: visible !important;
+    }
+
+    body.quote-printing .quote-sheet {
+        position: absolute;
+        inset: 0 auto auto 0;
+        width: 100%;
+        margin: 0;
+    }
+
+    body.quote-printing .quote-page {
+        width: 100vw;
+        min-height: 100vh;
+        aspect-ratio: auto;
+        padding: 0.35in 0.45in 0.45in;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
     }
 }
 
