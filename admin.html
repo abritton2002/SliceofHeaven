@@ -107,7 +107,8 @@
                 </form>
 
                 <div class="admin-quote-actions">
-                    <button type="button" class="admin-secondary-btn" id="printQuoteBtn">Save PDF</button>
+                    <button type="button" class="admin-secondary-btn" id="downloadPdfBtn">Download PDF</button>
+                    <button type="button" class="admin-secondary-btn" id="downloadPngBtn">Download PNG</button>
                     <button type="button" class="admin-primary-btn" id="saveQuoteBtn">Save Total</button>
                 </div>
             </section>
@@ -153,8 +154,10 @@
         const quoteForm = document.getElementById('quoteForm');
         const quoteSheet = document.getElementById('quoteSheet');
         const closeQuoteBtn = document.getElementById('closeQuoteBtn');
-        const printQuoteBtn = document.getElementById('printQuoteBtn');
+        const downloadPdfBtn = document.getElementById('downloadPdfBtn');
+        const downloadPngBtn = document.getElementById('downloadPngBtn');
         const saveQuoteBtn = document.getElementById('saveQuoteBtn');
+        let quoteLogoDataUrl = '';
 
         function getInitialKey() {
             const params = new URLSearchParams(window.location.search);
@@ -616,6 +619,210 @@
             activeQuoteRequest = null;
         }
 
+        function fileSafeName(value) {
+            return String(value || 'Customer')
+                .trim()
+                .replace(/[^\w\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-') || 'Customer';
+        }
+
+        function downloadBlob(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(url);
+        }
+
+        function svgEscape(value) {
+            return String(value || '').replace(/[&<>"']/g, character => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&apos;'
+            }[character]));
+        }
+
+        function wrapQuoteText(value, maxCharacters) {
+            return String(value || '')
+                .split(/\n+/)
+                .flatMap(line => {
+                    const words = line.trim().split(/\s+/).filter(Boolean);
+                    const lines = [];
+                    let current = '';
+
+                    words.forEach(word => {
+                        const next = current ? `${current} ${word}` : word;
+                        if (next.length > maxCharacters && current) {
+                            lines.push(current);
+                            current = word;
+                        } else {
+                            current = next;
+                        }
+                    });
+
+                    if (current) lines.push(current);
+                    return lines.length ? lines : [''];
+                });
+        }
+
+        function svgTextLines(lines, x, y, size, lineHeight, attributes = '') {
+            return lines.map((line, index) => (
+                `<text x="${x}" y="${y + (index * lineHeight)}" font-size="${size}" ${attributes}>${svgEscape(line)}</text>`
+            )).join('');
+        }
+
+        async function getQuoteLogoDataUrl() {
+            if (quoteLogoDataUrl) return quoteLogoDataUrl;
+
+            const response = await fetch('images/word2-logo.PNG');
+            const blob = await response.blob();
+            quoteLogoDataUrl = await new Promise(resolve => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.readAsDataURL(blob);
+            });
+            return quoteLogoDataUrl;
+        }
+
+        function getQuoteValues() {
+            return Object.fromEntries(new FormData(quoteForm).entries());
+        }
+
+        async function buildQuoteSvg() {
+            const values = getQuoteValues();
+            const logoDataUrl = await getQuoteLogoDataUrl();
+            const flavorLines = wrapQuoteText(values.flavorLine || 'Flavor:', 58);
+            const includesLines = wrapQuoteText(`*${values.includesLine || 'Includes custom details as discussed'}*`, 58);
+            const paymentNoteLines = [
+                '(If doing this option, please DO NOT tag as a good or service',
+                'as they take a %)'
+            ];
+
+            return `
+                <svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1294" viewBox="0 0 1000 1294">
+                    <rect width="1000" height="1294" fill="#e7f7fd"/>
+                    <text x="500" y="92" text-anchor="middle" fill="#223746" font-family="'Playwrite AU NSW', cursive" font-size="58" font-weight="400">Custom Quote</text>
+                    <rect x="80" y="125" width="840" height="1100" rx="48" fill="#fffef9" stroke="#2f627a" stroke-width="6"/>
+                    <g fill="#223746" text-anchor="middle" font-family="'Cormorant Garamond', Georgia, serif">
+                        <text x="500" y="190" font-family="'Playwrite AU NSW', cursive" font-size="34">For: ${svgEscape(values.customerName || 'Customer')}</text>
+                        <text x="500" y="236" font-size="30">${svgEscape(values.cakeTitle || 'Custom Cake')}</text>
+
+                        <text x="500" y="322" font-family="'Playwrite AU NSW', cursive" font-size="34">Cake Details:</text>
+                        <text x="500" y="368" font-size="29">${svgEscape(values.cakeDetails || 'Custom cake')}</text>
+                        ${svgTextLines(flavorLines, 500, 410, 28, 36)}
+
+                        <text x="500" y="526" font-size="34" font-weight="600">Quote Total: ${svgEscape(moneyDisplay(values.quoteTotal))}</text>
+                        ${svgTextLines(includesLines, 500, 572, 27, 36)}
+
+                        <text x="500" y="684" font-size="32" font-weight="600">Booking Deposit: ${svgEscape(moneyDisplay(values.deposit))}</text>
+                        <text x="500" y="724" font-size="27">(non-refundable &amp; required to secure your order)</text>
+
+                        <text x="500" y="808" font-family="'Playwrite AU NSW', cursive" font-size="34">Payment Options:</text>
+                        <text x="500" y="852" font-size="27">Apple Cash: ${svgEscape(values.appleCash || PAYMENT_DEFAULTS.appleCash)}</text>
+                        <text x="500" y="890" font-size="27">Venmo: ${svgEscape(values.venmo || PAYMENT_DEFAULTS.venmo)}</text>
+                        <text x="500" y="928" font-size="27">Zelle: ${svgEscape(values.zelle || PAYMENT_DEFAULTS.zelle)}</text>
+                        ${svgTextLines(paymentNoteLines, 500, 970, 26, 36)}
+
+                        <text x="500" y="1082" font-size="28">Final Payment Due: Upon Pick-Up.</text>
+
+                        <text x="500" y="1164" font-family="'Playwrite AU NSW', cursive" font-size="34">Pick-Up Date:</text>
+                        <text x="500" y="1206" font-size="27">${svgEscape(values.pickupDate || 'TBD')}</text>
+                        <text x="500" y="1270" font-family="'Playwrite AU NSW', cursive" font-size="20">Thank you, ${svgEscape(values.thankYouName || values.customerName || 'Customer')}!</text>
+                    </g>
+                    <circle cx="865" cy="1188" r="82" fill="#fffef9" stroke="#9fc9dc" stroke-width="5"/>
+                    <image href="${logoDataUrl}" x="793" y="1116" width="144" height="144" preserveAspectRatio="xMidYMid meet"/>
+                </svg>
+            `;
+        }
+
+        async function renderQuoteCanvas() {
+            if (document.fonts && document.fonts.ready) {
+                await document.fonts.ready;
+            }
+
+            const svg = await buildQuoteSvg();
+            const image = new Image();
+            const imageUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+            image.src = imageUrl;
+            await image.decode();
+
+            const canvas = document.createElement('canvas');
+            canvas.width = 1000;
+            canvas.height = 1294;
+            const context = canvas.getContext('2d');
+            context.drawImage(image, 0, 0);
+            return canvas;
+        }
+
+        function canvasToBlob(canvas, type, quality) {
+            return new Promise(resolve => canvas.toBlob(resolve, type, quality));
+        }
+
+        function makePdfFromJpegDataUrl(dataUrl, imageWidth, imageHeight) {
+            const base64 = dataUrl.split(',')[1];
+            const jpegBinary = atob(base64);
+            const jpegBytes = Uint8Array.from(jpegBinary, character => character.charCodeAt(0));
+            const encoder = new TextEncoder();
+            const pageWidth = 612;
+            const pageHeight = Math.round(pageWidth * imageHeight / imageWidth);
+            const content = `q\n${pageWidth} 0 0 ${pageHeight} 0 0 cm\n/Im0 Do\nQ\n`;
+            const chunks = [encoder.encode('%PDF-1.4\n')];
+            const offsets = [0];
+            let length = chunks[0].length;
+
+            function addChunk(chunk) {
+                chunks.push(chunk);
+                length += chunk.length;
+            }
+
+            function addObject(objectNumber, objectChunks) {
+                offsets.push(length);
+                addChunk(encoder.encode(`${objectNumber} 0 obj\n`));
+                objectChunks.forEach(chunk => addChunk(typeof chunk === 'string' ? encoder.encode(chunk) : chunk));
+                addChunk(encoder.encode('\nendobj\n'));
+            }
+
+            addObject(1, ['<< /Type /Catalog /Pages 2 0 R >>']);
+            addObject(2, ['<< /Type /Pages /Kids [3 0 R] /Count 1 >>']);
+            addObject(3, [`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageWidth} ${pageHeight}] /Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>`]);
+            addObject(4, [
+                `<< /Type /XObject /Subtype /Image /Width ${imageWidth} /Height ${imageHeight} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpegBytes.length} >>\nstream\n`,
+                jpegBytes,
+                '\nendstream'
+            ]);
+            addObject(5, [`<< /Length ${content.length} >>\nstream\n${content}endstream`]);
+
+            const xrefOffset = length;
+            const objectCount = 5;
+            const xrefRows = ['xref', `0 ${objectCount + 1}`, '0000000000 65535 f ']
+                .concat(offsets.slice(1).map(offset => `${String(offset).padStart(10, '0')} 00000 n `))
+                .join('\n');
+            const trailer = `\n${xrefRows}\ntrailer\n<< /Size ${objectCount + 1} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`;
+            chunks.push(encoder.encode(trailer));
+
+            return new Blob(chunks, { type: 'application/pdf' });
+        }
+
+        async function downloadQuotePng() {
+            const values = getQuoteValues();
+            const canvas = await renderQuoteCanvas();
+            const blob = await canvasToBlob(canvas, 'image/png');
+            downloadBlob(blob, `Slice-of-Heaven-Quote-${fileSafeName(values.customerName)}.png`);
+        }
+
+        async function downloadQuotePdf() {
+            const values = getQuoteValues();
+            const canvas = await renderQuoteCanvas();
+            const pdfBlob = makePdfFromJpegDataUrl(canvas.toDataURL('image/jpeg', 0.95), canvas.width, canvas.height);
+            downloadBlob(pdfBlob, `Slice-of-Heaven-Quote-${fileSafeName(values.customerName)}.pdf`);
+        }
+
         authForm.addEventListener('submit', event => {
             event.preventDefault();
             adminKey = adminKeyInput.value.trim();
@@ -735,17 +942,32 @@
             if (event.key === 'Escape' && !quoteModal.hidden) closeQuoteModal();
         });
 
-        printQuoteBtn.addEventListener('click', () => {
-            const originalTitle = document.title;
-            const values = Object.fromEntries(new FormData(quoteForm).entries());
-            const customerName = String(values.customerName || 'Customer').trim().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
-            document.body.classList.add('quote-printing');
-            document.title = `Slice-of-Heaven-Quote-${customerName || 'Customer'}`;
-            window.print();
-            window.setTimeout(() => {
-                document.body.classList.remove('quote-printing');
-                document.title = originalTitle;
-            }, 300);
+        downloadPdfBtn.addEventListener('click', async () => {
+            downloadPdfBtn.disabled = true;
+            downloadPdfBtn.textContent = 'Building...';
+
+            try {
+                await downloadQuotePdf();
+            } catch (error) {
+                alert(error.message || 'PDF could not be downloaded.');
+            } finally {
+                downloadPdfBtn.disabled = false;
+                downloadPdfBtn.textContent = 'Download PDF';
+            }
+        });
+
+        downloadPngBtn.addEventListener('click', async () => {
+            downloadPngBtn.disabled = true;
+            downloadPngBtn.textContent = 'Building...';
+
+            try {
+                await downloadQuotePng();
+            } catch (error) {
+                alert(error.message || 'PNG could not be downloaded.');
+            } finally {
+                downloadPngBtn.disabled = false;
+                downloadPngBtn.textContent = 'Download PNG';
+            }
         });
 
         saveQuoteBtn.addEventListener('click', async () => {

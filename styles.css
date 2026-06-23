@@ -3366,33 +3366,6 @@ html {
     }
 }
 
-@media print {
-    body.quote-printing * {
-        visibility: hidden !important;
-    }
-
-    body.quote-printing .quote-sheet,
-    body.quote-printing .quote-sheet * {
-        visibility: visible !important;
-    }
-
-    body.quote-printing .quote-sheet {
-        position: absolute;
-        inset: 0 auto auto 0;
-        width: 100%;
-        margin: 0;
-    }
-
-    body.quote-printing .quote-page {
-        width: 100vw;
-        min-height: 100vh;
-        aspect-ratio: auto;
-        padding: 0.35in 0.45in 0.45in;
-        print-color-adjust: exact;
-        -webkit-print-color-adjust: exact;
-    }
-}
-
 /* File Preview Styles */
 .file-preview {
     margin-top: 1rem;
