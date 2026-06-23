@@ -2649,6 +2649,11 @@ html {
     box-shadow: none;
 }
 
+.admin-request-card.status-row-quote-request {
+    border-left-color: #7c5c9f;
+}
+
+.admin-request-card.status-row-order-request,
 .admin-request-card.status-row-new,
 .admin-request-card.status-row-new-quote,
 .admin-request-card.status-row-new-order {
@@ -2659,6 +2664,7 @@ html {
     border-left-color: #d39a17;
 }
 
+.admin-request-card.status-row-confirmed,
 .admin-request-card.status-row-booked {
     border-left-color: #16803f;
 }
@@ -2768,6 +2774,13 @@ html {
     white-space: nowrap;
 }
 
+.status-quote-request {
+    background: #f0e7f7;
+    color: #5b3f78;
+    border-color: #c9addd;
+}
+
+.status-order-request,
 .status-new,
 .status-new-quote,
 .status-new-order {
@@ -2782,6 +2795,7 @@ html {
     border-color: #e4bd42;
 }
 
+.status-confirmed,
 .status-booked {
     background: #dff5e7;
     color: #11612e;
@@ -2969,6 +2983,12 @@ html {
     cursor: pointer;
 }
 
+.admin-calendar-day button.status-quote-request {
+    border-color: #d3bce4;
+    background: #f6edfb;
+}
+
+.admin-calendar-day button.status-order-request,
 .admin-calendar-day button.status-new,
 .admin-calendar-day button.status-new-quote,
 .admin-calendar-day button.status-new-order {
@@ -2976,9 +2996,20 @@ html {
     background: var(--baby-blue);
 }
 
+.admin-calendar-day button.status-quoted {
+    border-color: #e4bd42;
+    background: #fff5cf;
+}
+
+.admin-calendar-day button.status-confirmed,
 .admin-calendar-day button.status-booked {
     border-color: #b7e3c4;
     background: #e7f7ec;
+}
+
+.admin-calendar-day button.status-completed {
+    border-color: #cbd5e1;
+    background: #f1f5f9;
 }
 
 .admin-calendar-day button.status-backed-out {

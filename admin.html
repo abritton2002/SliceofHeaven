@@ -45,11 +45,10 @@
                 </div>
                 <select id="statusFilter">
                     <option value="all">All statuses</option>
-                    <option value="New">New</option>
-                    <option value="New Quote">New Quote</option>
-                    <option value="New Order">New Order</option>
+                    <option value="Quote Request">Quote Request</option>
+                    <option value="Order Request">Order Request</option>
                     <option value="Quoted">Quoted</option>
-                    <option value="Booked">Booked</option>
+                    <option value="Confirmed">Confirmed</option>
                     <option value="Completed">Completed</option>
                     <option value="Backed Out">Backed Out</option>
                 </select>
@@ -121,7 +120,7 @@
 
     <script>
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzJgHWxhgSIaLeP0xLaTwBRww5A2lCeH-D9zcyQJiUp3KkxzNk5St9jaonRLUWG7BHS/exec';
-        const STATUSES = ['New', 'New Quote', 'New Order', 'Quoted', 'Booked', 'Completed', 'Backed Out'];
+        const STATUSES = ['Quote Request', 'Order Request', 'Quoted', 'Confirmed', 'Completed', 'Backed Out'];
         const STORAGE_KEY = 'sliceAdminKey';
         const PAYMENT_DEFAULTS = {
             appleCash: '407-417-1226',
@@ -245,7 +244,8 @@
             const type = typeFilter.value;
 
             return requests.filter(request => {
-                const matchesStatus = status === 'all' || normalizeStatus(request.status) === status;
+                const requestStatus = normalizeStatus(request.status, request.requestType);
+                const matchesStatus = status === 'all' || requestStatus === status;
                 const matchesType = type === 'all' || request.requestType === type;
                 const searchable = [
                     request.name,
@@ -269,8 +269,13 @@
             return new Date(parts[0], parts[1] - 1, parts[2]);
         }
 
-        function normalizeStatus(status) {
-            return String(status || 'New').trim();
+        function normalizeStatus(status, requestType = '') {
+            const value = String(status || '').trim();
+            if (value === 'Booked') return 'Confirmed';
+            if (value === 'New Quote') return 'Quote Request';
+            if (value === 'New Order') return 'Order Request';
+            if (!value || value === 'New') return requestType || 'Quote Request';
+            return value;
         }
 
         function pickupTimeSortValue(value) {
@@ -312,7 +317,7 @@
         }
 
         function statusClass(status) {
-            return String(status || 'New').replace(/\s+/g, '-').toLowerCase();
+            return String(status || 'Quote Request').replace(/\s+/g, '-').toLowerCase();
         }
 
         function compactCakeLine(request) {
@@ -390,7 +395,7 @@
                 total: filtered.length,
                 quotes: filtered.filter(item => item.requestType === 'Quote Request').length,
                 orders: filtered.filter(item => item.requestType === 'Order Request').length,
-                open: filtered.filter(item => !['Completed', 'Backed Out'].includes(normalizeStatus(item.status))).length
+                open: filtered.filter(item => !['Completed', 'Backed Out'].includes(normalizeStatus(item.status, item.requestType))).length
             };
 
             statsEl.innerHTML = `
@@ -402,10 +407,10 @@
         }
 
         function requestCard(request) {
-            const status = normalizeStatus(request.status);
+            const status = normalizeStatus(request.status, request.requestType);
             const currentStatusClass = statusClass(status);
             const statusOptions = STATUSES.map(status => (
-                `<option value="${escapeHtml(status)}" ${normalizeStatus(request.status) === status ? 'selected' : ''}>${escapeHtml(status)}</option>`
+                `<option value="${escapeHtml(status)}" ${normalizeStatus(request.status, request.requestType) === status ? 'selected' : ''}>${escapeHtml(status)}</option>`
             )).join('');
 
             return `
@@ -505,10 +510,10 @@
                             ${dayRequests.length ? `<strong>${dayRequests.length}</strong>` : ''}
                         </div>
                         ${dayRequests.map(request => `
-                            <button type="button" data-row="${request.rowNumber}" class="status-${escapeHtml(statusClass(request.status))}">
+                            <button type="button" data-row="${request.rowNumber}" class="status-${escapeHtml(statusClass(normalizeStatus(request.status, request.requestType)))}">
                                 <span>${escapeHtml(request.pickupTime || 'TBD')}</span>
                                 ${escapeHtml(request.name || 'Request')}
-                                <small>${escapeHtml(normalizeStatus(request.status))} · ${escapeHtml(request.requestType || '')}</small>
+                                <small>${escapeHtml(normalizeStatus(request.status, request.requestType))}</small>
                             </button>
                         `).join('')}
                     </div>
@@ -974,8 +979,7 @@
             if (!activeQuoteRequest) return;
 
             const values = Object.fromEntries(new FormData(quoteForm).entries());
-            const currentStatus = normalizeStatus(activeQuoteRequest.status);
-            const nextStatus = ['Booked', 'Completed', 'Backed Out'].includes(currentStatus) ? currentStatus : 'Quoted';
+            const nextStatus = 'Confirmed';
             saveQuoteBtn.disabled = true;
             saveQuoteBtn.textContent = 'Saving...';
 
@@ -984,7 +988,8 @@
                     rowNumber: activeQuoteRequest.rowNumber,
                     status: nextStatus,
                     quotedPrice: moneyDisplay(values.quoteTotal),
-                    note: activeQuoteRequest.statusNote || ''
+                    note: activeQuoteRequest.statusNote || '',
+                    eventDate: values.pickupDate || ''
                 });
 
                 if (result.request) {

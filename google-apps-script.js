@@ -160,6 +160,8 @@ function publicErrorMessage(error) {
 
 function buildOrderRequest(row, rowNumber, adminColumns) {
   const timestampSort = sortValue(row[0]);
+  const requestType = displayValue(row[adminColumns.requestType - 1]) || 'Order Request';
+  const rawStatus = displayValue(row[adminColumns.pipelineStatus - 1]);
 
   return {
     rowNumber: rowNumber,
@@ -182,12 +184,21 @@ function buildOrderRequest(row, rowNumber, adminColumns) {
     pickupTime: displayTime(row[15]),
     delivery: displayValue(row[16]),
     allergies: displayValue(row[19]),
-    requestType: displayValue(row[adminColumns.requestType - 1]) || 'Order Request',
-    status: displayValue(row[adminColumns.pipelineStatus - 1]) || 'New',
+    requestType: requestType,
+    status: normalizePipelineStatus(rawStatus, requestType),
     statusUpdated: displayValue(row[adminColumns.statusUpdated - 1]),
     statusNote: displayValue(row[adminColumns.statusNote - 1]),
     quotedPrice: displayValue(row[adminColumns.quotedPrice - 1])
   };
+}
+
+function normalizePipelineStatus(status, requestType) {
+  const value = String(status || '').trim();
+  if (value === 'Booked') return 'Confirmed';
+  if (value === 'New Quote') return 'Quote Request';
+  if (value === 'New Order') return 'Order Request';
+  if (!value || value === 'New') return requestType || 'Quote Request';
+  return value;
 }
 
 function listOrderRequests(data) {
@@ -229,11 +240,15 @@ function updateOrderStatus(data) {
   }
 
   sheet.getRange(rowNumber, adminColumns.pipelineStatus, 1, 4).setValues([[
-    data.status || 'New',
+    normalizePipelineStatus(data.status, ''),
     new Date(),
     data.note || '',
     data.quotedPrice || ''
   ]]);
+
+  if (Object.prototype.hasOwnProperty.call(data, 'eventDate')) {
+    sheet.getRange(rowNumber, 15).setValue(formatAdminDate(data.eventDate));
+  }
 
   const updatedRow = sheet.getRange(rowNumber, 1, 1, sheet.getLastColumn()).getValues()[0];
   return jsonResponse({
@@ -241,6 +256,15 @@ function updateOrderStatus(data) {
     message: 'Status updated.',
     request: buildOrderRequest(updatedRow, rowNumber, adminColumns)
   });
+}
+
+function formatAdminDate(dateValue) {
+  if (!dateValue) return '';
+
+  const date = parseSheetDate(dateValue);
+  if (!date) return String(dateValue);
+
+  return Utilities.formatDate(date, Session.getScriptTimeZone(), 'M/d/yyyy');
 }
 
 // Helper function to format date from YYYY-MM-DD to M/D/YYYY
@@ -334,7 +358,7 @@ function handleOrderForm(data, e) {
   const targetSheet = getOrderSheet();
   const adminColumns = ensureAdminColumns(targetSheet);
   const requestType = data.requestIntent === 'order' ? 'Order Request' : 'Quote Request';
-  const initialStatus = data.requestIntent === 'order' ? 'New Order' : 'New Quote';
+  const initialStatus = requestType;
 
   // Create a row with the form data matching Google Sheet column order based on Odalys's correct data
   const row = [
