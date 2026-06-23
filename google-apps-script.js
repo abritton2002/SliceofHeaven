@@ -3,7 +3,7 @@ const ORDER_SHEET_NAME = 'Form Responses 1';
 const CONTACT_SHEET_NAME = 'Contact Form Responses';
 const ADMIN_KEY_PROPERTY = 'ADMIN_KEY';
 const ADMIN_HEADERS = ['Request Type', 'Pipeline Status', 'Status Updated', 'Status Note', 'Quoted Price'];
-const ADMIN_START_COLUMN = 21;
+const ADMIN_FALLBACK_START_COLUMN = 21;
 
 function jsonResponse(payload) {
   return ContentService
@@ -17,13 +17,32 @@ function getOrderSheet() {
 }
 
 function ensureAdminColumns(sheet) {
-  const headerRange = sheet.getRange(1, ADMIN_START_COLUMN, 1, ADMIN_HEADERS.length);
+  const lastColumn = Math.max(sheet.getLastColumn(), ADMIN_FALLBACK_START_COLUMN + ADMIN_HEADERS.length - 1);
+  const headers = sheet.getRange(1, 1, 1, lastColumn).getValues()[0].map(function(header) {
+    return String(header || '').trim();
+  });
+  const firstAdminIndex = headers.indexOf(ADMIN_HEADERS[0]);
+  const lastUsedIndex = headers.reduce(function(lastIndex, header, index) {
+    return header ? index : lastIndex;
+  }, -1);
+  const startColumn = firstAdminIndex >= 0
+    ? firstAdminIndex + 1
+    : Math.max(lastUsedIndex + 2, ADMIN_FALLBACK_START_COLUMN);
+  const headerRange = sheet.getRange(1, startColumn, 1, ADMIN_HEADERS.length);
   const currentHeaders = headerRange.getValues()[0];
   const needsHeaders = ADMIN_HEADERS.some((header, index) => currentHeaders[index] !== header);
 
   if (needsHeaders) {
     headerRange.setValues([ADMIN_HEADERS]);
   }
+
+  return {
+    requestType: startColumn,
+    pipelineStatus: startColumn + 1,
+    statusUpdated: startColumn + 2,
+    statusNote: startColumn + 3,
+    quotedPrice: startColumn + 4
+  };
 }
 
 function requireAdminKey(data) {
@@ -115,11 +134,67 @@ function sortValue(value) {
   return date ? date.getTime() : 0;
 }
 
+function htmlEscape(value) {
+  return String(value || '').replace(/[&<>"']/g, function(character) {
+    return {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    }[character];
+  });
+}
+
+function safeLinkValue(value) {
+  return htmlEscape(String(value || '').replace(/[\r\n]/g, '').trim());
+}
+
+function publicErrorMessage(error) {
+  if (error && String(error.message || error) === 'Unauthorized') {
+    return 'Unauthorized.';
+  }
+
+  return 'Request could not be completed.';
+}
+
+function buildOrderRequest(row, rowNumber, adminColumns) {
+  const timestampSort = sortValue(row[0]);
+
+  return {
+    rowNumber: rowNumber,
+    timestamp: displayValue(row[0]),
+    timestampSort: timestampSort,
+    name: displayValue(row[1]),
+    email: displayValue(row[2]),
+    phone: displayValue(row[3]),
+    shape: displayValue(row[4]),
+    layers: displayValue(row[5]),
+    size: displayValue(row[6]),
+    servings: displayValue(row[7]),
+    flavors: displayValue(row[8]),
+    extras: displayValue(row[9]),
+    colors: displayValue(row[10]),
+    message: displayValue(row[11]),
+    occasion: displayValue(row[12]),
+    eventDate: displayDate(row[14]),
+    eventDateIso: dateToIso(row[14]),
+    pickupTime: displayTime(row[15]),
+    delivery: displayValue(row[16]),
+    allergies: displayValue(row[19]),
+    requestType: displayValue(row[adminColumns.requestType - 1]) || 'Order Request',
+    status: displayValue(row[adminColumns.pipelineStatus - 1]) || 'New',
+    statusUpdated: displayValue(row[adminColumns.statusUpdated - 1]),
+    statusNote: displayValue(row[adminColumns.statusNote - 1]),
+    quotedPrice: displayValue(row[adminColumns.quotedPrice - 1])
+  };
+}
+
 function listOrderRequests(data) {
   requireAdminKey(data);
 
   const sheet = getOrderSheet();
-  ensureAdminColumns(sheet);
+  const adminColumns = ensureAdminColumns(sheet);
 
   const values = sheet.getDataRange().getValues();
   const requests = [];
@@ -128,35 +203,7 @@ function listOrderRequests(data) {
     const row = values[i];
     if (!row[0] && !row[1] && !row[2]) continue;
 
-    const timestampSort = sortValue(row[0]);
-
-    requests.push({
-      rowNumber: i + 1,
-      timestamp: displayValue(row[0]),
-      timestampSort: timestampSort,
-      name: displayValue(row[1]),
-      email: displayValue(row[2]),
-      phone: displayValue(row[3]),
-      shape: displayValue(row[4]),
-      layers: displayValue(row[5]),
-      size: displayValue(row[6]),
-      servings: displayValue(row[7]),
-      flavors: displayValue(row[8]),
-      extras: displayValue(row[9]),
-      colors: displayValue(row[10]),
-      message: displayValue(row[11]),
-      occasion: displayValue(row[12]),
-      eventDate: displayDate(row[14]),
-      eventDateIso: dateToIso(row[14]),
-      pickupTime: displayTime(row[15]),
-      delivery: displayValue(row[16]),
-      allergies: displayValue(row[19]),
-      requestType: displayValue(row[20]) || 'Order Request',
-      status: displayValue(row[21]) || 'New',
-      statusUpdated: displayValue(row[22]),
-      statusNote: displayValue(row[23]),
-      quotedPrice: displayValue(row[24])
-    });
+    requests.push(buildOrderRequest(row, i + 1, adminColumns));
   }
 
   requests.sort(function(a, b) {
@@ -175,28 +222,25 @@ function updateOrderStatus(data) {
   }
 
   const sheet = getOrderSheet();
-  ensureAdminColumns(sheet);
+  const adminColumns = ensureAdminColumns(sheet);
 
   if (rowNumber > sheet.getLastRow()) {
     throw new Error('Request row not found.');
   }
 
-  sheet.getRange(rowNumber, 22, 1, 4).setValues([[
+  sheet.getRange(rowNumber, adminColumns.pipelineStatus, 1, 4).setValues([[
     data.status || 'New',
     new Date(),
     data.note || '',
     data.quotedPrice || ''
   ]]);
 
-  return jsonResponse({status: 'success', message: 'Status updated.'});
-}
-
-function setAdminKey(key) {
-  const generatedKey = Utilities.getUuid().replace(/-/g, '') + Utilities.getUuid().replace(/-/g, '').slice(0, 8);
-  const adminKey = key || generatedKey;
-
-  PropertiesService.getScriptProperties().setProperty(ADMIN_KEY_PROPERTY, String(adminKey));
-  return adminKey;
+  const updatedRow = sheet.getRange(rowNumber, 1, 1, sheet.getLastColumn()).getValues()[0];
+  return jsonResponse({
+    status: 'success',
+    message: 'Status updated.',
+    request: buildOrderRequest(updatedRow, rowNumber, adminColumns)
+  });
 }
 
 // Helper function to format date from YYYY-MM-DD to M/D/YYYY
@@ -257,7 +301,7 @@ function doGet(e) {
     });
   } catch (error) {
     console.error('Error in doGet:', error);
-    return jsonResponse({status: 'error', message: error.toString()});
+    return jsonResponse({status: 'error', message: publicErrorMessage(error)});
   }
 }
 
@@ -271,18 +315,6 @@ function doPost(e) {
         return updateOrderStatus(data);
       }
 
-      console.log('Form type received:', formType);
-      console.log('Data received:', data);
-      console.log('Raw post data:', e.postData);
-      console.log('Post data contents:', e.postData ? e.postData.contents : 'none');
-      console.log('Post data length:', e.postData ? e.postData.contents.length : 'none');
-      console.log('Available parameter keys:', Object.keys(data));
-      
-      // Handle file uploads if present
-      if (e.postData && e.postData.contents) {
-        console.log('Post data contents length:', e.postData.contents.length);
-      }
-      
       if (formType === 'order') {
         return handleOrderForm(data, e);
       } else if (formType === 'contact') {
@@ -294,14 +326,13 @@ function doPost(e) {
       
     } catch (error) {
       console.error('Error in doPost:', error);
-      // Return error response
-      return jsonResponse({status: 'error', message: error.toString()});
+      return jsonResponse({status: 'error', message: publicErrorMessage(error)});
     }
 }
 
 function handleOrderForm(data, e) {
   const targetSheet = getOrderSheet();
-  ensureAdminColumns(targetSheet);
+  const adminColumns = ensureAdminColumns(targetSheet);
   const requestType = data.requestIntent === 'order' ? 'Order Request' : 'Quote Request';
   const initialStatus = data.requestIntent === 'order' ? 'New Order' : 'New Quote';
 
@@ -326,50 +357,73 @@ function handleOrderForm(data, e) {
     data.delivery || '', // Will you need it delivered?
     data.pricingAck || '', // Pricing acknowledgment
     data.termsAck || '', // Terms acknowledgment
-    data.allergies || '', // Allergies / Dietary Restrictions
-    requestType, // Request Type
-    initialStatus, // Pipeline Status
-    new Date(), // Status Updated
-    '', // Status Note
-    '' // Quoted Price
+    data.allergies || '' // Allergies / Dietary Restrictions
   ];
 
   // Add the row to the sheet
   targetSheet.appendRow(row);
+  const appendedRow = targetSheet.getLastRow();
+  targetSheet.getRange(appendedRow, adminColumns.requestType, 1, ADMIN_HEADERS.length).setValues([[
+    requestType,
+    initialStatus,
+    new Date(),
+    '',
+    ''
+  ]]);
+
+  const emailFields = {
+    name: htmlEscape(data.name),
+    email: safeLinkValue(data.email),
+    phone: safeLinkValue(data.phone),
+    shape: htmlEscape(data.shape),
+    servings: htmlEscape(data.servings),
+    layers: htmlEscape(data.layers),
+    size: htmlEscape(data.size),
+    flavors: htmlEscape(data.flavors),
+    extras: htmlEscape(data.extras),
+    colors: htmlEscape(data.colors),
+    message: htmlEscape(data.message),
+    occasion: htmlEscape(data.occasion),
+    allergies: htmlEscape(data.allergies || 'None specified'),
+    eventDate: htmlEscape(data.eventDate),
+    pickupTime: htmlEscape(data.pickupTime),
+    delivery: htmlEscape(data.delivery),
+    requestType: htmlEscape(requestType)
+  };
 
   // Send email notification
   const emailSubject = `${requestType} - ${data.name}`;
   const emailBody = `
-    <h2>NEW ${requestType.toUpperCase()}!</h2>
+    <h2>NEW ${emailFields.requestType.toUpperCase()}!</h2>
     
     <h3>👤 CUSTOMER INFO:</h3>
-    <p><strong>Name:</strong> ${data.name}</p>
-    <p><strong>Email:</strong> <a href="mailto:${data.email}">${data.email}</a></p>
-    <p><strong>Phone:</strong> <a href="tel:${data.phone}">${data.phone}</a></p>
+    <p><strong>Name:</strong> ${emailFields.name}</p>
+    <p><strong>Email:</strong> <a href="mailto:${emailFields.email}">${emailFields.email}</a></p>
+    <p><strong>Phone:</strong> <a href="tel:${emailFields.phone}">${emailFields.phone}</a></p>
     
     <h3>🍰 CAKE DETAILS:</h3>
-    <p><strong>Shape:</strong> ${data.shape}</p>
-    <p><strong>Servings:</strong> ${data.servings} people</p>
-    <p><strong>Layers:</strong> ${data.layers} layers</p>
-    <p><strong>Size:</strong> ${data.size} inches</p>
-    <p><strong>Flavors:</strong> ${data.flavors}</p>
-    <p><strong>Extras:</strong> ${data.extras}</p>
+    <p><strong>Shape:</strong> ${emailFields.shape}</p>
+    <p><strong>Servings:</strong> ${emailFields.servings} people</p>
+    <p><strong>Layers:</strong> ${emailFields.layers} layers</p>
+    <p><strong>Size:</strong> ${emailFields.size} inches</p>
+    <p><strong>Flavors:</strong> ${emailFields.flavors}</p>
+    <p><strong>Extras:</strong> ${emailFields.extras}</p>
     
     <h3>🎨 DESIGN:</h3>
-    <p><strong>Colors:</strong> ${data.colors}</p>
-    <p><strong>Message:</strong> "${data.message}"</p>
-    <p><strong>Occasion:</strong> ${data.occasion}</p>
+    <p><strong>Colors:</strong> ${emailFields.colors}</p>
+    <p><strong>Message:</strong> "${emailFields.message}"</p>
+    <p><strong>Occasion:</strong> ${emailFields.occasion}</p>
     
     <h3>⚠️ ALLERGIES / DIETARY RESTRICTIONS:</h3>
-    <p><strong>Allergies:</strong> ${data.allergies || 'None specified'}</p>
+    <p><strong>Allergies:</strong> ${emailFields.allergies}</p>
     
     <h3>📅 EVENT INFO:</h3>
-    <p><strong>Event Date:</strong> ${data.eventDate}</p>
-    <p><strong>Pickup Time:</strong> ${data.pickupTime}</p>
-    <p><strong>Delivery:</strong> ${data.delivery}</p>
+    <p><strong>Event Date:</strong> ${emailFields.eventDate}</p>
+    <p><strong>Pickup Time:</strong> ${emailFields.pickupTime}</p>
+    <p><strong>Delivery:</strong> ${emailFields.delivery}</p>
 
     <hr>
-    <h3>📱 TEXT CUSTOMER: <a href="tel:${data.phone}">${data.phone}</a></h3>
+    <h3>📱 TEXT CUSTOMER: <a href="tel:${emailFields.phone}">${emailFields.phone}</a></h3>
   `;
 
   // Send the email to yourself
@@ -390,7 +444,7 @@ function handleOrderForm(data, e) {
         </div>
 
         <div style="padding: 30px 0;">
-          <h2 style="color: #333; margin-bottom: 20px;">Thank You, ${data.name}!</h2>
+          <h2 style="color: #333; margin-bottom: 20px;">Thank You, ${emailFields.name}!</h2>
           <p style="color: #555; font-size: 16px; line-height: 1.6;">
             I've received your ${data.requestIntent === 'order' ? 'cake order request' : 'cake quote request'} and I'm excited to create something special for you.
             I'll review your details and get back to you within <strong>24 hours</strong>.
@@ -402,31 +456,31 @@ function handleOrderForm(data, e) {
           <table style="width: 100%; border-collapse: collapse;">
             <tr>
               <td style="padding: 8px 0; color: #666; border-bottom: 1px solid rgba(0,0,0,0.1);">Occasion:</td>
-              <td style="padding: 8px 0; color: #333; font-weight: bold; border-bottom: 1px solid rgba(0,0,0,0.1);">${data.occasion}</td>
+              <td style="padding: 8px 0; color: #333; font-weight: bold; border-bottom: 1px solid rgba(0,0,0,0.1);">${emailFields.occasion}</td>
             </tr>
             <tr>
               <td style="padding: 8px 0; color: #666; border-bottom: 1px solid rgba(0,0,0,0.1);">Event Date:</td>
-              <td style="padding: 8px 0; color: #333; font-weight: bold; border-bottom: 1px solid rgba(0,0,0,0.1);">${data.eventDate}</td>
+              <td style="padding: 8px 0; color: #333; font-weight: bold; border-bottom: 1px solid rgba(0,0,0,0.1);">${emailFields.eventDate}</td>
             </tr>
             <tr>
               <td style="padding: 8px 0; color: #666; border-bottom: 1px solid rgba(0,0,0,0.1);">Pickup Time:</td>
-              <td style="padding: 8px 0; color: #333; font-weight: bold; border-bottom: 1px solid rgba(0,0,0,0.1);">${data.pickupTime}</td>
+              <td style="padding: 8px 0; color: #333; font-weight: bold; border-bottom: 1px solid rgba(0,0,0,0.1);">${emailFields.pickupTime}</td>
             </tr>
             <tr>
               <td style="padding: 8px 0; color: #666; border-bottom: 1px solid rgba(0,0,0,0.1);">Cake:</td>
-              <td style="padding: 8px 0; color: #333; font-weight: bold; border-bottom: 1px solid rgba(0,0,0,0.1);">${data.size}, ${data.layers} layers, ${data.shape}</td>
+              <td style="padding: 8px 0; color: #333; font-weight: bold; border-bottom: 1px solid rgba(0,0,0,0.1);">${emailFields.size}, ${emailFields.layers} layers, ${emailFields.shape}</td>
             </tr>
             <tr>
               <td style="padding: 8px 0; color: #666; border-bottom: 1px solid rgba(0,0,0,0.1);">Flavors:</td>
-              <td style="padding: 8px 0; color: #333; font-weight: bold; border-bottom: 1px solid rgba(0,0,0,0.1);">${data.flavors}</td>
+              <td style="padding: 8px 0; color: #333; font-weight: bold; border-bottom: 1px solid rgba(0,0,0,0.1);">${emailFields.flavors}</td>
             </tr>
             <tr>
               <td style="padding: 8px 0; color: #666; border-bottom: 1px solid rgba(0,0,0,0.1);">Message:</td>
-              <td style="padding: 8px 0; color: #333; font-weight: bold; border-bottom: 1px solid rgba(0,0,0,0.1);">"${data.message}"</td>
+              <td style="padding: 8px 0; color: #333; font-weight: bold; border-bottom: 1px solid rgba(0,0,0,0.1);">"${emailFields.message}"</td>
             </tr>
             <tr>
               <td style="padding: 8px 0; color: #666;">Delivery:</td>
-              <td style="padding: 8px 0; color: #333; font-weight: bold;">${data.delivery}</td>
+              <td style="padding: 8px 0; color: #333; font-weight: bold;">${emailFields.delivery}</td>
             </tr>
           </table>
         </div>
@@ -520,10 +574,8 @@ Order received: ${new Date().toLocaleString()}
         }
       );
       
-      console.log('Calendar event created:', event.getTitle());
-      
     } catch (calendarError) {
-      console.error('Error creating calendar event:', calendarError);
+      console.error('Error creating calendar event.');
       // Don't fail the whole request if calendar fails
     }
   }
@@ -573,29 +625,38 @@ function handleContactForm(data) {
   targetSheet.appendRow(row);
 
   // Send email notification for contact form
+  const contactFields = {
+    name: htmlEscape(data.name),
+    email: safeLinkValue(data.email),
+    phone: safeLinkValue(data.phone),
+    inquiryType: htmlEscape(data.inquiryType),
+    message: htmlEscape(data.message),
+    cakeImage: safeLinkValue(data.cakeImage),
+    cakeTitle: htmlEscape(data.cakeTitle)
+  };
   const emailSubject = `❓ New Inquiry - ${data.name}`;
   const emailBody = `
     <h2>❓ NEW INQUIRY ALERT!</h2>
     
     <h3>👤 CUSTOMER INFO:</h3>
-    <p><strong>Name:</strong> ${data.name}</p>
-    <p><strong>Email:</strong> <a href="mailto:${data.email}">${data.email}</a></p>
-    <p><strong>Phone:</strong> <a href="tel:${data.phone}">${data.phone}</a></p>
+    <p><strong>Name:</strong> ${contactFields.name}</p>
+    <p><strong>Email:</strong> <a href="mailto:${contactFields.email}">${contactFields.email}</a></p>
+    <p><strong>Phone:</strong> <a href="tel:${contactFields.phone}">${contactFields.phone}</a></p>
     
     <h3>❓ INQUIRY DETAILS:</h3>
-    <p><strong>Inquiry Type:</strong> ${data.inquiryType}</p>
+    <p><strong>Inquiry Type:</strong> ${contactFields.inquiryType}</p>
     <p><strong>Message:</strong></p>
-    <p>${data.message}</p>
+    <p>${contactFields.message}</p>
     
     ${data.cakeImage ? `
     <h3>🍰 REFERENCED CAKE:</h3>
-    <p><strong>Cake:</strong> ${data.cakeTitle}</p>
-    <p><strong>Image:</strong> ${data.cakeImage}</p>
+    <p><strong>Cake:</strong> ${contactFields.cakeTitle}</p>
+    <p><strong>Image:</strong> ${contactFields.cakeImage}</p>
     ` : ''}
     
     <hr>
-    <h3>📧 REPLY TO: <a href="mailto:${data.email}">${data.email}</a></h3>
-    <h3>📱 CALL: <a href="tel:${data.phone}">${data.phone}</a></h3>
+    <h3>📧 REPLY TO: <a href="mailto:${contactFields.email}">${contactFields.email}</a></h3>
+    <h3>📱 CALL: <a href="tel:${contactFields.phone}">${contactFields.phone}</a></h3>
   `;
 
   // Send the email

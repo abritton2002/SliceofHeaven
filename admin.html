@@ -108,7 +108,17 @@
 
         function getInitialKey() {
             const params = new URLSearchParams(window.location.search);
-            return params.get('key') || localStorage.getItem(STORAGE_KEY) || '';
+            const keyFromUrl = params.get('key');
+
+            if (keyFromUrl) {
+                params.delete('key');
+                const query = params.toString();
+                const cleanUrl = `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`;
+                window.history.replaceState({}, document.title, cleanUrl);
+                return keyFromUrl;
+            }
+
+            return sessionStorage.getItem(STORAGE_KEY) || '';
         }
 
         function setBusy(isBusy) {
@@ -133,7 +143,16 @@
                 : APPS_SCRIPT_URL;
 
             const response = await fetch(url, options);
-            const result = await response.json();
+            const responseText = await response.text();
+            let result;
+
+            try {
+                result = JSON.parse(responseText);
+            } catch (error) {
+                throw new Error(responseText.trim().startsWith('<')
+                    ? 'The dashboard API returned an HTML page instead of data. Refresh once, then check that the Apps Script deployment is accessible to anyone.'
+                    : 'The dashboard API returned an unreadable response.');
+            }
 
             if (result.status !== 'success') {
                 throw new Error(result.message || 'Request failed.');
@@ -154,7 +173,7 @@
                 });
                 authPanel.hidden = true;
                 dashboard.hidden = false;
-                localStorage.setItem(STORAGE_KEY, adminKey);
+                sessionStorage.setItem(STORAGE_KEY, adminKey);
                 setCalendarToNextRequest();
                 render();
             } catch (error) {
@@ -195,6 +214,21 @@
             const parts = isoDate.split('-').map(Number);
             if (parts.length !== 3 || parts.some(Number.isNaN)) return null;
             return new Date(parts[0], parts[1] - 1, parts[2]);
+        }
+
+        function pickupTimeSortValue(value) {
+            const text = String(value || '').trim();
+            const match = text.match(/^(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?$/i);
+            if (!match) return Number.MAX_SAFE_INTEGER;
+
+            let hour = Number(match[1]);
+            const minute = Number(match[2] || 0);
+            const period = match[3] ? match[3].toUpperCase() : '';
+
+            if (period === 'PM' && hour !== 12) hour += 12;
+            if (period === 'AM' && hour === 12) hour = 0;
+
+            return (hour * 60) + minute;
         }
 
         function formatEventDate(request) {
@@ -377,7 +411,7 @@
                 const iso = date
                     ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
                     : '';
-                const dayRequests = (byDate[iso] || []).sort((a, b) => String(a.pickupTime).localeCompare(String(b.pickupTime)));
+                const dayRequests = (byDate[iso] || []).sort((a, b) => pickupTimeSortValue(a.pickupTime) - pickupTimeSortValue(b.pickupTime));
 
                 html += `
                     <div class="admin-calendar-day ${inMonth ? '' : 'muted'} ${dayRequests.length ? 'has-items' : ''}">
@@ -417,7 +451,7 @@
         refreshBtn.addEventListener('click', loadRequests);
 
         forgetKeyBtn.addEventListener('click', () => {
-            localStorage.removeItem(STORAGE_KEY);
+            sessionStorage.removeItem(STORAGE_KEY);
             adminKey = '';
             adminKeyInput.value = '';
             dashboard.hidden = true;
@@ -463,13 +497,21 @@
             button.textContent = 'Saving...';
 
             try {
-                await apiRequest('updateStatus', {
+                const result = await apiRequest('updateStatus', {
                     rowNumber: card.dataset.row,
                     status: formData.get('status'),
                     quotedPrice: formData.get('quotedPrice'),
                     note: formData.get('note')
                 });
-                await loadRequests();
+
+                if (result.request) {
+                    requests = requests.map(request => (
+                        String(request.rowNumber) === String(result.request.rowNumber) ? result.request : request
+                    ));
+                    render();
+                } else {
+                    await loadRequests();
+                }
             } catch (error) {
                 alert(error.message);
             } finally {

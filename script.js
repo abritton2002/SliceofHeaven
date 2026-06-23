@@ -1,16 +1,18 @@
+let heroCarouselInitialized = false;
+
 // Enhanced Hero Carousel Functionality
 function initHeroCarousel() {
+    if (heroCarouselInitialized) return;
+
     const heroCakes = document.querySelectorAll('.hero-cake');
     const heroDots = document.querySelectorAll('.hero-dot');
     const prevBtn = document.getElementById('prev-btn');
     const nextBtn = document.getElementById('next-btn');
+    const heroGallery = document.querySelector('.hero-gallery');
 
-    // Debug logging
-    console.log('Carousel initialization started');
-    console.log('Hero cakes found:', heroCakes.length);
-    console.log('Hero dots found:', heroDots.length);
-    console.log('Prev button found:', !!prevBtn);
-    console.log('Next button found:', !!nextBtn);
+    if (heroCakes.length === 0) return;
+
+    heroCarouselInitialized = true;
     
     let currentSlide = 0;
     let touchStartX = 0;
@@ -26,14 +28,11 @@ function initHeroCarousel() {
         if (index < 0) index = heroCakes.length - 1;
         if (index >= heroCakes.length) index = 0;
         
-        console.log('Showing slide:', index, 'Total slides:', heroCakes.length);
-        
         isTransitioning = true;
         
         // Hide all slides
-        heroCakes.forEach((cake, i) => {
+        heroCakes.forEach(cake => {
             cake.classList.remove('active');
-            console.log(`Slide ${i} classes after remove:`, cake.className);
         });
         
         // Remove active class from all dots
@@ -44,8 +43,6 @@ function initHeroCarousel() {
         // Show current slide and activate corresponding dot
         if (heroCakes[index]) {
             heroCakes[index].classList.add('active');
-            console.log(`Slide ${index} classes after add:`, heroCakes[index].className);
-            console.log(`Slide ${index} image src:`, heroCakes[index].querySelector('img')?.src);
         }
         if (heroDots[index]) {
             heroDots[index].classList.add('active');
@@ -99,30 +96,24 @@ function initHeroCarousel() {
         prevBtn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            console.log('Prev button clicked');
             if (!isTransitioning) {
                 prevSlide();
                 pauseAutoPlay();
                 setTimeout(resumeAutoPlay, 3000); // Resume after 3 seconds
             }
         });
-    } else {
-        console.error('Prev button not found');
     }
 
     if (nextBtn) {
         nextBtn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            console.log('Next button clicked');
             if (!isTransitioning) {
                 nextSlide();
                 pauseAutoPlay();
                 setTimeout(resumeAutoPlay, 3000); // Resume after 3 seconds
             }
         });
-    } else {
-        console.error('Next button not found');
     }
 
     // Dot navigation
@@ -136,19 +127,14 @@ function initHeroCarousel() {
         });
     });
 
-    // Touch/swipe functionality for mobile
-    const heroGallery = document.querySelector('.hero-gallery');
-    console.log('Hero gallery found:', !!heroGallery);
-    
     if (heroGallery) {
+        // Touch/swipe functionality for mobile
         heroGallery.addEventListener('touchstart', (e) => {
-            console.log('Touch start detected:', e.changedTouches[0].screenX);
             touchStartX = e.changedTouches[0].screenX;
             pauseAutoPlay();
         }, { passive: true });
 
         heroGallery.addEventListener('touchend', (e) => {
-            console.log('Touch end detected:', e.changedTouches[0].screenX);
             touchEndX = e.changedTouches[0].screenX;
             handleSwipe();
             setTimeout(resumeAutoPlay, 3000); // Resume after 3 seconds
@@ -157,14 +143,11 @@ function initHeroCarousel() {
         function handleSwipe() {
             const swipeThreshold = 50;
             const swipeDistance = touchEndX - touchStartX;
-            console.log('Swipe distance:', swipeDistance);
-            
+
             if (Math.abs(swipeDistance) > swipeThreshold && !isTransitioning) {
                 if (swipeDistance > 0) {
-                    console.log('Swipe right - going to previous slide');
                     prevSlide();
                 } else {
-                    console.log('Swipe left - going to next slide');
                     nextSlide();
                 }
             }
@@ -194,34 +177,8 @@ function initHeroCarousel() {
 
     // Initialize carousel
     if (heroCakes.length > 0) {
-        console.log('Initializing carousel with', heroCakes.length, 'slides');
-        
-        // Check if all images are loaded
-        heroCakes.forEach((cake, index) => {
-            const img = cake.querySelector('img');
-            if (img) {
-                console.log(`Slide ${index} image:`, img.src);
-                console.log(`Slide ${index} image display:`, window.getComputedStyle(img).display);
-                console.log(`Slide ${index} image opacity:`, window.getComputedStyle(img).opacity);
-                console.log(`Slide ${index} image visibility:`, window.getComputedStyle(img).visibility);
-                
-                if (img.complete) {
-                    console.log(`Slide ${index} image loaded:`, img.naturalWidth, 'x', img.naturalHeight);
-                } else {
-                    img.addEventListener('load', () => {
-                        console.log(`Slide ${index} image loaded:`, img.naturalWidth, 'x', img.naturalHeight);
-                    });
-                    img.addEventListener('error', () => {
-                        console.error(`Slide ${index} image failed to load:`, img.src);
-                    });
-                }
-            }
-        });
-        
         showSlide(0);
         startAutoPlay();
-    } else {
-        console.error('No hero cakes found for carousel initialization');
     }
 
     // Pause autoplay when page is not visible
@@ -236,17 +193,14 @@ function initHeroCarousel() {
 
 // Fallback initialization
 window.addEventListener('load', function() {
-    console.log('Window loaded, checking if carousel is initialized...');
     const heroCakes = document.querySelectorAll('.hero-cake');
     if (heroCakes.length > 0 && !document.querySelector('.hero-cake.active')) {
-        console.log('Carousel not initialized, initializing now...');
         initHeroCarousel();
     }
 });
 
 // Initialize carousel when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM loaded, initializing carousel...');
     // Small delay to ensure all elements are properly rendered
     setTimeout(() => {
         initHeroCarousel();
@@ -257,19 +211,23 @@ document.addEventListener('DOMContentLoaded', function() {
 const hamburger = document.getElementById('hamburger');
 const navMenu = document.getElementById('nav-menu');
 
-hamburger.addEventListener('click', () => {
-    hamburger.classList.toggle('active');
-    navMenu.classList.toggle('active');
-});
+if (hamburger && navMenu) {
+    hamburger.addEventListener('click', () => {
+        hamburger.classList.toggle('active');
+        navMenu.classList.toggle('active');
+    });
+}
 
 // Close mobile menu when clicking on nav links
 const navLinks = document.querySelectorAll('.nav-link');
-navLinks.forEach(link => {
-    link.addEventListener('click', () => {
-        hamburger.classList.remove('active');
-        navMenu.classList.remove('active');
+if (hamburger && navMenu) {
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            hamburger.classList.remove('active');
+            navMenu.classList.remove('active');
+        });
     });
-});
+}
 
 // Smooth scrolling for navigation links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -289,13 +247,15 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 const navbar = document.getElementById('navbar');
 let lastScrollY = window.scrollY;
 
-window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
-        navbar.classList.add('scrolled');
-    } else {
-        navbar.classList.remove('scrolled');
-    }
-});
+if (navbar) {
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    });
+}
 
 // Netlify form handling - form will be handled automatically by Netlify
 // No additional JavaScript needed for form submission
@@ -378,25 +338,46 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Active navigation highlighting
-window.addEventListener('scroll', () => {
-    const sections = document.querySelectorAll('section[id]');
-    const scrollPos = window.scrollY + 100;
-    
-    sections.forEach(section => {
-        const top = section.offsetTop;
-        const bottom = top + section.offsetHeight;
+document.addEventListener('DOMContentLoaded', () => {
+    const sections = Array.from(document.querySelectorAll('section[id]'));
+    const sectionNavLinks = sections.map(section => {
         const id = section.getAttribute('id');
-        const navLink = document.querySelector(`.nav-link[href="#${id}"]`);
-        
-        if (scrollPos >= top && scrollPos <= bottom) {
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('active');
-            });
-            if (navLink) {
-                navLink.classList.add('active');
+        return document.querySelector(`.nav-link[href="#${id}"]`);
+    });
+    const activeNavLinks = Array.from(document.querySelectorAll('.nav-link'));
+    let navScrollTicking = false;
+
+    if (sections.length === 0 || activeNavLinks.length === 0) return;
+
+    function updateActiveNavigation() {
+        const scrollPos = window.scrollY + 100;
+
+        sections.forEach((section, index) => {
+            const top = section.offsetTop;
+            const bottom = top + section.offsetHeight;
+            const navLink = sectionNavLinks[index];
+
+            if (scrollPos >= top && scrollPos <= bottom) {
+                activeNavLinks.forEach(link => {
+                    link.classList.remove('active');
+                });
+                if (navLink) {
+                    navLink.classList.add('active');
+                }
             }
+        });
+
+        navScrollTicking = false;
+    }
+
+    window.addEventListener('scroll', () => {
+        if (!navScrollTicking) {
+            window.requestAnimationFrame(updateActiveNavigation);
+            navScrollTicking = true;
         }
     });
+
+    updateActiveNavigation();
 });
 
 // Gallery hover effects enhancement
@@ -433,19 +414,21 @@ window.addEventListener('load', () => {
 
 // Keyboard accessibility improvements
 document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && navMenu.classList.contains('active')) {
+    if (e.key === 'Escape' && navMenu && hamburger && navMenu.classList.contains('active')) {
         hamburger.classList.remove('active');
         navMenu.classList.remove('active');
     }
 });
 
 // Focus management for mobile menu
-hamburger.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        hamburger.click();
-    }
-});
+if (hamburger) {
+    hamburger.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            hamburger.click();
+        }
+    });
+}
 
 // Preload important images (when actual images are added)
 const imageUrls = [
@@ -487,6 +470,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const extrasPriceElement = document.getElementById('extras-price');
     const totalPriceElement = document.getElementById('total-price');
     const submitOrderBtn = orderForm ? orderForm.querySelector('.submit-order-btn') : null;
+
+    if (!orderForm || !layersSelect || !sizeSelect || !basePriceElement || !fillingsPriceElement || !extrasPriceElement || !totalPriceElement || !submitOrderBtn) {
+        return;
+    }
 
     // Pricing structure based on your menu
     const basePrices = {
@@ -652,11 +639,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     body: new URLSearchParams(formData)
                 });
 
-                console.log('Response status:', response.status);
-                console.log('Response headers:', response.headers);
-                
                 const result = await response.json();
-                console.log('Response result:', result);
 
                 if (result.status === 'success') {
                     // Get order details for confirmation modal
@@ -687,7 +670,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
             } catch (error) {
-                console.error('Form submission error:', error);
                 showNotification('Sorry, there was an error submitting your order. Please try again or contact us directly.', 'error');
             }
 
@@ -709,6 +691,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const contactForm = document.getElementById('contact-form');
     
     if (contactForm) {
+        const submitBtn = contactForm.querySelector('.submit-btn');
+        if (!submitBtn) return;
+
         contactForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -728,7 +713,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
-            const submitBtn = contactForm.querySelector('.submit-btn');
             const originalText = submitBtn.textContent;
             submitBtn.textContent = 'Sending Message...';
             submitBtn.disabled = true;
@@ -763,8 +747,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Add form type identifier
                 contactData.formType = 'contact';
 
-                console.log('Submitting contact data:', contactData);
-
                 // Submit to Google Apps Script
                 const response = await fetch(CONTACT_APPS_SCRIPT_URL, {
                     method: 'POST',
@@ -774,10 +756,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     body: new URLSearchParams(contactData)
                 });
 
-                console.log('Contact response status:', response.status);
-                
                 const result = await response.json();
-                console.log('Contact response result:', result);
 
                 if (result.status === 'success') {
                     showNotification('Thank you for your message! I\'ll get back to you within 24 hours.', 'success');
@@ -793,7 +772,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 
             } catch (error) {
-                console.error('Contact form submission error:', error);
                 showNotification('Sorry, there was an error sending your message. Please try again or contact us directly.', 'error');
             }
             
