@@ -45,6 +45,7 @@
                 </div>
                 <select id="statusFilter">
                     <option value="all">All statuses</option>
+                    <option value="New">New</option>
                     <option value="New Quote">New Quote</option>
                     <option value="New Order">New Order</option>
                     <option value="Quoted">Quoted</option>
@@ -69,7 +70,10 @@
                 <div class="admin-calendar-header">
                     <button type="button" class="admin-secondary-btn" id="prevMonthBtn">Previous</button>
                     <h2 id="calendarTitle"></h2>
-                    <button type="button" class="admin-secondary-btn" id="nextMonthBtn">Next</button>
+                    <div class="admin-calendar-actions">
+                        <button type="button" class="admin-secondary-btn" id="todayBtn">Today</button>
+                        <button type="button" class="admin-secondary-btn" id="nextMonthBtn">Next</button>
+                    </div>
                 </div>
                 <div class="admin-calendar-grid" id="calendarGrid"></div>
             </div>
@@ -78,7 +82,7 @@
 
     <script>
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzJgHWxhgSIaLeP0xLaTwBRww5A2lCeH-D9zcyQJiUp3KkxzNk5St9jaonRLUWG7BHS/exec';
-        const STATUSES = ['New Quote', 'New Order', 'Quoted', 'Booked', 'Completed', 'Backed Out'];
+        const STATUSES = ['New', 'New Quote', 'New Order', 'Quoted', 'Booked', 'Completed', 'Backed Out'];
         const STORAGE_KEY = 'sliceAdminKey';
 
         let adminKey = '';
@@ -144,10 +148,14 @@
 
             try {
                 const result = await apiRequest('adminList');
-                requests = result.requests || [];
+                requests = (result.requests || []).sort((a, b) => {
+                    return (Number(b.timestampSort || 0) - Number(a.timestampSort || 0)) ||
+                        (Number(b.rowNumber || 0) - Number(a.rowNumber || 0));
+                });
                 authPanel.hidden = true;
                 dashboard.hidden = false;
                 localStorage.setItem(STORAGE_KEY, adminKey);
+                setCalendarToNextRequest();
                 render();
             } catch (error) {
                 dashboard.hidden = true;
@@ -182,6 +190,73 @@
             });
         }
 
+        function parseIsoDate(isoDate) {
+            if (!isoDate) return null;
+            const parts = isoDate.split('-').map(Number);
+            if (parts.length !== 3 || parts.some(Number.isNaN)) return null;
+            return new Date(parts[0], parts[1] - 1, parts[2]);
+        }
+
+        function formatEventDate(request) {
+            const date = parseIsoDate(request.eventDateIso);
+            if (!date) return request.eventDate || 'No date';
+
+            return date.toLocaleDateString('en-US', {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
+        }
+
+        function dateBadge(request) {
+            const date = parseIsoDate(request.eventDateIso);
+            if (!date) {
+                return `
+                    <div class="admin-date-tile no-date">
+                        <span>Date</span>
+                        <strong>?</strong>
+                        <small>${escapeHtml(request.pickupTime || 'TBD')}</small>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="admin-date-tile">
+                    <span>${date.toLocaleDateString('en-US', { month: 'short' })}</span>
+                    <strong>${date.getDate()}</strong>
+                    <small>${escapeHtml(request.pickupTime || 'TBD')}</small>
+                </div>
+            `;
+        }
+
+        function statusClass(status) {
+            return String(status || 'New').replace(/\s+/g, '-').toLowerCase();
+        }
+
+        function compactCakeLine(request) {
+            return [
+                request.size,
+                request.layers ? `${request.layers} layers` : '',
+                request.shape,
+                request.servings ? `${request.servings} servings` : ''
+            ].filter(Boolean).join(' · ') || 'Cake details pending';
+        }
+
+        function setCalendarToNextRequest() {
+            const datedRequests = requests
+                .map(request => parseIsoDate(request.eventDateIso))
+                .filter(Boolean)
+                .sort((a, b) => a - b);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const nextDate = datedRequests.find(date => date >= today) || datedRequests[datedRequests.length - 1];
+
+            if (nextDate) {
+                calendarMonth = new Date(nextDate.getFullYear(), nextDate.getMonth(), 1);
+            }
+        }
+
         function escapeHtml(value) {
             return String(value || '').replace(/[&<>"']/g, character => ({
                 '&': '&amp;',
@@ -210,45 +285,56 @@
 
         function requestCard(request) {
             const status = request.status || 'New';
-            const statusClass = status.replace(/\s+/g, '-').toLowerCase();
+            const currentStatusClass = statusClass(status);
             const statusOptions = STATUSES.map(status => (
                 `<option value="${escapeHtml(status)}" ${request.status === status ? 'selected' : ''}>${escapeHtml(status)}</option>`
             )).join('');
 
             return `
-                <article class="admin-request-card" data-row="${request.rowNumber}">
-                    <div class="admin-request-main">
-                        <div>
-                            <div class="admin-request-labels">
-                                <span class="admin-pill">${escapeHtml(request.requestType)}</span>
-                                <span class="admin-pill status-${escapeHtml(statusClass)}">${escapeHtml(status)}</span>
+                <article class="admin-request-card status-row-${escapeHtml(currentStatusClass)}" data-row="${request.rowNumber}">
+                    <div class="admin-request-row">
+                        <div class="admin-row-main">
+                            <div class="admin-row-title">
+                                <span class="admin-pill status-${escapeHtml(currentStatusClass)}">${escapeHtml(status)}</span>
+                                <strong>${escapeHtml(request.name || 'Unnamed request')}</strong>
+                                <span>${escapeHtml(request.requestType || 'Request')}</span>
                             </div>
-                            <h2>${escapeHtml(request.name || 'Unnamed request')}</h2>
-                            <p>${escapeHtml(request.occasion || 'No occasion')}${request.eventDate ? ` - ${escapeHtml(request.eventDate)}` : ''}${request.pickupTime ? ` at ${escapeHtml(request.pickupTime)}` : ''}</p>
+                            <div class="admin-row-meta">
+                                <span>${escapeHtml(formatEventDate(request))}</span>
+                                <span>${escapeHtml(request.pickupTime || 'Time TBD')}</span>
+                                <span>${escapeHtml(request.occasion || 'No occasion')}</span>
+                                <span>${escapeHtml(compactCakeLine(request))}</span>
+                            </div>
                         </div>
-                        <div class="admin-contact-links">
-                            ${request.phone ? `<a href="tel:${escapeHtml(request.phone)}">${escapeHtml(request.phone)}</a>` : ''}
+
+                        <div class="admin-row-contact">
+                            ${request.phone ? `<a href="tel:${escapeHtml(request.phone)}">${escapeHtml(request.phone)}</a>` : '<span>-</span>'}
                             ${request.email ? `<a href="mailto:${escapeHtml(request.email)}">${escapeHtml(request.email)}</a>` : ''}
                         </div>
+
+                        <form class="admin-status-form">
+                            <select name="status" aria-label="Status">${statusOptions}</select>
+                            <input type="text" name="quotedPrice" placeholder="Quoted price" value="${escapeHtml(request.quotedPrice || '')}">
+                            <input type="text" name="note" placeholder="Note" value="${escapeHtml(request.statusNote || '')}">
+                            <button type="submit" class="admin-primary-btn">Save</button>
+                        </form>
                     </div>
 
-                    <dl class="admin-request-details">
-                        <div><dt>Cake</dt><dd>${escapeHtml(request.size || '-')}, ${escapeHtml(request.layers || '-')} layers, ${escapeHtml(request.shape || '-')}</dd></div>
-                        <div><dt>Servings</dt><dd>${escapeHtml(request.servings || '-')}</dd></div>
-                        <div><dt>Delivery</dt><dd>${escapeHtml(request.delivery || '-')}</dd></div>
-                        <div><dt>Colors</dt><dd>${escapeHtml(request.colors || '-')}</dd></div>
-                        <div><dt>Flavors</dt><dd>${escapeHtml(request.flavors || '-')}</dd></div>
-                        <div><dt>Extras</dt><dd>${escapeHtml(request.extras || '-')}</dd></div>
-                        <div><dt>Message</dt><dd>${escapeHtml(request.message || '-')}</dd></div>
-                        <div><dt>Allergies</dt><dd>${escapeHtml(request.allergies || '-')}</dd></div>
-                    </dl>
-
-                    <form class="admin-status-form">
-                        <select name="status">${statusOptions}</select>
-                        <input type="text" name="quotedPrice" placeholder="Quoted price" value="${escapeHtml(request.quotedPrice || '')}">
-                        <input type="text" name="note" placeholder="Status note" value="${escapeHtml(request.statusNote || '')}">
-                        <button type="submit" class="admin-primary-btn">Save</button>
-                    </form>
+                    <details class="admin-request-details">
+                        <summary>View full request</summary>
+                        <dl>
+                            <div><dt>Submitted</dt><dd>${escapeHtml(request.timestamp || '-')}</dd></div>
+                            <div><dt>Cake</dt><dd>${escapeHtml(request.size || '-')}, ${escapeHtml(request.layers || '-')} layers, ${escapeHtml(request.shape || '-')}</dd></div>
+                            <div><dt>Servings</dt><dd>${escapeHtml(request.servings || '-')}</dd></div>
+                            <div><dt>Delivery</dt><dd>${escapeHtml(request.delivery || '-')}</dd></div>
+                            <div><dt>Colors</dt><dd>${escapeHtml(request.colors || '-')}</dd></div>
+                            <div><dt>Flavors</dt><dd>${escapeHtml(request.flavors || '-')}</dd></div>
+                            <div><dt>Extras</dt><dd>${escapeHtml(request.extras || '-')}</dd></div>
+                            <div><dt>Message</dt><dd>${escapeHtml(request.message || '-')}</dd></div>
+                            <div><dt>Allergies</dt><dd>${escapeHtml(request.allergies || '-')}</dd></div>
+                            <div><dt>Status updated</dt><dd>${escapeHtml(request.statusUpdated || '-')}</dd></div>
+                        </dl>
+                    </details>
                 </article>
             `;
         }
@@ -272,7 +358,8 @@
                 year: 'numeric'
             });
 
-            const byDate = filtered.reduce((acc, request) => {
+            const calendarRequests = filtered.filter(request => request.eventDateIso);
+            const byDate = calendarRequests.reduce((acc, request) => {
                 if (!request.eventDateIso) return acc;
                 acc[request.eventDateIso] = acc[request.eventDateIso] || [];
                 acc[request.eventDateIso].push(request);
@@ -290,14 +377,19 @@
                 const iso = date
                     ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
                     : '';
-                const dayRequests = byDate[iso] || [];
+                const dayRequests = (byDate[iso] || []).sort((a, b) => String(a.pickupTime).localeCompare(String(b.pickupTime)));
 
                 html += `
-                    <div class="admin-calendar-day ${inMonth ? '' : 'muted'}">
-                        <span>${inMonth ? dayNumber : ''}</span>
+                    <div class="admin-calendar-day ${inMonth ? '' : 'muted'} ${dayRequests.length ? 'has-items' : ''}">
+                        <div class="admin-calendar-date-line">
+                            <span>${inMonth ? dayNumber : ''}</span>
+                            ${dayRequests.length ? `<strong>${dayRequests.length}</strong>` : ''}
+                        </div>
                         ${dayRequests.map(request => `
-                            <button type="button" data-row="${request.rowNumber}">
-                                ${escapeHtml(request.name || 'Request')}<small>${escapeHtml(request.status)}</small>
+                            <button type="button" data-row="${request.rowNumber}" class="status-${escapeHtml(statusClass(request.status))}">
+                                <span>${escapeHtml(request.pickupTime || 'TBD')}</span>
+                                ${escapeHtml(request.name || 'Request')}
+                                <small>${escapeHtml(request.status)} · ${escapeHtml(request.requestType || '')}</small>
                             </button>
                         `).join('')}
                     </div>
@@ -353,6 +445,12 @@
 
         document.getElementById('nextMonthBtn').addEventListener('click', () => {
             calendarMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1, 1);
+            render();
+        });
+
+        document.getElementById('todayBtn').addEventListener('click', () => {
+            const today = new Date();
+            calendarMonth = new Date(today.getFullYear(), today.getMonth(), 1);
             render();
         });
 

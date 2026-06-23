@@ -38,18 +38,38 @@ function requireAdminKey(data) {
 }
 
 function dateToIso(value) {
-  if (!value) return '';
+  const date = parseSheetDate(value);
+  if (!date) return '';
+
+  return Utilities.formatDate(date, Session.getScriptTimeZone(), 'yyyy-MM-dd');
+}
+
+function parseSheetDate(value) {
+  if (!value) return null;
 
   if (Object.prototype.toString.call(value) === '[object Date]' && !isNaN(value.getTime())) {
-    return Utilities.formatDate(value, Session.getScriptTimeZone(), 'yyyy-MM-dd');
+    const normalized = new Date(value);
+    const year = normalized.getFullYear();
+
+    if (year > 0 && year < 100) {
+      normalized.setFullYear(2000 + year);
+    }
+
+    return normalized;
   }
 
-  const parsed = new Date(value);
-  if (!isNaN(parsed.getTime())) {
-    return Utilities.formatDate(parsed, Session.getScriptTimeZone(), 'yyyy-MM-dd');
+  const stringValue = String(value).trim();
+  const slashDate = stringValue.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})/);
+  if (slashDate) {
+    const month = parseInt(slashDate[1], 10);
+    const day = parseInt(slashDate[2], 10);
+    let year = parseInt(slashDate[3], 10);
+    if (year < 100) year += 2000;
+    return new Date(year, month - 1, day);
   }
 
-  return '';
+  const parsed = new Date(stringValue);
+  return isNaN(parsed.getTime()) ? null : parsed;
 }
 
 function displayValue(value) {
@@ -60,6 +80,39 @@ function displayValue(value) {
   }
 
   return String(value);
+}
+
+function displayDate(value) {
+  const date = parseSheetDate(value);
+  if (!date) return displayValue(value);
+
+  return Utilities.formatDate(date, Session.getScriptTimeZone(), 'M/d/yyyy');
+}
+
+function displayTime(value) {
+  if (!value) return '';
+
+  if (Object.prototype.toString.call(value) === '[object Date]' && !isNaN(value.getTime())) {
+    return Utilities.formatDate(value, Session.getScriptTimeZone(), 'h:mm a');
+  }
+
+  const stringValue = String(value).trim();
+  const timeMatch = stringValue.match(/(\d{1,2}):(\d{2})(?::\d{2})?\s*(AM|PM)?/i);
+  if (!timeMatch) return stringValue;
+
+  if (timeMatch[3]) {
+    return `${parseInt(timeMatch[1], 10)}:${timeMatch[2]} ${timeMatch[3].toUpperCase()}`;
+  }
+
+  const hour24 = parseInt(timeMatch[1], 10);
+  const hour12 = hour24 === 0 ? 12 : hour24 > 12 ? hour24 - 12 : hour24;
+  const period = hour24 < 12 ? 'AM' : 'PM';
+  return `${hour12}:${timeMatch[2]} ${period}`;
+}
+
+function sortValue(value) {
+  const date = parseSheetDate(value);
+  return date ? date.getTime() : 0;
 }
 
 function listOrderRequests(data) {
@@ -75,9 +128,12 @@ function listOrderRequests(data) {
     const row = values[i];
     if (!row[0] && !row[1] && !row[2]) continue;
 
+    const timestampSort = sortValue(row[0]);
+
     requests.push({
       rowNumber: i + 1,
       timestamp: displayValue(row[0]),
+      timestampSort: timestampSort,
       name: displayValue(row[1]),
       email: displayValue(row[2]),
       phone: displayValue(row[3]),
@@ -90,9 +146,9 @@ function listOrderRequests(data) {
       colors: displayValue(row[10]),
       message: displayValue(row[11]),
       occasion: displayValue(row[12]),
-      eventDate: displayValue(row[14]),
+      eventDate: displayDate(row[14]),
       eventDateIso: dateToIso(row[14]),
-      pickupTime: displayValue(row[15]),
+      pickupTime: displayTime(row[15]),
       delivery: displayValue(row[16]),
       allergies: displayValue(row[19]),
       requestType: displayValue(row[20]) || 'Order Request',
@@ -102,6 +158,10 @@ function listOrderRequests(data) {
       quotedPrice: displayValue(row[24])
     });
   }
+
+  requests.sort(function(a, b) {
+    return (b.timestampSort - a.timestampSort) || (b.rowNumber - a.rowNumber);
+  });
 
   return jsonResponse({status: 'success', requests: requests});
 }
