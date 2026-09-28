@@ -1,0 +1,2 @@
+# Backend source lives in the repo but should not be served publicly
+/google-apps-script.js  /404.html  404!

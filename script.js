@@ -211,10 +211,17 @@ document.addEventListener('DOMContentLoaded', function() {
 const hamburger = document.getElementById('hamburger');
 const navMenu = document.getElementById('nav-menu');
 
+function setMobileMenu(open) {
+    if (!hamburger || !navMenu) return;
+    hamburger.classList.toggle('active', open);
+    navMenu.classList.toggle('active', open);
+    hamburger.setAttribute('aria-expanded', String(open));
+    hamburger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+}
+
 if (hamburger && navMenu) {
     hamburger.addEventListener('click', () => {
-        hamburger.classList.toggle('active');
-        navMenu.classList.toggle('active');
+        setMobileMenu(!navMenu.classList.contains('active'));
     });
 }
 
@@ -222,11 +229,14 @@ if (hamburger && navMenu) {
 const navLinks = document.querySelectorAll('.nav-link');
 if (hamburger && navMenu) {
     navLinks.forEach(link => {
-        link.addEventListener('click', () => {
-            hamburger.classList.remove('active');
-            navMenu.classList.remove('active');
-        });
+        link.addEventListener('click', () => setMobileMenu(false));
     });
+}
+
+function trackLead(formType, requestIntent) {
+    if (typeof gtag === 'function') {
+        gtag('event', 'generate_lead', { form_type: formType, request_intent: requestIntent || '' });
+    }
 }
 
 // Smooth scrolling for navigation links
@@ -402,33 +412,13 @@ document.querySelectorAll('.menu-item').forEach(item => {
     });
 });
 
-// Loading animation for page
-window.addEventListener('load', () => {
-    document.body.style.opacity = '0';
-    document.body.style.transition = 'opacity 0.5s ease';
-    
-    setTimeout(() => {
-        document.body.style.opacity = '1';
-    }, 100);
-});
-
 // Keyboard accessibility improvements
 document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && navMenu && hamburger && navMenu.classList.contains('active')) {
-        hamburger.classList.remove('active');
-        navMenu.classList.remove('active');
+    if (e.key === 'Escape' && navMenu && navMenu.classList.contains('active')) {
+        setMobileMenu(false);
+        hamburger.focus();
     }
 });
-
-// Focus management for mobile menu
-if (hamburger) {
-    hamburger.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            hamburger.click();
-        }
-    });
-}
 
 // Preload important images (when actual images are added)
 const imageUrls = [
@@ -493,9 +483,9 @@ document.addEventListener('DOMContentLoaded', function() {
             basePrice = basePrices[layers][size];
         }
 
-        // Calculate fillings price
+        // Calculate flavor upgrades + fillings price
         let fillingsPrice = 0;
-        const fillingCheckboxes = document.querySelectorAll('input[name="flavors"]:checked:not([disabled])');
+        const fillingCheckboxes = document.querySelectorAll('input[name="flavors"]:checked:not([disabled]), input[name="fillings"]:checked:not([disabled])');
         fillingCheckboxes.forEach(checkbox => {
             const price = parseFloat(checkbox.getAttribute('data-price')) || 0;
             fillingsPrice += price;
@@ -510,22 +500,49 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         // Update display
-        basePriceElement.textContent = `$${basePrice}`;
-        fillingsPriceElement.textContent = `$${fillingsPrice}`;
-        extrasPriceElement.textContent = `$${extrasPrice}`;
-        
+        basePriceElement.textContent = formatMoney(basePrice);
+        fillingsPriceElement.textContent = formatMoney(fillingsPrice);
+        extrasPriceElement.textContent = formatMoney(extrasPrice);
+
         const total = basePrice + fillingsPrice + extrasPrice;
-        totalPriceElement.textContent = `$${total}`;
+        totalPriceElement.textContent = formatMoney(total);
+    }
+
+    function formatMoney(amount) {
+        return Number.isInteger(amount) ? `$${amount}` : `$${amount.toFixed(2)}`;
     }
 
     // Add event listeners for price updates
     if (layersSelect) layersSelect.addEventListener('change', updatePricing);
     if (sizeSelect) sizeSelect.addEventListener('change', updatePricing);
-    
+
     // Add listeners for all checkboxes
-    document.querySelectorAll('input[name="flavors"], input[name="extras"]').forEach(checkbox => {
+    document.querySelectorAll('input[name="flavors"], input[name="fillings"], input[name="extras"]').forEach(checkbox => {
         checkbox.addEventListener('change', updatePricing);
     });
+
+    // Prefill from links: /order?occasion=Wedding and gallery picks (/order?cake=<slug>&title=<title>)
+    const urlParams = new URLSearchParams(window.location.search);
+    const occasionParam = urlParams.get('occasion');
+    const occasionSelect = document.getElementById('occasion');
+    if (occasionParam && occasionSelect && Array.from(occasionSelect.options).some(opt => opt.value === occasionParam)) {
+        occasionSelect.value = occasionParam;
+    }
+
+    const cakeParam = urlParams.get('cake');
+    const cakeTitleParam = urlParams.get('title');
+    const inspirationPreview = document.getElementById('inspiration-preview');
+    const inspirationInput = document.getElementById('inspiration-input');
+    function applyInspiration() {
+        if (!cakeParam || !cakeTitleParam || !/^[a-z0-9-]+$/.test(cakeParam) || !inspirationPreview || !inspirationInput) return;
+        const inspirationImage = document.getElementById('inspiration-image');
+        inspirationImage.src = `/images/cakes/${cakeParam}-640.webp`;
+        inspirationImage.alt = cakeTitleParam;
+        document.getElementById('inspiration-title').textContent = cakeTitleParam;
+        inspirationInput.value = `${cakeTitleParam} - ${window.location.origin}/images/cakes/${cakeParam}-1400.webp`;
+        inspirationPreview.hidden = false;
+    }
+    applyInspiration();
 
     function getRequestIntent() {
         return orderForm?.querySelector('input[name="requestIntent"]:checked')?.value || 'quote';
@@ -574,10 +591,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
 
-            // Check that at least one flavor is selected
-            const flavorChecked = orderForm.querySelector('input[name="flavors"]:checked');
-            if (!flavorChecked) {
+            // Check that at least one flavor and one filling are selected
+            if (!orderForm.querySelector('#flavor-group input[name="flavors"]:checked')) {
                 showNotification('Please select at least one flavor.', 'error');
+                return;
+            }
+            if (!orderForm.querySelector('#filling-group input[name="fillings"]:checked')) {
+                showNotification('Please select at least one filling.', 'error');
                 return;
             }
 
@@ -614,14 +634,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Collect all form data
                 const formData = new FormData(orderForm);
 
-                // Collect selected flavors and extras
-                const flavors = Array.from(orderForm.querySelectorAll('input[name="flavors"]:checked'))
+                // Collect selected flavors + fillings (one sheet column) and extras
+                const flavors = Array.from(orderForm.querySelectorAll('input[name="flavors"]:checked, input[name="fillings"]:checked'))
                     .map(cb => cb.value).join(', ');
                 const extras = Array.from(orderForm.querySelectorAll('input[name="extras"]:checked'))
                     .map(cb => cb.value).join(', ');
 
                 // Delete individual checkbox entries to avoid duplicates
                 formData.delete('flavors');
+                formData.delete('fillings');
                 formData.delete('extras');
 
                 // Add comma-separated flavors and extras to form data
@@ -661,10 +682,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         total: totalPrice
                     });
 
+                    trackLead('order', requestIntent);
+
                     // Reset form
                     orderForm.reset();
                     updatePricing(); // Reset pricing display
                     updateRequestIntentCopy();
+                    applyInspiration();
                 } else {
                     throw new Error(result.message || 'Submission failed');
                 }
@@ -738,7 +762,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     inquiryType: formData.get('inquiry-type'),
                     message: formData.get('message'),
                     cakeImage: formData.get('cakeImage') || '',
-                    cakeTitle: formData.get('cakeTitle') || ''
+                    cakeTitle: formData.get('cakeTitle') || '',
+                    website: formData.get('website') || ''
                 };
 
                 // Google Apps Script web app URL for contact form
@@ -759,6 +784,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const result = await response.json();
 
                 if (result.status === 'success') {
+                    trackLead('contact');
                     showNotification('Thank you for your message! I\'ll get back to you within 24 hours.', 'success');
                     contactForm.reset();
                     
@@ -868,6 +894,22 @@ function showOrderConfirmation(orderDetails) {
         message.textContent = isOrder
             ? 'Thank you for your order request. I will review it and follow up about your deposit.'
             : 'Thank you for your quote request. I will review the details and follow up with pricing.';
+    }
+
+    const nextSteps = document.getElementById('confirmation-next-steps');
+    if (nextSteps) {
+        const steps = isOrder
+            ? ['I\'ll review your order and contact you within 24 hours',
+               'A 50% non-refundable deposit will be required to secure your date',
+               'Check your phone for a text or call from me!']
+            : ['I\'ll review your details and send pricing within 24 hours',
+               'A quote does not reserve your date yet',
+               'Check your phone for a text or call from me!'];
+        nextSteps.replaceChildren(...steps.map(text => {
+            const li = document.createElement('li');
+            li.textContent = text;
+            return li;
+        }));
     }
 
     // Populate order details

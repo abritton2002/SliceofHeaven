@@ -329,6 +329,29 @@ function doGet(e) {
   }
 }
 
+// Stop spreadsheet formula injection: values starting with = + - @ are stored as plain text.
+function sheetSafe(value) {
+  const text = value === undefined || value === null ? '' : String(value);
+  return /^[=+\-@\t\r]/.test(text) ? "'" + text : text;
+}
+
+// Basic abuse limits for the public forms. Returns a reason string when the request should be dropped.
+function publicSubmissionBlocked(data) {
+  // Honeypot: real visitors never see or fill the "website" field.
+  if (data.website) return 'honeypot';
+
+  const cache = CacheService.getScriptCache();
+  const bump = function(key, limit, seconds) {
+    const count = Number(cache.get(key) || 0) + 1;
+    cache.put(key, String(count), seconds);
+    return count > limit;
+  };
+  const email = String(data.email || '').trim().toLowerCase();
+  if (email && bump('email:' + email, 5, 3600)) return 'email-rate';
+  if (bump('all-submissions', 40, 600)) return 'global-rate';
+  return '';
+}
+
 function doPost(e) {
     try {
       // Parse the form data
@@ -337,6 +360,13 @@ function doPost(e) {
 
       if (data.action === 'updateStatus') {
         return updateOrderStatus(data);
+      }
+
+      const blockedReason = publicSubmissionBlocked(data);
+      if (blockedReason) {
+        console.warn('Dropped submission: ' + blockedReason);
+        // Look like success so bots don't learn to adapt.
+        return jsonResponse({status: 'success', message: 'Submitted successfully!'});
       }
 
       if (formType === 'order') {
@@ -375,14 +405,16 @@ function handleOrderForm(data, e) {
     data.colors || '', // Colors
     data.message || '', // What would you like your cake to say?
     data.occasion || '', // Occasion
-    '', // Inspiration Photos (blank column for sheet alignment)
+    data.inspiration || '', // Inspiration Photos (gallery cake picked on the site, if any)
     formatDate(data.eventDate) || '', // Date Needed
     formatTime(data.pickupTime) || '', // Preferred Pick-Up Time
     data.delivery || '', // Will you need it delivered?
     data.pricingAck || '', // Pricing acknowledgment
     data.termsAck || '', // Terms acknowledgment
     data.allergies || '' // Allergies / Dietary Restrictions
-  ];
+  ].map(function(value, index) {
+    return index === 0 ? value : sheetSafe(value);
+  });
 
   // Add the row to the sheet
   targetSheet.appendRow(row);
@@ -412,6 +444,7 @@ function handleOrderForm(data, e) {
     eventDate: htmlEscape(data.eventDate),
     pickupTime: htmlEscape(data.pickupTime),
     delivery: htmlEscape(data.delivery),
+    inspiration: htmlEscape(data.inspiration),
     requestType: htmlEscape(requestType)
   };
 
@@ -445,6 +478,7 @@ function handleOrderForm(data, e) {
     <p><strong>Event Date:</strong> ${emailFields.eventDate}</p>
     <p><strong>Pickup Time:</strong> ${emailFields.pickupTime}</p>
     <p><strong>Delivery:</strong> ${emailFields.delivery}</p>
+    ${data.inspiration ? `<p><strong>Inspiration from gallery:</strong> ${emailFields.inspiration}</p>` : ''}
 
     <hr>
     <h3>📱 TEXT CUSTOMER: <a href="tel:${emailFields.phone}">${emailFields.phone}</a></h3>
@@ -457,8 +491,8 @@ function handleOrderForm(data, e) {
     htmlBody: emailBody
   });
 
-  // Send confirmation email to customer
-  if (data.email) {
+  // Send confirmation email to customer (keep quota in reserve for the owner notifications)
+  if (data.email && MailApp.getRemainingDailyQuota() > 10) {
     const customerEmailSubject = `${data.requestIntent === 'order' ? 'Order Request' : 'Quote Request'} Received - Slice of Heaven Vintage Cakes`;
     const customerEmailBody = `
       <div style="font-family: 'Georgia', serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -643,7 +677,9 @@ function handleContactForm(data) {
     data.message || '', // Message
     data.cakeImage || '', // Cake Image (if from gallery)
     data.cakeTitle || '' // Cake Title (if from gallery)
-  ];
+  ].map(function(value, index) {
+    return index === 0 ? value : sheetSafe(value);
+  });
 
   // Add the row to the sheet
   targetSheet.appendRow(row);

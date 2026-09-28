@@ -1,0 +1,24 @@
+# Netlify response headers
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN
+
+# Optimized images have unique names; cache them for a year
+/images/cakes/*
+  Cache-Control: public, max-age=31536000, immutable
+/images/brand/*
+  Cache-Control: public, max-age=2592000
+/images/social/*
+  Cache-Control: public, max-age=2592000
+
+# CSS/JS keep their names between deploys, so cache briefly
+/styles.css
+  Cache-Control: public, max-age=3600, must-revalidate
+/script.js
+  Cache-Control: public, max-age=3600, must-revalidate
+
+/admin.html
+  X-Robots-Tag: noindex, nofollow
+/admin
+  X-Robots-Tag: noindex, nofollow

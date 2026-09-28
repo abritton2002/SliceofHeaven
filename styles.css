@@ -171,7 +171,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Hero Section - Clean */
 .hero {
-    background: url('images/maybehero-1440.jpg');
+    background: url('images/cakes/hero-background-1440.webp');
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
@@ -3787,7 +3787,7 @@ html {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: url('images/daltonwedding.JPG') center center / cover no-repeat;
+    background: url('images/cakes/tiered-vintage-wedding-cake-1600.webp') center center / cover no-repeat;
     margin-top: 100px;
 }
 
@@ -4013,5 +4013,632 @@ html {
     .events-gallery-grid {
         grid-template-columns: 1fr;
         gap: 0.75rem;
+    }
+}
+
+/* =============================================
+   SEO CONTENT PAGES, GALLERY CARDS & NAV UPDATES
+   ============================================= */
+
+/* Hamburger is a real <button> now */
+.hamburger {
+    background: none;
+    border: 0;
+    padding: 8px;
+    margin: 0;
+}
+
+.nav-link[aria-current="page"]:not(.order-btn) {
+    color: var(--dark-blue);
+    text-decoration: underline;
+    text-underline-offset: 6px;
+}
+
+/* Tighter desktop nav so seven links fit */
+@media (max-width: 1320px) and (min-width: 769px) {
+    .nav-container { padding: 0 24px; }
+    .nav-menu { gap: 1.4rem; margin-left: 1.5rem; }
+    .nav-link { font-size: 0.85rem; letter-spacing: 0.05em; }
+    .order-btn { padding: 0.65rem 1.1rem; }
+}
+
+@media (max-width: 1120px) and (min-width: 769px) {
+    .nav-socials { display: none; }
+    .nav-menu { gap: 1.1rem; margin-left: 1rem; }
+    .logo-img { height: 64px; }
+}
+
+/* Footer headings are paragraphs now (keeps the heading outline clean) */
+.footer-brand {
+    font-family: "Playwrite AU NSW", cursive;
+    font-size: 1.2rem !important;
+    opacity: 1 !important;
+    margin-bottom: var(--space-sm);
+}
+
+.footer-heading {
+    font-size: 1rem !important;
+    color: var(--baby-blue);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 700;
+    opacity: 1 !important;
+}
+
+/* Home */
+.welcome-title {
+    font-size: 2.3rem;
+    line-height: 1.35;
+    color: var(--dark-blue);
+}
+
+/* Page header */
+.page-header {
+    background: var(--baby-blue);
+    padding: calc(100px + 3.5rem) 0 3rem;
+    text-align: center;
+}
+
+.page-header h1 {
+    color: var(--dark-blue);
+    font-size: 2.5rem;
+    line-height: 1.35;
+    margin-bottom: var(--space-sm);
+}
+
+.page-header .lead {
+    max-width: 720px;
+    margin: 0 auto;
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+}
+
+.breadcrumbs {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-sm);
+}
+
+.breadcrumbs a {
+    color: var(--dark-blue);
+}
+
+/* Content sections */
+.content-section {
+    padding: var(--space-lg) 0;
+    background: var(--cream);
+}
+
+.content-section.alt {
+    background: var(--white);
+}
+
+.section-heading {
+    text-align: center;
+    color: var(--dark-blue);
+    font-size: 2rem;
+    margin-bottom: var(--space-xs);
+}
+
+.section-lead {
+    text-align: center;
+    color: var(--text-secondary);
+    max-width: 640px;
+    margin: 0 auto var(--space-md);
+    font-size: 1.15rem;
+}
+
+.prose {
+    max-width: 780px;
+    margin: 0 auto;
+}
+
+.prose h2 {
+    color: var(--dark-blue);
+    font-size: 1.8rem;
+    line-height: 1.4;
+    margin: var(--space-md) 0 var(--space-sm);
+}
+
+.prose h2:first-child {
+    margin-top: 0;
+}
+
+.prose h3 {
+    color: var(--text-primary);
+    font-size: 1.3rem;
+    margin: var(--space-md) 0 var(--space-xs);
+}
+
+.prose p {
+    margin-bottom: var(--space-sm);
+    font-size: 1.15rem;
+}
+
+.prose a:not(.cta-button),
+.text-link {
+    color: var(--dark-blue);
+    font-weight: 600;
+}
+
+.center {
+    text-align: center;
+    margin-top: var(--space-md);
+}
+
+.small {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+}
+
+.check-list {
+    list-style: none;
+    margin: 0 0 var(--space-sm);
+    padding: 0;
+}
+
+.check-list li {
+    position: relative;
+    padding-left: 1.6rem;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.check-list li::before {
+    content: "\2661";
+    position: absolute;
+    left: 0;
+    color: var(--dark-blue);
+}
+
+.steps {
+    margin: 0 0 var(--space-md) 1.4rem;
+    font-size: 1.1rem;
+}
+
+.steps li {
+    margin-bottom: 0.75rem;
+    padding-left: 0.25rem;
+}
+
+.pill-list {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0;
+    margin: 0 0 var(--space-sm);
+}
+
+.pill-list li {
+    background: var(--baby-blue);
+    color: var(--dark-blue);
+    padding: 0.35rem 1rem;
+    font-weight: 600;
+}
+
+/* Price tables */
+.table-wrap {
+    overflow-x: auto;
+    margin: var(--space-sm) 0 var(--space-md);
+}
+
+.price-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--white);
+    font-size: 1.1rem;
+}
+
+.price-table caption {
+    text-align: left;
+    color: var(--text-secondary);
+    font-style: italic;
+    padding-bottom: 0.5rem;
+}
+
+.price-table th,
+.price-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-soft);
+    text-align: left;
+}
+
+.price-table thead th {
+    background: var(--dark-blue);
+    color: var(--white);
+    font-weight: 600;
+}
+
+.price-table tbody th {
+    font-weight: 600;
+}
+
+/* FAQ */
+.faq-list {
+    margin-top: var(--space-sm);
+}
+
+.faq-list details {
+    background: var(--white);
+    border: 1px solid var(--border-soft);
+    margin-bottom: 0.75rem;
+}
+
+.content-section.alt .faq-list details {
+    background: var(--cream);
+}
+
+.faq-list summary {
+    cursor: pointer;
+    padding: 1rem 1.25rem;
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: var(--dark-blue);
+}
+
+.faq-list details p {
+    padding: 0 1.25rem 1rem;
+    margin: 0;
+}
+
+/* Feature cards (home + 404) */
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 1.5rem;
+}
+
+.feature-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--cream);
+    color: inherit;
+    text-decoration: none;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 26px rgba(0, 0, 0, 0.1);
+}
+
+.feature-card img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+}
+
+.feature-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 1.25rem;
+}
+
+.feature-card-title {
+    font-family: "Playwrite AU NSW", cursive;
+    color: var(--dark-blue);
+    font-size: 1.15rem;
+    line-height: 1.5;
+}
+
+.feature-card-text {
+    color: var(--text-secondary);
+}
+
+.feature-card-more {
+    color: var(--dark-blue);
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+/* Mini galleries on landing pages */
+.mini-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.25rem;
+    max-width: 1200px;
+    margin: var(--space-md) auto 0;
+    padding: 0 20px;
+}
+
+.container .mini-gallery {
+    padding: 0;
+}
+
+.mini-card {
+    margin: 0;
+}
+
+.mini-card img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    display: block;
+}
+
+.mini-card figcaption {
+    text-align: center;
+    font-size: 1rem;
+    color: var(--text-secondary);
+    padding-top: 0.5rem;
+}
+
+/* Split layout (weddings) */
+.split {
+    display: grid;
+    grid-template-columns: minmax(0, 480px) 1fr;
+    gap: var(--space-lg);
+    align-items: center;
+}
+
+.split-media img {
+    width: 100%;
+    height: auto;
+    display: block;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.split .cta-buttons {
+    justify-content: flex-start;
+}
+
+/* CTA band */
+.cta-band {
+    background: var(--dark-blue);
+    color: var(--white);
+    text-align: center;
+    padding: var(--space-lg) 0;
+}
+
+.cta-band h2 {
+    font-size: 2rem;
+    margin-bottom: var(--space-xs);
+}
+
+.cta-band p {
+    font-size: 1.2rem;
+    opacity: 0.92;
+    margin-bottom: var(--space-md);
+}
+
+.cta-band .cta-buttons {
+    justify-content: center;
+}
+
+.cta-band .cta-button {
+    background: var(--white);
+    color: var(--dark-blue);
+}
+
+.cta-band .cta-button:hover {
+    background: var(--baby-blue);
+}
+
+.cta-band .cta-button.secondary {
+    background: transparent;
+    color: var(--white);
+    border: 1px solid var(--white);
+}
+
+.cta-band .cta-button.secondary:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+/* Gallery sections & cards */
+.jump-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.6rem;
+    margin: 0 auto var(--space-md);
+}
+
+.jump-links a {
+    border: 1px solid var(--dark-blue);
+    color: var(--dark-blue);
+    padding: 0.35rem 0.9rem;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.jump-links a:hover {
+    background: var(--dark-blue);
+    color: var(--white);
+}
+
+.gallery-section {
+    padding: var(--space-md) 0;
+    scroll-margin-top: 110px;
+}
+
+.gallery-section h2 {
+    text-align: center;
+    color: var(--dark-blue);
+    font-size: 1.8rem;
+    line-height: 1.4;
+}
+
+.gallery-section-intro {
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+.gallery-section .gallery-grid {
+    margin-top: var(--space-md);
+}
+
+.gallery-card {
+    margin: 0;
+    scroll-margin-top: 110px;
+}
+
+.gallery-open {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    padding: 0;
+    border: 0;
+    background: var(--baby-blue);
+    cursor: pointer;
+}
+
+.gallery-open:hover .gallery-img {
+    transform: scale(1.03);
+}
+
+.gallery-open:hover .overlay,
+.gallery-open:focus-visible .overlay {
+    opacity: 1;
+}
+
+.gallery-open:focus-visible {
+    outline: 3px solid var(--dark-blue);
+    outline-offset: 3px;
+}
+
+.gallery-open .overlay span {
+    color: var(--white);
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.gallery-card figcaption {
+    padding: 0.75rem 0.25rem 0;
+    text-align: center;
+}
+
+.gallery-card-title {
+    display: block;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-size: 1.05rem;
+}
+
+.gallery-card-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+/* Gallery modal */
+.cake-modal[hidden] {
+    display: none !important;
+}
+
+.close-modal {
+    background: none;
+    border: 0;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.cake-details h2 {
+    font-size: 1.6rem;
+    color: var(--dark-blue);
+    margin-bottom: var(--space-xs);
+    text-align: center;
+    line-height: 1.4;
+}
+
+.cake-actions {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+/* Order form inspiration + spam honeypot */
+.inspiration-preview {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    background: var(--baby-blue);
+    padding: 1rem;
+    margin-bottom: var(--space-md);
+}
+
+.inspiration-preview[hidden] {
+    display: none;
+}
+
+.inspiration-preview img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.hp-field {
+    position: absolute !important;
+    left: -10000px !important;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+@media (max-width: 1024px) {
+    .split {
+        grid-template-columns: 1fr;
+    }
+
+    .split-media {
+        max-width: 480px;
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        padding: calc(70px + 2.5rem) 0 2rem;
+    }
+
+    .page-header h1 {
+        font-size: 1.9rem;
+    }
+
+    .page-header .lead {
+        font-size: 1.1rem;
+    }
+
+    .welcome-title {
+        font-size: 1.8rem;
+        text-align: center;
+    }
+
+    .section-heading,
+    .cta-band h2 {
+        font-size: 1.6rem;
+    }
+
+    .prose h2 {
+        font-size: 1.5rem;
+    }
+
+    .mini-gallery {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+
+    .split .cta-buttons {
+        justify-content: center;
+    }
+
+    .price-table th,
+    .price-table td {
+        padding: 0.6rem;
     }
 }

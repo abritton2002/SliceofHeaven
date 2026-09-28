@@ -1,33 +1,131 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
     <url>
         <loc>https://sliceofheavenvintagecakes.com/</loc>
-        <lastmod>2026-03-08</lastmod>
-        <changefreq>weekly</changefreq>
+        <lastmod>2026-09-28</lastmod>
         <priority>1.0</priority>
     </url>
     <url>
-        <loc>https://sliceofheavenvintagecakes.com/weddings.html</loc>
-        <lastmod>2026-03-08</lastmod>
-        <changefreq>monthly</changefreq>
+        <loc>https://sliceofheavenvintagecakes.com/vintage-heart-cakes</loc>
+        <lastmod>2026-09-28</lastmod>
         <priority>0.9</priority>
     </url>
     <url>
-        <loc>https://sliceofheavenvintagecakes.com/gallery.html</loc>
-        <lastmod>2026-03-08</lastmod>
-        <changefreq>weekly</changefreq>
+        <loc>https://sliceofheavenvintagecakes.com/birthday-cakes</loc>
+        <lastmod>2026-09-28</lastmod>
+        <priority>0.9</priority>
+    </url>
+    <url>
+        <loc>https://sliceofheavenvintagecakes.com/weddings</loc>
+        <lastmod>2026-09-28</lastmod>
+        <priority>0.9</priority>
+    </url>
+    <url>
+        <loc>https://sliceofheavenvintagecakes.com/gender-reveal-cakes</loc>
+        <lastmod>2026-09-28</lastmod>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://sliceofheavenvintagecakes.com/contact.html</loc>
-        <lastmod>2026-03-08</lastmod>
-        <changefreq>monthly</changefreq>
+        <loc>https://sliceofheavenvintagecakes.com/gallery</loc>
+        <lastmod>2026-09-28</lastmod>
+        <priority>0.8</priority>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/pink-buttercream-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/pink-red-cherry-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/sabrina-themed-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/butterflies-themed-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/pink-25-themed-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/pink-hijab-themed-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/pink-21-chocolate-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/pink-cherry-21-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/pink-floral-27-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/pink-red-birthday-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/pink-princess-round-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/pink-24-round-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/pink-dirty-thirty-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/pink-white-birthday-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/pink-butterfly-25-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/pink-orange-disco-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/pink-25-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/pink-dogs-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/red-themed-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/red-and-white-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/fsu-themed-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/red-leopard-forty-fine-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/red-leopard-since-04-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/red-black-ruler-of-my-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/burgundy-28-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/red-birthday-baby-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/purple-themed-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/purple-twenty-fine-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/green-animal-themed-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/powder-blue-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/blue-lace-and-cherry-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/dusty-blue-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/sky-blue-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/blue-seashell-thirty-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/blue-rose-34-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/navy-gold-birthday-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/teal-orange-disco-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/blue-engaged-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/lemon-drop-ribbon-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/sweetheart-swirl-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/rose-garden-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/minimalist-black-and-white-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/book-lovers-dream-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/elegant-ivory-ribbon-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/classic-black-and-ivory-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/elegant-tall-ivory-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/pastel-swirl-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/seaside-shell-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/classic-cream-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/black-ribbon-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/timeless-ivory-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/white-gold-twenty-four-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/white-twenty-six-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/white-cherry-birthday-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/white-gold-23-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/white-graduation-round-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/white-black-twenty-one-round-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/cream-rose-24-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/ivory-two-tier-wedding-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/white-bride-to-be-round-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/white-just-married-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/white-just-married-tall-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/white-baby-shower-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/floral-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/twin-floral-cakes-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/colorful-retro-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/tropical-sunset-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/groovy-pink-and-orange-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/gilded-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/mocha-pink-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/double-chocolate-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/coffee-lovers-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/a-tini-bit-older-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/tiramisu-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/leopard-print-23-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/one-year-anniversary-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/black-white-21-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/black-scorpio-heart-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/hunny-bee-themed-cake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/whimsical-strawberry-shortcake-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/beautiful-collection-of-custom-cakes-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/another-beautiful-collection-1400.webp</image:loc></image:image>
+        <image:image><image:loc>https://sliceofheavenvintagecakes.com/images/cakes/another-beautiful-collection-2-1400.webp</image:loc></image:image>
+    </url>
+    <url>
+        <loc>https://sliceofheavenvintagecakes.com/pricing</loc>
+        <lastmod>2026-09-28</lastmod>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://sliceofheavenvintagecakes.com/order</loc>
+        <lastmod>2026-09-28</lastmod>
         <priority>0.7</priority>
     </url>
     <url>
-        <loc>https://sliceofheavenvintagecakes.com/order.html</loc>
-        <lastmod>2026-03-08</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.9</priority>
+        <loc>https://sliceofheavenvintagecakes.com/contact</loc>
+        <lastmod>2026-09-28</lastmod>
+        <priority>0.5</priority>
     </url>
 </urlset>
