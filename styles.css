@@ -5542,3 +5542,46 @@ html {
         gap: 0.5rem;
     }
 }
+
+/* No font-dependent symbols: draw markers with CSS so no device shows a missing-glyph box */
+.order-disclaimer li:before,
+.confirmation-next-steps li:before {
+    content: "";
+    top: 0.72em;
+    left: 0.35rem;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--dark-blue);
+}
+
+.faq-list summary {
+    list-style: none;
+    position: relative;
+    padding-right: 2.75rem;
+}
+
+.faq-list summary::-webkit-details-marker {
+    display: none;
+}
+
+.faq-list summary::marker {
+    content: "";
+}
+
+.faq-list summary::after {
+    content: "";
+    position: absolute;
+    right: 1.25rem;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid var(--dark-blue);
+    border-bottom: 2px solid var(--dark-blue);
+    transform: translateY(-70%) rotate(45deg);
+    transition: transform 0.2s ease;
+}
+
+.faq-list details[open] summary::after {
+    transform: translateY(-30%) rotate(-135deg);
+}
