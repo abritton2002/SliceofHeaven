@@ -545,7 +545,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         eventDateInput.min = toDateInputValue(today);
-        eventDateInput.max = toDateInputValue(getLatestBookableDate());
 
         // Earliest day a request for this pickup date can be sent (pickup minus 1½ months)
         function earliestRequestDate(pickup) {
@@ -655,11 +654,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 if (eventDate < today) {
                     showNotification('Event date must be in the future.', 'error');
-                    return;
-                }
-
-                if (eventDate > getLatestBookableDate()) {
-                    showNotification('I only take orders up to 1½ months before the pickup date. Please send your request once your date is within that window.', 'error');
                     return;
                 }
 
@@ -835,7 +829,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 if (result.status === 'success') {
                     trackLead('contact');
-                    showNotification('Thank you for your message! I\'ll get back to you within 24 hours.', 'success');
+                    showNotification('Thank you for your message! I\'ll get back to you within 24 to 48 hours.', 'success');
                     contactForm.reset();
                     
                     // Reset cake image display if it was shown
@@ -949,12 +943,15 @@ function showOrderConfirmation(orderDetails) {
     const nextSteps = document.getElementById('confirmation-next-steps');
     if (nextSteps) {
         const steps = isOrder
-            ? ['I\'ll review your order and contact you within 24 hours',
-               'A 50% non-refundable deposit will be required to secure your date',
+            ? ['I\'ll review your order and reply within 24 to 48 hours',
+               'Once you receive your quote, a 50% non-refundable deposit is due to secure your date',
                'Check your phone for a text or call from me!']
-            : ['I\'ll review your details and send pricing within 24 hours',
-               'A quote does not reserve your date yet',
+            : ['I\'ll review your details and send your quote within 24 to 48 hours',
+               'Once you receive your quote, a 50% non-refundable deposit is due to secure your date',
                'Check your phone for a text or call from me!'];
+        if (orderDetails.date && new Date(orderDetails.date + 'T00:00:00') > getLatestBookableDate()) {
+            steps.unshift('Heads up: your date is more than 1½ months away, so it can\'t be confirmed until it\'s within that window');
+        }
         nextSteps.replaceChildren(...steps.map(text => {
             const li = document.createElement('li');
             li.textContent = text;

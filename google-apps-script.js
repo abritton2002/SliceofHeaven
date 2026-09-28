@@ -505,7 +505,7 @@ function handleOrderForm(data, e) {
           <h2 style="color: #333; margin-bottom: 20px;">Thank You, ${emailFields.name}!</h2>
           <p style="color: #555; font-size: 16px; line-height: 1.6;">
             I've received your ${data.requestIntent === 'order' ? 'cake order request' : 'cake quote request'} and I'm excited to create something special for you.
-            I'll review your details and get back to you within <strong>24 hours</strong>.
+            I'll review your details and get back to you within <strong>24 to 48 hours</strong>.
           </p>
         </div>
 
@@ -546,8 +546,8 @@ function handleOrderForm(data, e) {
         <div style="padding: 20px 0; border-top: 1px solid #eee;">
           <h3 style="color: #333; margin-bottom: 15px;">What's Next?</h3>
           <ul style="color: #555; line-height: 1.8; padding-left: 20px;">
-            <li>I'll review your details and contact you within 24 hours</li>
-            <li>If you are ready to book, a 50% non-refundable deposit will be required to secure your date</li>
+            <li>I'll review your details and contact you within 24 to 48 hours</li>
+            <li>Once you receive your quote, a 50% non-refundable deposit is due to secure your date</li>
             <li>Final payment is due 24 hours before pickup</li>
           </ul>
         </div>
