@@ -35,10 +35,12 @@ body {
     color: var(--text-primary);
     background-color: var(--cream);
     overflow-x: hidden;
+    overflow-x: clip; /* clip, not hidden: hidden turns body into a scroll container and breaks the sticky header */
 }
 
 html {
     overflow-x: hidden;
+    overflow-x: clip;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -5162,5 +5164,367 @@ html {
 @media (max-width: 768px) {
     .modal-nav {
         top: 34%;
+    }
+}
+
+/* =============================================
+   POLISH: order form, gallery chips, footer, spacing
+   ============================================= */
+
+/* Order + contact: one consistent heading style inside forms */
+.order-form h3,
+.order-form .section-title,
+.cake-configuration h3,
+.acknowledgments-section h3,
+.price-summary h3,
+.contact-form .form-intro h3,
+.contact-form .form-intro h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: 1.45rem;
+    line-height: 1.3;
+    letter-spacing: 0.01em;
+    color: var(--dark-blue);
+    text-align: left;
+    margin-bottom: 1rem;
+}
+
+.submit-order-btn {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    border-radius: 0;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.form-row > .form-group {
+    min-width: 0;
+}
+
+.checkbox-group {
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 0.6rem;
+}
+
+.checkbox-item {
+    padding: 0.6rem 0.75rem;
+    border-radius: 0;
+    border: 1px solid var(--border-soft);
+}
+
+.checkbox-item:hover {
+    transform: none;
+    border-color: var(--dark-blue);
+}
+
+.checkbox-item input[type="checkbox"] {
+    flex-shrink: 0;
+    accent-color: var(--dark-blue);
+}
+
+/* Progress indicator always one row */
+.order-progress {
+    flex-wrap: nowrap;
+}
+
+.progress-connector {
+    flex: 1 1 24px;
+    max-width: 48px;
+    min-width: 8px;
+}
+
+/* Gallery */
+.gallery h1 {
+    text-align: center;
+}
+
+.filter-bar {
+    gap: 0.4rem;
+    max-width: none;
+}
+
+.filter-chip {
+    font-size: 0.95rem;
+    padding: 0.4rem 0.8rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Contact heading block */
+.contact h1 {
+    text-align: center;
+    margin-bottom: var(--space-sm);
+}
+
+.contact .form-intro {
+    text-align: center;
+}
+
+.contact-form .form-intro h2 {
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    /* Tighter top spacing now that the header is in the page flow */
+    body section#order.order,
+    .contact {
+        padding: 2.25rem 0 3rem !important;
+    }
+
+    .order h1,
+    .contact h1 {
+        font-size: 2rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .order .container,
+    .contact .container {
+        padding: 0 14px;
+    }
+
+    .order-form {
+        padding: 1.25rem;
+    }
+
+    .quote-intent-section,
+    .cake-configuration,
+    .acknowledgments-section,
+    .price-summary {
+        padding: 1rem;
+        margin: 1.25rem 0;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+        margin-bottom: 0;
+    }
+
+    .form-group {
+        margin-bottom: 1.1rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        padding: 0.8rem;
+        font-size: 1.05rem;
+    }
+
+    .order-progress {
+        padding: 0.75rem 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .progress-step {
+        padding: 0.25rem 0.2rem;
+    }
+
+    .progress-label {
+        font-size: 0.68rem;
+    }
+
+    #flavor-group {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .checkbox-group:not(#flavor-group) {
+        grid-template-columns: 1fr;
+    }
+
+    .checkbox-item label {
+        font-size: 0.95rem;
+        line-height: 1.35;
+    }
+
+    .acknowledgment-item {
+        padding: 0.9rem;
+        gap: 0.75rem;
+    }
+
+    .delivery-notice {
+        padding: 0.9rem 1rem;
+    }
+
+    .contact-form {
+        padding: 1.25rem;
+    }
+
+    /* Gallery: one swipeable row of filters, two cakes per row */
+    .filter-bar {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        overflow-x: auto;
+        margin: var(--space-sm) -14px 0.25rem;
+        padding: 0 14px 6px;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .filter-bar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .gallery .container {
+        padding: 0 14px;
+    }
+
+    .gallery h1 {
+        font-size: 2.1rem;
+    }
+
+    .gallery-intro {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    #galleryGrid.gallery-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem 0.6rem;
+    }
+
+    .gallery-card figcaption {
+        font-size: 0.9rem;
+        line-height: 1.3;
+        padding-top: 0.4rem;
+    }
+
+    /* Home */
+    .tagline {
+        font-size: 1.5rem;
+    }
+
+    /* Footer: brand full width, link lists side by side */
+    .footer-content {
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem 1rem;
+    }
+
+    .footer-content .footer-section:first-child {
+        grid-column: 1 / -1;
+    }
+
+    .footer-section ul li {
+        margin-bottom: 0.35rem;
+    }
+
+    .footer-section ul li a {
+        font-size: 0.95rem;
+    }
+}
+
+#flavor-group .checkbox-item:last-child {
+    grid-column: 1 / -1;
+}
+
+.price-breakdown {
+    gap: 0;
+}
+
+.price-line {
+    padding: 0.35rem 0;
+}
+
+.price-line.total {
+    border-top: 1px solid rgba(32, 102, 146, 0.25);
+    padding-top: 0.75rem;
+    margin-top: 0.4rem;
+}
+
+/* Order form headings are h2 now (correct outline); same look as before */
+.price-summary h2,
+.acknowledgments-section h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: 1.45rem;
+    line-height: 1.3;
+    letter-spacing: 0.01em;
+    color: var(--dark-blue);
+    text-align: left;
+    margin-bottom: 1rem;
+}
+
+/* Readable contrast for small text */
+.filter-count {
+    opacity: 1;
+    color: #56616a;
+}
+
+.filter-chip[aria-pressed="true"] .filter-count {
+    color: #dbe9f3;
+}
+
+.progress-step {
+    opacity: 1;
+}
+
+.progress-step:not(.active):not(.completed) .progress-icon {
+    opacity: 0.6;
+}
+
+.progress-label {
+    color: #4f5a62;
+}
+
+.form-note,
+.order-form .form-note {
+    color: #56616a;
+}
+
+/* Split images: reserve their space before they load (no layout jump) */
+.split-media {
+    width: 100%;
+}
+
+/* Lighter hero image on phones */
+@media (max-width: 768px) {
+    .hero {
+        background-image: url('images/cakes/hero-background-800.webp');
+    }
+}
+
+/* Instagram photo strip (replaces the embedded feed) */
+.insta-strip {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-top: var(--space-md);
+}
+
+.insta-strip a {
+    display: block;
+}
+
+.insta-strip img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    transition: opacity 0.2s ease;
+}
+
+.insta-strip a:hover img {
+    opacity: 0.85;
+}
+
+.instagram-section .section-note {
+    margin-top: 0.25rem;
+}
+
+@media (max-width: 768px) {
+    .insta-strip {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.4rem;
     }
 }

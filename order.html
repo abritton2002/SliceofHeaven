@@ -71,7 +71,8 @@
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Playwrite+AU+NSW:wght@100..400&display=swap" rel="stylesheet">
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&amp;family=Playwrite+AU+NSW:wght@100..400&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&amp;family=Playwrite+AU+NSW:wght@100..400&amp;display=swap"></noscript>
     <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
@@ -146,7 +147,7 @@
                         <p><strong>Inspiration:</strong> <span id="inspiration-title"></span><br><small>I'll see this photo with your request. Mention any changes in the design section.</small></p>
                     </div>
                     <div class="form-section quote-intent-section">
-                        <h3 class="section-title">What do you need?</h3>
+                        <h2 class="section-title"></h2>
                         <div class="intent-options" role="radiogroup" aria-label="Request type">
                             <label class="intent-option">
                                 <input type="radio" name="requestIntent" value="quote" checked>
@@ -167,7 +168,7 @@
 
                     <!-- 1. Customer Information -->
                     <div class="form-section">
-                        <h3 class="section-title">Customer Information</h3>
+                        <h2 class="section-title"></h2>
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="customer-name">Name *</label>
@@ -188,7 +189,7 @@
 
                     <!-- 2. Event Details -->
                     <div class="form-section">
-                        <h3 class="section-title">Event Details</h3>
+                        <h2 class="section-title"></h2>
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="occasion">Occasion *</label>
@@ -255,7 +256,7 @@
 
                     <!-- 3. Cake Configuration -->
                     <div class="form-section cake-configuration">
-                        <h3 class="section-title">Cake Configuration</h3>
+                        <h2 class="section-title"></h2>
                     
                         <div class="form-row">
                             <div class="form-group">
@@ -407,7 +408,7 @@
 
                     <!-- 4. Design Specifications -->
                     <div class="form-section">
-                        <h3 class="section-title">Design Specifications</h3>
+                        <h2 class="section-title"></h2>
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="cake-colors">Cake Colors * <span class="optional-label">(write "not sure" if flexible)</span></label>
@@ -422,7 +423,7 @@
 
                     <!-- 5. Allergies / Dietary Restrictions -->
                     <div class="form-section">
-                        <h3 class="section-title">Allergies / Dietary Restrictions</h3>
+                        <h2 class="section-title"></h2>
                         <div class="form-group">
                             <label for="allergies">Please list any allergies or dietary restrictions (Optional)</label>
                             <textarea id="allergies" name="allergies" placeholder="Please list any allergies or dietary restrictions (e.g., nuts, dairy, gluten, etc.). Leave blank if none." rows="3"></textarea>
@@ -430,7 +431,7 @@
                     </div>
 
                     <div class="price-summary">
-                        <h3>Starting Price Estimate</h3>
+                        <h2>Starting Price Estimate</h2>
                         <div class="price-breakdown">
                             <div class="price-line">
                                 <span>Base Price:</span>
@@ -453,7 +454,7 @@
                     </div>
 
                     <div class="acknowledgments-section">
-                        <h3>Required Acknowledgments</h3>
+                        <h2>Required Acknowledgments</h2>
                     
                         <div class="form-group">
                             <div class="acknowledgment-item">
