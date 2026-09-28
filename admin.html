@@ -583,7 +583,7 @@
                                 <h3>Payment Options:</h3>
                                 <p>Apple Cash: <span>${escapeHtml(values.appleCash || PAYMENT_DEFAULTS.appleCash)}</span></p>
                                 <p>Venmo: ${escapeHtml(values.venmo || PAYMENT_DEFAULTS.venmo)}</p>
-                                <p>Zelle: ${escapeHtml(values.zelle || PAYMENT_DEFAULTS.zelle)}</p>
+                                <p>Zelle: ${escapeHtml(values.zelle || PAYMENT_DEFAULTS.zelle)} <span class="quote-warning">(send to this Zelle tag, DO NOT send to a phone number)</span></p>
                                 <p>(If doing this option, please <span>DO NOT</span> tag as a good or service<br>as they take a %)</p>
                             </div>
 
@@ -732,9 +732,10 @@
                         <text x="500" y="852" font-size="27">Apple Cash: ${svgEscape(values.appleCash || PAYMENT_DEFAULTS.appleCash)}</text>
                         <text x="500" y="890" font-size="27">Venmo: ${svgEscape(values.venmo || PAYMENT_DEFAULTS.venmo)}</text>
                         <text x="500" y="928" font-size="27">Zelle: ${svgEscape(values.zelle || PAYMENT_DEFAULTS.zelle)}</text>
-                        ${svgTextLines(paymentNoteLines, 500, 970, 26, 36)}
+                        <text x="500" y="964" font-size="26" font-weight="700">(send to this Zelle tag, DO NOT send to a phone number)</text>
+                        ${svgTextLines(paymentNoteLines, 500, 1006, 26, 36)}
 
-                        <text x="500" y="1082" font-size="28">Final Payment Due: Upon Pick-Up.</text>
+                        <text x="500" y="1098" font-size="28">Final Payment Due: Upon Pick-Up.</text>
 
                         <text x="500" y="1164" font-family="'Playwrite AU NSW', cursive" font-size="34">Pick-Up Date:</text>
                         <text x="500" y="1206" font-size="27">${svgEscape(values.pickupDate || 'TBD')}</text>

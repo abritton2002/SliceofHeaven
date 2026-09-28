@@ -3205,6 +3205,10 @@ html {
     text-underline-offset: 3px;
 }
 
+.quote-payment .quote-warning {
+    font-weight: 700;
+}
+
 .quote-money > p:first-child {
     font-size: 1.58rem;
 }
@@ -4020,32 +4024,378 @@ html {
    SEO CONTENT PAGES, GALLERY CARDS & NAV UPDATES
    ============================================= */
 
-/* Hamburger is a real <button> now */
-.hamburger {
+/* Site header / navigation */
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: var(--cream);
+    border-bottom: 1px solid rgba(32, 102, 146, 0.14);
+    transition: box-shadow 0.2s ease;
+}
+
+.site-header.scrolled {
+    box-shadow: 0 2px 14px rgba(0, 0, 0, 0.06);
+}
+
+.site-nav {
+    position: relative;
+    max-width: 1240px;
+    margin: 0 auto;
+    height: 76px;
+    padding: 0 32px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.site-logo {
+    justify-self: start;
+    display: block;
+}
+
+.site-logo img {
+    display: block;
+    height: 46px;
+    width: auto;
+}
+
+.site-links {
+    display: flex;
+    align-items: center;
+    gap: 2.25rem;
+}
+
+.site-link {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: 0.82rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-primary);
+    text-decoration: none;
+    padding: 0.35rem 0;
+    border-bottom: 1px solid transparent;
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.site-link:hover,
+.site-link[aria-current="page"] {
+    color: var(--dark-blue);
+    border-bottom-color: currentColor;
+}
+
+.site-link-extra {
+    display: none;
+}
+
+.site-actions {
+    justify-self: end;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.site-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--white);
+    background: var(--dark-blue);
+    padding: 0.7rem 1.35rem;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.2s ease;
+}
+
+.site-quote:hover {
+    background: var(--dark-blue-hover);
+}
+
+.menu-toggle {
+    display: none;
     background: none;
     border: 0;
-    padding: 8px;
+    padding: 10px 4px;
+    cursor: pointer;
+}
+
+.menu-toggle span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    margin: 5px 0;
+    background: var(--dark-blue);
+    transition: transform 0.25s ease, opacity 0.2s ease;
+}
+
+.menu-toggle.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.menu-toggle.active span:nth-child(2) { opacity: 0; }
+.menu-toggle.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+@media (max-width: 1080px) {
+    .site-nav { padding: 0 20px; }
+    .site-links { gap: 1.4rem; }
+}
+
+@media (max-width: 900px) {
+    .site-nav {
+        height: 64px;
+        grid-template-columns: 1fr auto;
+        padding: 0 16px;
+    }
+
+    .site-logo img { height: 40px; }
+
+    .site-quote { padding: 0.55rem 1rem; }
+    .site-quote-long { display: none; }
+
+    .menu-toggle { display: block; }
+
+    .site-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        padding: 0.5rem 16px 1rem;
+        background: var(--cream);
+        border-bottom: 1px solid rgba(32, 102, 146, 0.14);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+    }
+
+    .site-links.active { display: flex; }
+
+    .site-link {
+        font-size: 0.95rem;
+        padding: 0.9rem 0;
+        border-bottom: 1px solid var(--border-soft);
+    }
+
+    .site-link:hover,
+    .site-link[aria-current="page"] {
+        border-bottom-color: var(--border-soft);
+    }
+
+    .site-link-extra {
+        display: block;
+        border-bottom: 0;
+        color: var(--dark-blue);
+    }
+}
+
+/* Header is in the page flow now (sticky), so the old fixed-nav offsets go away */
+.page-header {
+    padding-top: 3.5rem !important;
+}
+
+.gallery {
+    padding-top: var(--space-lg) !important;
+}
+
+.hero {
+    padding-top: 40px;
+}
+
+@media (max-width: 768px) {
+    .page-header { padding-top: 2.25rem !important; }
+    .gallery { padding-top: var(--space-md) !important; }
+    .hero { padding-top: 30px; }
+}
+
+/* Headings: script face for page titles, serif for section headings */
+.prose h2,
+.section-heading,
+.gallery-section h2,
+.cta-band h2,
+.instagram-section h2,
+.cake-details h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+
+.section-heading,
+.gallery-section h2,
+.instagram-section h2 {
+    font-size: 2.1rem;
+}
+
+.prose h2 {
+    font-size: 1.9rem;
+}
+
+/* Photo grids on landing pages */
+.photo-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.25rem;
+    margin-top: var(--space-md);
+}
+
+.photo-grid-pair {
+    grid-template-columns: repeat(2, minmax(0, 320px));
+    justify-content: center;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 20px;
+}
+
+.photo-card {
     margin: 0;
 }
 
-.nav-link[aria-current="page"]:not(.order-btn) {
+.photo-card img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+}
+
+.photo-card figcaption {
+    padding-top: 0.5rem;
+    font-size: 1rem;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+/* Home category links */
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.5rem;
+    margin-top: var(--space-md);
+}
+
+.category-link {
+    display: block;
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+.category-link img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+}
+
+.category-link span {
+    display: block;
+    padding-top: 0.75rem;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
     color: var(--dark-blue);
+}
+
+.category-link:hover span {
     text-decoration: underline;
-    text-underline-offset: 6px;
+    text-underline-offset: 5px;
 }
 
-/* Tighter desktop nav so seven links fit */
-@media (max-width: 1320px) and (min-width: 769px) {
-    .nav-container { padding: 0 24px; }
-    .nav-menu { gap: 1.4rem; margin-left: 1.5rem; }
-    .nav-link { font-size: 0.85rem; letter-spacing: 0.05em; }
-    .order-btn { padding: 0.65rem 1.1rem; }
+.section-note {
+    max-width: 680px;
+    margin: var(--space-md) auto 0;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 1.1rem;
 }
 
-@media (max-width: 1120px) and (min-width: 769px) {
-    .nav-socials { display: none; }
-    .nav-menu { gap: 1.1rem; margin-left: 1rem; }
-    .logo-img { height: 64px; }
+.section-note a,
+.section-lead a {
+    color: var(--dark-blue);
+    font-weight: 600;
+}
+
+.plain-list {
+    margin: 0 0 var(--space-sm) 1.2rem;
+    font-size: 1.1rem;
+}
+
+.plain-list li {
+    margin-bottom: 0.6rem;
+}
+
+.plain-list a {
+    color: var(--dark-blue);
+    font-weight: 600;
+}
+
+/* End-of-page quote prompt */
+.page-end {
+    padding: var(--space-lg) 0;
+    background: var(--baby-blue);
+    text-align: center;
+}
+
+.page-end p {
+    max-width: 620px;
+    margin: 0 auto var(--space-sm);
+    font-size: 1.2rem;
+}
+
+/* Booking window note under the order date field */
+.date-window-note {
+    margin-top: 0.4rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.date-window-note.is-warning {
+    color: #9a3412;
+    font-weight: 600;
+}
+
+/* Footer social icons */
+.footer-socials a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+@media (max-width: 1024px) {
+    .photo-grid,
+    .category-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .photo-grid,
+    .category-grid {
+        gap: 0.75rem;
+    }
+
+    .photo-grid-pair {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .section-heading,
+    .gallery-section h2,
+    .instagram-section h2 {
+        font-size: 1.7rem;
+    }
+
+    .prose h2 {
+        font-size: 1.6rem;
+    }
+
+    .page-header h1 {
+        font-size: 1.75rem !important;
+    }
 }
 
 /* Footer headings are paragraphs now (keeps the heading outline clean) */
@@ -4185,10 +4535,14 @@ html {
 }
 
 .check-list li::before {
-    content: "\2661";
+    content: "";
     position: absolute;
-    left: 0;
-    color: var(--dark-blue);
+    left: 0.35rem;
+    top: 0.75em;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--dark-blue);
 }
 
 .steps {
@@ -4640,5 +4994,15 @@ html {
     .price-table th,
     .price-table td {
         padding: 0.6rem;
+    }
+}
+
+.split .prose h2 {
+    text-align: left;
+}
+
+@media (max-width: 1024px) {
+    .split .prose h2 {
+        text-align: center;
     }
 }

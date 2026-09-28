@@ -109,42 +109,26 @@
           "mainEntity": [
             {
               "@type": "Question",
-              "name": "What is a vintage heart cake?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "A vintage heart cake is a heart-shaped buttercream cake decorated in a retro, over-the-top piping style: layered shell borders, swags, ruffles and scrolls, usually finished with bows, cherries or pearls. It's the look that's taken over Instagram and TikTok, and it's what I love to make most."
-              }
-            },
-            {
-              "@type": "Question",
               "name": "Is a vintage cake the same as a Lambeth cake?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Pretty much. Lambeth is the name of the classic overpiping technique the vintage style comes from. When people ask for a Lambeth cake, a vintage cake or a retro heart cake, they usually mean the same thing: lots of layered buttercream piping."
+                "text": "Close to it. Lambeth is the name of the old overpiping technique the vintage look comes from, so people use the two names for the same style: layer on layer of buttercream piping."
               }
             },
             {
               "@type": "Question",
-              "name": "What sizes do your heart cakes come in?",
+              "name": "Can I get the same design as a round cake?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Heart cakes come in 6, 8 and 10 inch sizes with 2, 3 or 4 layers, starting at $65. See the full price list. Not sure what size you need? Put your guest count on the quote form and I'll recommend one."
+                "text": "Yes. Every design comes heart-shaped or round, and the starting prices are the same."
               }
             },
             {
               "@type": "Question",
-              "name": "Can I get a round vintage cake instead?",
+              "name": "What sizes do heart cakes come in?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Yes. Every design can be made heart-shaped or round, at the same starting prices."
-              }
-            },
-            {
-              "@type": "Question",
-              "name": "Can you write a custom message on it?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "Yes. Standard writing is included, and 3D lettering is available as an add-on. Tell me the exact wording on the quote form."
+                "text": "Six, 8 or 10 inch, with 2, 3 or 4 layers. Put your guest count on the quote form and I'll suggest a size."
               }
             },
             {
@@ -152,7 +136,15 @@
               "name": "Can I send an inspiration photo?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Yes. Tap any cake in the gallery and choose \"Get a quote for one like this\" to attach it to your request. For photos from elsewhere, message me on Instagram."
+                "text": "Yes. Open any cake in the gallery and choose \"Get a quote for one like this\" to attach it to your request. For photos from somewhere else, message me on Instagram."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How far ahead can I book?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "I take orders up to 1½ months before your pickup date, and at least 3 days out. If your date is further away than that, please reach out closer to the date."
               }
             }
           ]
@@ -166,161 +158,127 @@
     <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-    <nav class="navbar" id="navbar" aria-label="Main">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <a href="/" aria-label="Slice of Heaven Vintage Cakes home">
-                    <img src="/images/brand/wordmark-240.webp" alt="Slice of Heaven Vintage Cakes" class="logo-img" width="240" height="240" decoding="async">
-                </a>
+    <header class="site-header" id="navbar">
+        <div class="site-nav">
+            <a href="/" class="site-logo" aria-label="Slice of Heaven Vintage Cakes home">
+                <img src="/images/brand/wordmark-nav.webp" alt="Slice of Heaven Vintage Cakes" width="196" height="120" decoding="async">
+            </a>
+            <nav class="site-links" id="nav-menu" aria-label="Main">
+                <a href="/gallery" class="site-link">Gallery</a>
+                <a href="/vintage-heart-cakes" class="site-link" aria-current="page">Heart Cakes</a>
+                <a href="/birthday-cakes" class="site-link">Birthdays</a>
+                <a href="/weddings" class="site-link">Weddings</a>
+                <a href="/pricing" class="site-link">Pricing</a>
+                <a href="/contact" class="site-link site-link-extra">Ask a Question</a>
+            </nav>
+            <div class="site-actions">
+                <a href="/order" class="site-quote"><span class="site-quote-long">Get a </span>Quote</a>
+                <button type="button" class="menu-toggle" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
             </div>
-            <div class="nav-menu" id="nav-menu">
-                <a href="/gallery" class="nav-link">Gallery</a>
-                <a href="/vintage-heart-cakes" class="nav-link" aria-current="page">Heart Cakes</a>
-                <a href="/birthday-cakes" class="nav-link">Birthdays</a>
-                <a href="/weddings" class="nav-link">Weddings</a>
-                <a href="/pricing" class="nav-link">Pricing &amp; FAQ</a>
-                <a href="/contact" class="nav-link">Inquire</a>
-                <a href="/order" class="nav-link order-btn">Get a Quote</a>
-                <div class="nav-socials">
-                    <a href="https://www.instagram.com/_sliceofheavencakes_/" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
-                    <a href="https://www.tiktok.com/@_sliceofheavencakes_" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="TikTok"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg></a>
-                </div>
-            </div>
-            <button type="button" class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-menu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
         </div>
-    </nav>
+    </header>
 
     <main id="main">
         <header class="page-header">
             <div class="container">
                 <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a> <span aria-hidden="true">/</span> <span aria-current="page">Vintage Heart Cakes</span></nav>
                 <h1>Vintage Heart Cakes in Tampa</h1>
-                <p class="lead">Hand-piped, retro-style heart cakes with buttercream borders, satin bows, glitter cherries and pearls, made to order in my Tampa home bakery.</p>
+                <p class="lead">Heart-shaped buttercream cakes, piped by hand in the retro Lambeth style.</p>
             </div>
         </header>
 
         <section class="content-section">
-            <div class="container prose">
-                <h2>The Cake Everyone's Asking For</h2>
-                <p>Vintage heart cakes are my specialty. Each one is a heart-shaped cake frosted in smooth buttercream and piped by hand with layer after layer of shells, swags, ruffles and scallops, the classic Lambeth look. Then come the finishing touches: satin bows, fresh or glitter cherries, edible pearls and your message written across the top.</p>
-                <p>They're perfect for birthdays, anniversaries, engagements, bridal showers, Galentine's and Valentine's Day, or any day that deserves a little extra. Pick any color palette, from soft pink and ivory to bold red, black or chocolate.</p>
+            <div class="container">
+                <div class="split">
+                    <div class="split-media">
+                        <img src="/images/cakes/pink-red-cherry-heart-cake-1400.webp" alt="Pink heart cake with red piping, red bows, glitter cherries and &quot;twenty nine and fine.&quot;" width="600" height="800" loading="lazy" decoding="async">
+                    </div>
+                    <div class="prose">
+                        <h2>What makes a cake "vintage"</h2>
+                        <p>The look comes from overpiping: rows of buttercream shells, swags, ruffles and scallops stacked around the top and sides of the cake, so the frosting is the decoration.</p>
+                        <p>On top of the piping I add whatever fits the occasion. Satin bows and glitter cherries are the most requested, and pearls, flowers and hand-written messages are common too.</p>
+                        <p>Heart cakes come in 6, 8 and 10 inch sizes with 2 to 4 layers, in any color you want. Cakes start at $65 for a 6-inch, 2-layer cake. <a href="/pricing">See all prices, flavors and add-ons</a>.</p>
+                    </div>
+                </div>
             </div>
-            <div class="mini-gallery">
-                <figure class="mini-card">
-                    <a href="/gallery#pink-buttercream-heart-cake"><img src="/images/cakes/pink-buttercream-heart-cake-640.webp" alt="Pink buttercream heart cake" width="640" height="630" loading="lazy" decoding="async"></a>
-                    <figcaption>Pink Buttercream Heart Cake</figcaption>
-                </figure>
-                <figure class="mini-card">
-                    <a href="/gallery#pink-red-cherry-heart-cake"><img src="/images/cakes/pink-red-cherry-heart-cake-640.webp" alt="Pink red cherry heart cake" width="600" height="800" loading="lazy" decoding="async"></a>
-                    <figcaption>Pink Red Cherry Heart Cake</figcaption>
-                </figure>
-                <figure class="mini-card">
-                    <a href="/gallery#black-ribbon-heart-cake"><img src="/images/cakes/black-ribbon-heart-cake-640.webp" alt="Black Ribbon Heart Cake" width="640" height="663" loading="lazy" decoding="async"></a>
-                    <figcaption>Black Ribbon Heart Cake</figcaption>
-                </figure>
-                <figure class="mini-card">
-                    <a href="/gallery#red-leopard-forty-fine-heart-cake"><img src="/images/cakes/red-leopard-forty-fine-heart-cake-640.webp" alt="Red leopard forty fine heart cake" width="640" height="1138" loading="lazy" decoding="async"></a>
-                    <figcaption>Red Leopard Forty Fine Heart Cake</figcaption>
-                </figure>
-                <figure class="mini-card">
-                    <a href="/gallery#powder-blue-heart-cake"><img src="/images/cakes/powder-blue-heart-cake-640.webp" alt="Powder Blue Heart Cake" width="640" height="639" loading="lazy" decoding="async"></a>
-                    <figcaption>Powder Blue Heart Cake</figcaption>
-                </figure>
-                <figure class="mini-card">
-                    <a href="/gallery#double-chocolate-heart-cake"><img src="/images/cakes/double-chocolate-heart-cake-640.webp" alt="Double Chocolate Heart Cake" width="640" height="639" loading="lazy" decoding="async"></a>
-                    <figcaption>Double Chocolate Heart Cake</figcaption>
-                </figure>
-                <figure class="mini-card">
-                    <a href="/gallery#rose-garden-heart-cake"><img src="/images/cakes/rose-garden-heart-cake-640.webp" alt="Rose Garden Heart Cake" width="640" height="660" loading="lazy" decoding="async"></a>
-                    <figcaption>Rose Garden Heart Cake</figcaption>
-                </figure>
-                <figure class="mini-card">
-                    <a href="/gallery#pink-dirty-thirty-heart-cake"><img src="/images/cakes/pink-dirty-thirty-heart-cake-640.webp" alt="Pink dirty thirty heart cake" width="640" height="853" loading="lazy" decoding="async"></a>
-                    <figcaption>Pink Dirty Thirty Heart Cake</figcaption>
-                </figure>
-            </div>
-            <p class="center"><a href="/gallery" class="cta-button secondary">See All Heart Cakes in the Gallery</a></p>
         </section>
 
         <section class="content-section alt">
-            <div class="container prose">
-                <h2>Heart Cake Sizes &amp; Starting Prices</h2>
-                <p>Heart cakes come in 6, 8 and 10 inch sizes with 2 to 4 layers. Six cake flavors and vanilla buttercream filling are included. Final pricing depends on the level of detail, customization and colors.</p>
-            <div class="table-wrap">
-                <table class="price-table">
-                    <caption>Starting prices by size and layers (heart or round)</caption>
-                    <thead>
-                        <tr><th scope="col">Layers</th><th scope="col">6 inch</th><th scope="col">8 inch</th><th scope="col">10 inch</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr><th scope="row">2 layers</th><td>$65</td><td>$75</td><td>$85</td></tr>
-                        <tr><th scope="row">3 layers</th><td>$75</td><td>$85</td><td>$95</td></tr>
-                        <tr><th scope="row">4 layers</th><td>$85</td><td>$95</td><td>$105</td></tr>
-                    </tbody>
-                </table>
+            <div class="container">
+                <h2 class="section-heading">Recent heart cakes</h2>
+            <div class="photo-grid">
+                <figure class="photo-card">
+                    <a href="/gallery#pink-buttercream-heart-cake"><img src="/images/cakes/pink-buttercream-heart-cake-640.webp" alt="Pink heart cake with a pearl heart outline around &quot;Birthday Girl&quot; and pink satin bows" width="640" height="630" loading="lazy" decoding="async"></a>
+                    <figcaption>Birthday Girl Heart Cake</figcaption>
+                </figure>
+                <figure class="photo-card">
+                    <a href="/gallery#pink-dirty-thirty-heart-cake"><img src="/images/cakes/pink-dirty-thirty-heart-cake-640.webp" alt="Pink heart cake with black bows and &quot;dirty thirty.&quot;" width="640" height="853" loading="lazy" decoding="async"></a>
+                    <figcaption>Dirty Thirty Heart Cake</figcaption>
+                </figure>
+                <figure class="photo-card">
+                    <a href="/gallery#black-ribbon-heart-cake"><img src="/images/cakes/black-ribbon-heart-cake-640.webp" alt="Ivory heart cake with a pearl heart outline, black bows and &quot;thirty.&quot;" width="640" height="663" loading="lazy" decoding="async"></a>
+                    <figcaption>Thirty Black Bow Heart Cake</figcaption>
+                </figure>
+                <figure class="photo-card">
+                    <a href="/gallery#red-leopard-forty-fine-heart-cake"><img src="/images/cakes/red-leopard-forty-fine-heart-cake-640.webp" alt="Red heart cake with leopard print sides, black bows, glitter cherries and &quot;Forty Fine.&quot;" width="640" height="1138" loading="lazy" decoding="async"></a>
+                    <figcaption>Forty Fine Leopard Heart Cake</figcaption>
+                </figure>
+                <figure class="photo-card">
+                    <a href="/gallery#blue-rose-34-heart-cake"><img src="/images/cakes/blue-rose-34-heart-cake-640.webp" alt="Blue heart cake with ivory piping, pink roses and &quot;hello thirty four.&quot;" width="640" height="853" loading="lazy" decoding="async"></a>
+                    <figcaption>Hello Thirty Four Heart Cake</figcaption>
+                </figure>
+                <figure class="photo-card">
+                    <a href="/gallery#double-chocolate-heart-cake"><img src="/images/cakes/double-chocolate-heart-cake-640.webp" alt="Chocolate and mocha heart cake with brown bows and &quot;A TINI BIT OLDER&quot; in block letters" width="640" height="639" loading="lazy" decoding="async"></a>
+                    <figcaption>Tini Bit Older Chocolate Heart Cake</figcaption>
+                </figure>
+                <figure class="photo-card">
+                    <a href="/gallery#rose-garden-heart-cake"><img src="/images/cakes/rose-garden-heart-cake-640.webp" alt="Ivory heart cake with pink rosettes, pink bows and &quot;hello 24.&quot;" width="640" height="660" loading="lazy" decoding="async"></a>
+                    <figcaption>Hello 24 Rosette Heart Cake</figcaption>
+                </figure>
+                <figure class="photo-card">
+                    <a href="/gallery#black-scorpio-heart-cake"><img src="/images/cakes/black-scorpio-heart-cake-640.webp" alt="Black heart cake with black bows, white pearls and &quot;Scorpio baby.&quot;" width="640" height="853" loading="lazy" decoding="async"></a>
+                    <figcaption>Scorpio Baby Heart Cake</figcaption>
+                </figure>
             </div>
-                <h3>Popular finishing touches</h3>
-                <ul class="check-list">
-                    <li>Satin bows (starting at $5)</li>
-                    <li>Cherries (starting at $5) or glitter cherries (+$10)</li>
-                    <li>Edible pearls or edible glitter (starting at $5)</li>
-                    <li>3D lettering (starting at $5). Standard writing is included.</li>
-                    <li>Edible seashells for a coastal look (starting at $10)</li>
-                </ul>
-                <p><a href="/pricing" class="text-link">See all flavors, fillings &amp; add-ons &rarr;</a></p>
+                <p class="center"><a href="/gallery" class="text-link">See every cake in the gallery</a></p>
             </div>
         </section>
 
         <section class="content-section">
             <div class="container prose">
-                <h2>How to Order a Heart Cake</h2>
-            <ol class="steps">
-                <li><strong>Get inspired.</strong> Browse the <a href="/gallery">gallery</a> and save the designs you love.</li>
-                <li><strong>Request a quote.</strong> Fill out the <a href="/order">quote form</a> with your date, guest count, colors and message. It's fine if some details are still "not sure yet."</li>
-                <li><strong>Confirm your date.</strong> I'll reply within 24 hours with pricing. A 50% non-refundable deposit reserves your date, and the balance is due 24 hours before pickup.</li>
-                <li><strong>Pick up your cake.</strong> Your cake will be ready at your scheduled pickup time. Delivery is very limited, so please ask before you book.</li>
-            </ol>
-                <h2>Heart Cake FAQ</h2>
+                <h2>Questions about heart cakes</h2>
             <div class="faq-list">
                 <details>
-                    <summary>What is a vintage heart cake?</summary>
-                    <p>A vintage heart cake is a heart-shaped buttercream cake decorated in a retro, over-the-top piping style: layered shell borders, swags, ruffles and scrolls, usually finished with bows, cherries or pearls. It's the look that's taken over Instagram and TikTok, and it's what I love to make most.</p>
-                </details>
-                <details>
                     <summary>Is a vintage cake the same as a Lambeth cake?</summary>
-                    <p>Pretty much. Lambeth is the name of the classic overpiping technique the vintage style comes from. When people ask for a Lambeth cake, a vintage cake or a retro heart cake, they usually mean the same thing: lots of layered buttercream piping.</p>
+                    <p>Close to it. Lambeth is the name of the old overpiping technique the vintage look comes from, so people use the two names for the same style: layer on layer of buttercream piping.</p>
                 </details>
                 <details>
-                    <summary>What sizes do your heart cakes come in?</summary>
-                    <p>Heart cakes come in 6, 8 and 10 inch sizes with 2, 3 or 4 layers, starting at $65. See the <a href="/pricing">full price list</a>. Not sure what size you need? Put your guest count on the quote form and I'll recommend one.</p>
+                    <summary>Can I get the same design as a round cake?</summary>
+                    <p>Yes. Every design comes heart-shaped or round, and the starting prices are the same.</p>
                 </details>
                 <details>
-                    <summary>Can I get a round vintage cake instead?</summary>
-                    <p>Yes. Every design can be made heart-shaped or round, at the same starting prices.</p>
-                </details>
-                <details>
-                    <summary>Can you write a custom message on it?</summary>
-                    <p>Yes. Standard writing is included, and 3D lettering is available as an add-on. Tell me the exact wording on the quote form.</p>
+                    <summary>What sizes do heart cakes come in?</summary>
+                    <p>Six, 8 or 10 inch, with 2, 3 or 4 layers. Put your guest count on the <a href="/order">quote form</a> and I'll suggest a size.</p>
                 </details>
                 <details>
                     <summary>Can I send an inspiration photo?</summary>
-                    <p>Yes. Tap any cake in the <a href="/gallery">gallery</a> and choose "Get a quote for one like this" to attach it to your request. For photos from elsewhere, message me on <a href="https://www.instagram.com/_sliceofheavencakes_/" target="_blank" rel="noopener noreferrer">Instagram</a>.</p>
+                    <p>Yes. Open any cake in the <a href="/gallery">gallery</a> and choose "Get a quote for one like this" to attach it to your request. For photos from somewhere else, message me on <a href="https://www.instagram.com/_sliceofheavencakes_/" target="_blank" rel="noopener noreferrer">Instagram</a>.</p>
+                </details>
+                <details>
+                    <summary>How far ahead can I book?</summary>
+                    <p>I take orders up to 1&frac12; months before your pickup date, and at least 3 days out. If your date is further away than that, please reach out closer to the date.</p>
                 </details>
             </div>
             </div>
         </section>
-        <section class="cta-band">
+        <section class="page-end">
             <div class="container">
-                <h2>Ready for Your Heart Cake?</h2>
-                <p>Tell me your date, colors and message, and I'll send you a quote within 24 hours.</p>
-                <div class="cta-buttons">
-                    <a href="/order" class="cta-button">Request a Quote</a>
-                    <a href="/contact" class="cta-button secondary">Ask a Question</a>
-                </div>
+                <p>Send me your date, colors and message, and I'll reply with a quote within 24 hours.</p>
+                <a href="/order" class="cta-button">Request a Quote</a>
             </div>
         </section>
     </main>
@@ -330,10 +288,10 @@
             <div class="footer-content">
                 <div class="footer-section">
                     <p class="footer-brand">Slice of Heaven Vintage Cakes</p>
-                    <p>Hand-piped vintage heart cakes and custom buttercream cakes from a home bakery in Tampa, Florida. Serving Tampa, St. Petersburg, Clearwater and the Tampa Bay area.</p>
+                    <p>Hand-piped vintage heart cakes and custom buttercream cakes from a home bakery in Tampa, Florida. Serving Tampa, St. Petersburg, Clearwater and the rest of Tampa Bay.</p>
                     <div class="footer-socials">
-                        <a href="https://www.instagram.com/_sliceofheavencakes_/" target="_blank" rel="noopener noreferrer">Instagram</a>
-                        <a href="https://www.tiktok.com/@_sliceofheavencakes_" target="_blank" rel="noopener noreferrer">TikTok</a>
+                        <a href="https://www.instagram.com/_sliceofheavencakes_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg><span>Instagram</span></a>
+                        <a href="https://www.tiktok.com/@_sliceofheavencakes_" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg><span>TikTok</span></a>
                     </div>
                 </div>
                 <div class="footer-section">
@@ -349,7 +307,7 @@
                     <p class="footer-heading">Info</p>
                     <ul>
                         <li><a href="/gallery">Gallery</a></li>
-                        <li><a href="/pricing">Pricing, Flavors &amp; FAQ</a></li>
+                        <li><a href="/pricing">Prices, Flavors &amp; FAQ</a></li>
                         <li><a href="/order">Request a Quote</a></li>
                         <li><a href="/contact">Ask a Question</a></li>
                     </ul>

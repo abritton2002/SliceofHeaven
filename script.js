@@ -226,7 +226,16 @@ if (hamburger && navMenu) {
 }
 
 // Close mobile menu when clicking on nav links
-const navLinks = document.querySelectorAll('.nav-link');
+const navLinks = document.querySelectorAll('.site-link');
+
+// Latest pickup date accepted: 1½ months from today
+function getLatestBookableDate() {
+    const latest = new Date();
+    latest.setHours(0, 0, 0, 0);
+    latest.setMonth(latest.getMonth() + 1);
+    latest.setDate(latest.getDate() + 15);
+    return latest;
+}
 if (hamburger && navMenu) {
     navLinks.forEach(link => {
         link.addEventListener('click', () => setMobileMenu(false));
@@ -521,6 +530,42 @@ document.addEventListener('DOMContentLoaded', function() {
         checkbox.addEventListener('change', updatePricing);
     });
 
+    // Booking window: pickup dates can be at most 1½ months out
+    const eventDateInput = document.getElementById('event-date');
+    const dateWindowNote = document.getElementById('date-window-note');
+    const dateWindowNoteText = dateWindowNote ? dateWindowNote.textContent : '';
+
+    function toDateInputValue(date) {
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${date.getFullYear()}-${month}-${day}`;
+    }
+
+    if (eventDateInput) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        eventDateInput.min = toDateInputValue(today);
+        eventDateInput.max = toDateInputValue(getLatestBookableDate());
+
+        // Earliest day a request for this pickup date can be sent (pickup minus 1½ months)
+        function earliestRequestDate(pickup) {
+            const earliest = new Date(pickup);
+            earliest.setDate(earliest.getDate() - 15);
+            earliest.setMonth(earliest.getMonth() - 1);
+            return earliest;
+        }
+
+        eventDateInput.addEventListener('change', () => {
+            if (!dateWindowNote) return;
+            const pickup = eventDateInput.value ? new Date(eventDateInput.value + 'T00:00:00') : null;
+            const tooFar = pickup && pickup > getLatestBookableDate();
+            dateWindowNote.classList.toggle('is-warning', Boolean(tooFar));
+            dateWindowNote.textContent = tooFar
+                ? `That date is more than 1½ months away, so it can't be confirmed yet. Please send your request on or after ${earliestRequestDate(pickup).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}.`
+                : dateWindowNoteText;
+        });
+    }
+
     // Prefill from links: /order?occasion=Wedding and gallery picks (/order?cake=<slug>&title=<title>)
     const urlParams = new URLSearchParams(window.location.search);
     const occasionParam = urlParams.get('occasion');
@@ -604,12 +649,17 @@ document.addEventListener('DOMContentLoaded', function() {
             // Validate event date (should be in the future)
             const eventDateField = orderForm.querySelector('[name="eventDate"]');
             if (eventDateField.value) {
-                const eventDate = new Date(eventDateField.value);
+                const eventDate = new Date(eventDateField.value + 'T00:00:00');
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
 
                 if (eventDate < today) {
                     showNotification('Event date must be in the future.', 'error');
+                    return;
+                }
+
+                if (eventDate > getLatestBookableDate()) {
+                    showNotification('I only take orders up to 1½ months before the pickup date. Please send your request once your date is within that window.', 'error');
                     return;
                 }
 
