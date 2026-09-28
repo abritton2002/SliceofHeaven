@@ -5528,3 +5528,17 @@ html {
         gap: 0.4rem;
     }
 }
+
+.photo-grid-three {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@media (max-width: 768px) {
+    .photo-grid-three {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.5rem;
+    }
+}
