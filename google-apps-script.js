@@ -4,6 +4,7 @@ const CONTACT_SHEET_NAME = 'Contact Form Responses';
 const ADMIN_KEY_PROPERTY = 'ADMIN_KEY';
 const ADMIN_HEADERS = ['Request Type', 'Pipeline Status', 'Status Updated', 'Status Note', 'Quoted Price'];
 const ADMIN_FALLBACK_START_COLUMN = 21;
+const ADMIN_PAGE_SIZE_MAX = 100;
 
 function jsonResponse(payload) {
   return ContentService
@@ -221,7 +222,23 @@ function listOrderRequests(data) {
     return (b.timestampSort - a.timestampSort) || (b.rowNumber - a.rowNumber);
   });
 
-  return jsonResponse({status: 'success', requests: requests});
+  // Paging keeps each response small; Google's response relay (script.googleusercontent.com)
+  // intermittently fails on large payloads. Callers that send no limit get everything, as before.
+  const limit = Math.min(parseInt(data.limit, 10) || 0, ADMIN_PAGE_SIZE_MAX);
+  if (!limit) {
+    return jsonResponse({status: 'success', requests: requests});
+  }
+
+  const offset = Math.max(parseInt(data.offset, 10) || 0, 0);
+  const page = requests.slice(offset, offset + limit);
+  const nextOffset = offset + page.length;
+
+  return jsonResponse({
+    status: 'success',
+    requests: page,
+    total: requests.length,
+    nextOffset: nextOffset < requests.length ? nextOffset : null
+  });
 }
 
 function updateOrderStatus(data) {
