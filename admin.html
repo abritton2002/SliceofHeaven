@@ -186,6 +186,11 @@
         const READ_FAILED_MESSAGE = 'Google\'s server didn\'t respond after several tries. Wait a minute, then press Refresh.';
         const WRITE_UNCONFIRMED_MESSAGE = 'Google\'s server didn\'t confirm the save. Press Refresh to check whether it went through.';
 
+        const SPLIT_ATTEMPTS = 2;
+
+        // Google's relay failed to deliver a response (HTML page, timeout, dropped connection).
+        class RelayError extends Error {}
+
         const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
         async function fetchText(url, options) {
@@ -202,10 +207,10 @@
         // Apps Script hands every response to a second Google server, which sometimes sends back
         // an HTML error page or hangs even though the script itself ran fine. Reads are safe to
         // repeat, so they retry with backoff; writes run once so a save is never applied twice.
-        async function apiRequest(action, payload = {}) {
+        async function apiRequest(action, payload = {}, readAttempts = READ_ATTEMPTS) {
             const isRead = action === 'adminList';
             const params = new URLSearchParams({ action, key: adminKey, ...payload });
-            const attempts = isRead ? READ_ATTEMPTS : 1;
+            const attempts = isRead ? readAttempts : 1;
 
             for (let attempt = 1; attempt <= attempts; attempt++) {
                 if (attempt > 1) await sleep(1000 * 2 ** (attempt - 2));
@@ -231,24 +236,61 @@
                 return result;
             }
 
-            throw new Error(isRead ? READ_FAILED_MESSAGE : WRITE_UNCONFIRMED_MESSAGE);
+            throw isRead ? new RelayError(READ_FAILED_MESSAGE) : new Error(WRITE_UNCONFIRMED_MESSAGE);
         }
 
-        // Loads the list in small pages. An older script version ignores offset/limit and returns
-        // everything with no nextOffset, which ends the loop after one call.
+        let skippedRequestCount = 0;
+        let reachabilityCheck = null;
+
+        // The plain "API is running" response carries no order data, so it tells us whether
+        // Google is up at all. Checked at most once per load.
+        function googleIsReachable() {
+            reachabilityCheck = reachabilityCheck || fetchText(`${APPS_SCRIPT_URL}?_=${Date.now()}`, { cache: 'no-store' })
+                .then(text => JSON.parse(text).status === 'success')
+                .catch(() => false);
+            return reachabilityCheck;
+        }
+
+        // Loads the list in pages. If Google can't deliver a page, it is split in half until the
+        // order it chokes on is isolated and skipped, so one bad order can't lock everyone out.
+        // An older script version ignores offset/limit and returns everything with no total.
         async function fetchAllRequests() {
             const byRow = new Map();
-            let offset = 0;
+            let total = null;
+            let loadedAny = false;
+            let skipped = 0;
+            reachabilityCheck = null;
 
-            while (true) {
-                const result = await apiRequest('adminList', { offset, limit: LIST_PAGE_SIZE });
-                (result.requests || []).forEach(request => byRow.set(String(request.rowNumber), request));
+            async function loadRange(offset, limit, attempts) {
+                if (total !== null && offset >= total) return;
 
-                const nextOffset = Number(result.nextOffset);
-                if (result.nextOffset == null || !(nextOffset > offset)) break;
-                offset = nextOffset;
+                try {
+                    const result = await apiRequest('adminList', { offset, limit }, attempts);
+                    (result.requests || []).forEach(request => byRow.set(String(request.rowNumber), request));
+                    total = result.total == null ? -1 : Number(result.total);
+                    loadedAny = true;
+                } catch (error) {
+                    if (!(error instanceof RelayError)) throw error;
+                    // Only hunt for a bad order when Google is otherwise answering.
+                    if (!loadedAny && !(await googleIsReachable())) throw error;
+                    if (limit === 1) {
+                        skipped++;
+                        return;
+                    }
+                    const half = Math.ceil(limit / 2);
+                    await loadRange(offset, half, SPLIT_ATTEMPTS);
+                    await loadRange(offset + half, limit - half, SPLIT_ATTEMPTS);
+                }
             }
 
+            for (let offset = 0; ; offset += LIST_PAGE_SIZE) {
+                await loadRange(offset, LIST_PAGE_SIZE, READ_ATTEMPTS);
+                if (!loadedAny) throw new RelayError(READ_FAILED_MESSAGE);
+                if (total === -1 || offset + LIST_PAGE_SIZE >= total) break;
+            }
+
+            // Slots past the real end of the list aren't orders, so they don't count as skipped.
+            skippedRequestCount = total > 0 ? Math.min(skipped, Math.max(total - byRow.size, 0)) : skipped;
             return Array.from(byRow.values());
         }
 
@@ -441,6 +483,7 @@
                 <div><strong>${counts.open}</strong><span>Open</span></div>
                 <div><strong>${counts.quotes}</strong><span>Quotes</span></div>
                 <div><strong>${counts.orders}</strong><span>Orders</span></div>
+                ${skippedRequestCount ? `<div><strong>${skippedRequestCount}</strong><span>Couldn't load</span></div>` : ''}
             `;
         }
 

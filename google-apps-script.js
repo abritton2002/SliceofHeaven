@@ -6,9 +6,18 @@ const ADMIN_HEADERS = ['Request Type', 'Pipeline Status', 'Status Updated', 'Sta
 const ADMIN_FALLBACK_START_COLUMN = 21;
 const ADMIN_PAGE_SIZE_MAX = 100;
 
+// Escapes every non-ASCII character (emoji, curly quotes, stray symbols from phone keyboards)
+// as \uXXXX so the response body is plain ASCII. JSON.parse restores the exact text, and
+// Google's response relay has nothing unusual to choke on.
+function asciiJson(payload) {
+  return JSON.stringify(payload).replace(/[\u007f-￿]/g, function(character) {
+    return '\\u' + ('0000' + character.charCodeAt(0).toString(16)).slice(-4);
+  });
+}
+
 function jsonResponse(payload) {
   return ContentService
-    .createTextOutput(JSON.stringify(payload))
+    .createTextOutput(asciiJson(payload))
     .setMimeType(ContentService.MimeType.JSON);
 }
 
