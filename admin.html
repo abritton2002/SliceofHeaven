@@ -205,12 +205,13 @@
         }
 
         // Apps Script hands every response to a second Google server, which sometimes sends back
-        // an HTML error page or hangs even though the script itself ran fine. Reads are safe to
-        // repeat, so they retry with backoff; writes run once so a save is never applied twice.
+        // an HTML error page or hangs even though the script itself ran fine. Every call retries
+        // with backoff: reads are harmless, and updateStatus writes the same fixed values each
+        // time, so repeating a save gives the same result (only "Status Updated" moves).
         async function apiRequest(action, payload = {}, readAttempts = READ_ATTEMPTS) {
             const isRead = action === 'adminList';
             const params = new URLSearchParams({ action, key: adminKey, ...payload });
-            const attempts = isRead ? readAttempts : 1;
+            const attempts = isRead ? readAttempts : READ_ATTEMPTS;
 
             for (let attempt = 1; attempt <= attempts; attempt++) {
                 if (attempt > 1) await sleep(1000 * 2 ** (attempt - 2));
