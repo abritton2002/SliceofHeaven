@@ -2586,6 +2586,16 @@ html {
     font-weight: 700;
 }
 
+.admin-sync {
+    margin: 0 0 10px;
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+
+.admin-sync:empty {
+    display: none;
+}
+
 .admin-stats {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));

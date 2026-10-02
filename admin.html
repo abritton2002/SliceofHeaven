@@ -22,6 +22,7 @@
             </div>
             <div class="admin-actions">
                 <button type="button" class="admin-secondary-btn" id="refreshBtn">Refresh</button>
+                <button type="button" class="admin-secondary-btn" id="olderBtn">Show Older</button>
                 <button type="button" class="admin-secondary-btn" id="forgetKeyBtn">Forget Key</button>
             </div>
         </header>
@@ -37,6 +38,7 @@
         </section>
 
         <section class="admin-dashboard" id="dashboard" hidden>
+            <p class="admin-sync" id="syncStatus" role="status"></p>
             <div class="admin-stats" id="stats"></div>
 
             <div class="admin-toolbar">
@@ -140,6 +142,8 @@
         const authError = document.getElementById('authError');
         const adminKeyInput = document.getElementById('adminKeyInput');
         const refreshBtn = document.getElementById('refreshBtn');
+        const olderBtn = document.getElementById('olderBtn');
+        const syncStatus = document.getElementById('syncStatus');
         const forgetKeyBtn = document.getElementById('forgetKeyBtn');
         const searchInput = document.getElementById('searchInput');
         const statusFilter = document.getElementById('statusFilter');
@@ -181,15 +185,11 @@
         }
 
         const LIST_PAGE_SIZE = 40;
-        const READ_ATTEMPTS = 4;
-        const REQUEST_TIMEOUT_MS = 30000;
-        const READ_FAILED_MESSAGE = 'Google\'s server didn\'t respond after several tries. Wait a minute, then press Refresh.';
+        const READ_ATTEMPTS = 2;
+        const REQUEST_TIMEOUT_MS = 15000;
+        const CACHE_KEY = 'sliceAdminOrders';
+        const READ_FAILED_MESSAGE = 'Couldn\'t reach Google. Try again in a minute.';
         const WRITE_UNCONFIRMED_MESSAGE = 'Google\'s server didn\'t confirm the save. Press Refresh to check whether it went through.';
-
-        const SPLIT_ATTEMPTS = 2;
-
-        // Google's relay failed to deliver a response (HTML page, timeout, dropped connection).
-        class RelayError extends Error {}
 
         const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -205,16 +205,15 @@
         }
 
         // Apps Script hands every response to a second Google server, which sometimes sends back
-        // an HTML error page or hangs even though the script itself ran fine. Every call retries
-        // with backoff: reads are harmless, and updateStatus writes the same fixed values each
+        // an HTML error page or hangs even though the script itself ran fine. Each call gets one
+        // quick retry: reads are harmless, and updateStatus writes the same fixed values each
         // time, so repeating a save gives the same result (only "Status Updated" moves).
-        async function apiRequest(action, payload = {}, readAttempts = READ_ATTEMPTS) {
+        async function apiRequest(action, payload = {}) {
             const isRead = action === 'adminList';
             const params = new URLSearchParams({ action, key: adminKey, ...payload });
-            const attempts = isRead ? readAttempts : READ_ATTEMPTS;
 
-            for (let attempt = 1; attempt <= attempts; attempt++) {
-                if (attempt > 1) await sleep(1000 * 2 ** (attempt - 2));
+            for (let attempt = 1; attempt <= READ_ATTEMPTS; attempt++) {
+                if (attempt > 1) await sleep(1000);
 
                 let result;
                 try {
@@ -237,83 +236,170 @@
                 return result;
             }
 
-            throw isRead ? new RelayError(READ_FAILED_MESSAGE) : new Error(WRITE_UNCONFIRMED_MESSAGE);
+            throw new Error(isRead ? READ_FAILED_MESSAGE : WRITE_UNCONFIRMED_MESSAGE);
         }
 
-        let skippedRequestCount = 0;
-        let reachabilityCheck = null;
+        // Recent = submitted in the last 30 days or the event hasn't happened yet (decided by the
+        // script). Older requests load only when asked for. Both are kept in this browser so the
+        // dashboard opens instantly and older ones are only fetched once.
+        let recentRequests = [];
+        let olderRequests = null;
+        let savedAt = 0;
 
-        // The plain "API is running" response carries no order data, so it tells us whether
-        // Google is up at all. Checked at most once per load.
-        function googleIsReachable() {
-            reachabilityCheck = reachabilityCheck || fetchText(`${APPS_SCRIPT_URL}?_=${Date.now()}`, { cache: 'no-store' })
-                .then(text => JSON.parse(text).status === 'success')
-                .catch(() => false);
-            return reachabilityCheck;
-        }
-
-        // Loads the list in pages. If Google can't deliver a page, it is split in half until the
-        // order it chokes on is isolated and skipped, so one bad order can't lock everyone out.
-        // An older script version ignores offset/limit and returns everything with no total.
-        async function fetchAllRequests() {
-            const byRow = new Map();
-            let total = null;
-            let loadedAny = false;
-            let skipped = 0;
-            reachabilityCheck = null;
-
-            async function loadRange(offset, limit, attempts) {
-                if (total !== null && offset >= total) return;
-
-                try {
-                    const result = await apiRequest('adminList', { offset, limit }, attempts);
-                    (result.requests || []).forEach(request => byRow.set(String(request.rowNumber), request));
-                    total = result.total == null ? -1 : Number(result.total);
-                    loadedAny = true;
-                } catch (error) {
-                    if (!(error instanceof RelayError)) throw error;
-                    // Only hunt for a bad order when Google is otherwise answering.
-                    if (!loadedAny && !(await googleIsReachable())) throw error;
-                    if (limit === 1) {
-                        skipped++;
-                        return;
-                    }
-                    const half = Math.ceil(limit / 2);
-                    await loadRange(offset, half, SPLIT_ATTEMPTS);
-                    await loadRange(offset + half, limit - half, SPLIT_ATTEMPTS);
-                }
-            }
-
+        async function fetchScope(scope) {
+            const found = [];
             for (let offset = 0; ; offset += LIST_PAGE_SIZE) {
-                await loadRange(offset, LIST_PAGE_SIZE, READ_ATTEMPTS);
-                if (!loadedAny) throw new RelayError(READ_FAILED_MESSAGE);
-                if (total === -1 || offset + LIST_PAGE_SIZE >= total) break;
+                const result = await apiRequest('adminList', { scope, offset, limit: LIST_PAGE_SIZE });
+                found.push(...(result.requests || []));
+                if (result.nextOffset == null) return found;
             }
+        }
 
-            // Slots past the real end of the list aren't orders, so they don't count as skipped.
-            skippedRequestCount = total > 0 ? Math.min(skipped, Math.max(total - byRow.size, 0)) : skipped;
-            return Array.from(byRow.values());
+        async function keyFingerprint(key) {
+            const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(`slice-admin:${key}`));
+            return Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('');
+        }
+
+        // The saved copy is tagged with a fingerprint of the key, so it only opens for the same key.
+        async function readCache() {
+            try {
+                const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+                if (!cached || cached.fingerprint !== await keyFingerprint(adminKey)) return false;
+                recentRequests = cached.recent || [];
+                olderRequests = cached.older || null;
+                savedAt = cached.savedAt || 0;
+                return true;
+            } catch (error) {
+                return false;
+            }
+        }
+
+        async function writeCache() {
+            try {
+                localStorage.setItem(CACHE_KEY, JSON.stringify({
+                    fingerprint: await keyFingerprint(adminKey),
+                    recent: recentRequests,
+                    older: olderRequests,
+                    savedAt
+                }));
+            } catch (error) {
+                // A full or blocked storage only means the next open isn't instant.
+            }
+        }
+
+        function clearCache() {
+            try { localStorage.removeItem(CACHE_KEY); } catch (error) { /* nothing saved */ }
+            recentRequests = [];
+            olderRequests = null;
+            savedAt = 0;
+        }
+
+        function combineRequests() {
+            const byRow = new Map();
+            (olderRequests || []).forEach(request => byRow.set(String(request.rowNumber), request));
+            recentRequests.forEach(request => byRow.set(String(request.rowNumber), request));
+            requests = Array.from(byRow.values()).sort((a, b) => {
+                return (Number(b.timestampSort || 0) - Number(a.timestampSort || 0)) ||
+                    (Number(b.rowNumber || 0) - Number(a.rowNumber || 0));
+            });
+        }
+
+        function replaceRequest(updated) {
+            const swap = list => list && list.map(request => (
+                String(request.rowNumber) === String(updated.rowNumber) ? updated : request
+            ));
+            recentRequests = swap(recentRequests);
+            olderRequests = swap(olderRequests);
+            combineRequests();
+            writeCache();
+        }
+
+        function showSync(message, isError = false) {
+            syncStatus.textContent = message;
+            syncStatus.classList.toggle('admin-error', isError);
+        }
+
+        function savedTimeLabel() {
+            return savedAt ? new Date(savedAt).toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '';
+        }
+
+        function updateOlderButton() {
+            olderBtn.textContent = olderRequests ? 'Refresh Older' : 'Show Older';
+        }
+
+        function showDashboard() {
+            authPanel.hidden = true;
+            dashboard.hidden = false;
+            authError.hidden = true;
+            updateOlderButton();
+            render();
+        }
+
+        function showLogin(message) {
+            dashboard.hidden = true;
+            authPanel.hidden = false;
+            authError.textContent = message;
+            authError.hidden = false;
         }
 
         async function loadRequests() {
             setBusy(true);
             authError.hidden = true;
 
-            try {
-                requests = (await fetchAllRequests()).sort((a, b) => {
-                    return (Number(b.timestampSort || 0) - Number(a.timestampSort || 0)) ||
-                        (Number(b.rowNumber || 0) - Number(a.rowNumber || 0));
-                });
-                authPanel.hidden = true;
-                dashboard.hidden = false;
-                sessionStorage.setItem(STORAGE_KEY, adminKey);
+            const firstOpen = dashboard.hidden;
+            const hadCache = firstOpen && await readCache();
+            if (hadCache) {
+                combineRequests();
                 setCalendarToNextRequest(requests);
-                render();
+                showDashboard();
+            }
+            showSync(hadCache ? `Showing saved copy from ${savedTimeLabel()}. Updating...` : 'Updating...');
+
+            try {
+                const fresh = await fetchScope('recent');
+                const freshRows = new Set(fresh.map(request => String(request.rowNumber)));
+                // Requests that just aged past 30 days stay visible if older ones are already loaded.
+                if (olderRequests) {
+                    const agedOut = recentRequests.filter(request => !freshRows.has(String(request.rowNumber)));
+                    olderRequests = agedOut.concat(olderRequests.filter(request => !freshRows.has(String(request.rowNumber))));
+                }
+                recentRequests = fresh;
+                savedAt = Date.now();
+                combineRequests();
+                sessionStorage.setItem(STORAGE_KEY, adminKey);
+                await writeCache();
+                if (firstOpen && !hadCache) setCalendarToNextRequest(requests);
+                showDashboard();
+                showSync(`Updated ${savedTimeLabel()}.`);
             } catch (error) {
-                dashboard.hidden = true;
-                authPanel.hidden = false;
-                authError.textContent = error.message;
-                authError.hidden = false;
+                if (error.message === 'Unauthorized.') {
+                    clearCache();
+                    sessionStorage.removeItem(STORAGE_KEY);
+                    showLogin(error.message);
+                } else if (dashboard.hidden) {
+                    showLogin(error.message);
+                } else {
+                    showSync(`${error.message} Showing saved copy from ${savedTimeLabel()}.`, true);
+                }
+            } finally {
+                setBusy(false);
+            }
+        }
+
+        async function loadOlderRequests() {
+            setBusy(true);
+            showSync('Loading older requests...');
+
+            try {
+                const recentRows = new Set(recentRequests.map(request => String(request.rowNumber)));
+                olderRequests = (await fetchScope('older')).filter(request => !recentRows.has(String(request.rowNumber)));
+                combineRequests();
+                await writeCache();
+                updateOlderButton();
+                render();
+                showSync(`Older requests loaded. Recent ones updated ${savedTimeLabel()}.`);
+            } catch (error) {
+                showSync(error.message, true);
             } finally {
                 setBusy(false);
             }
@@ -484,7 +570,6 @@
                 <div><strong>${counts.open}</strong><span>Open</span></div>
                 <div><strong>${counts.quotes}</strong><span>Quotes</span></div>
                 <div><strong>${counts.orders}</strong><span>Orders</span></div>
-                ${skippedRequestCount ? `<div><strong>${skippedRequestCount}</strong><span>Couldn't load</span></div>` : ''}
             `;
         }
 
@@ -918,9 +1003,11 @@
         });
 
         refreshBtn.addEventListener('click', loadRequests);
+        olderBtn.addEventListener('click', loadOlderRequests);
 
         forgetKeyBtn.addEventListener('click', () => {
             sessionStorage.removeItem(STORAGE_KEY);
+            clearCache();
             adminKey = '';
             adminKeyInput.value = '';
             dashboard.hidden = true;
@@ -973,15 +1060,14 @@
             try {
                 const result = await apiRequest('updateStatus', {
                     rowNumber: card.dataset.row,
+                    expectedTimestamp: requests.find(request => String(request.rowNumber) === card.dataset.row)?.timestampSort || '',
                     status: formData.get('status'),
                     quotedPrice: formData.get('quotedPrice'),
                     note: formData.get('note')
                 });
 
                 if (result.request) {
-                    requests = requests.map(request => (
-                        String(request.rowNumber) === String(result.request.rowNumber) ? result.request : request
-                    ));
+                    replaceRequest(result.request);
                     render();
                 } else {
                     await loadRequests();
@@ -1069,6 +1155,7 @@
             try {
                 const result = await apiRequest('updateStatus', {
                     rowNumber: activeQuoteRequest.rowNumber,
+                    expectedTimestamp: activeQuoteRequest.timestampSort || '',
                     status: nextStatus,
                     quotedPrice: moneyDisplay(values.quoteTotal),
                     note: activeQuoteRequest.statusNote || '',
@@ -1076,9 +1163,7 @@
                 });
 
                 if (result.request) {
-                    requests = requests.map(request => (
-                        String(request.rowNumber) === String(result.request.rowNumber) ? result.request : request
-                    ));
+                    replaceRequest(result.request);
                     activeQuoteRequest = result.request;
                     render();
                 }

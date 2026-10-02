@@ -5,6 +5,7 @@ const ADMIN_KEY_PROPERTY = 'ADMIN_KEY';
 const ADMIN_HEADERS = ['Request Type', 'Pipeline Status', 'Status Updated', 'Status Note', 'Quoted Price'];
 const ADMIN_FALLBACK_START_COLUMN = 21;
 const ADMIN_PAGE_SIZE_MAX = 100;
+const ADMIN_RECENT_DAYS = 30;
 
 // Escapes every non-ASCII character (emoji, curly quotes, stray symbols from phone keyboards)
 // as \uXXXX so the response body is plain ASCII. JSON.parse restores the exact text, and
@@ -165,6 +166,10 @@ function publicErrorMessage(error) {
     return 'Unauthorized.';
   }
 
+  if (error && String(error.message || error) === 'Request moved.') {
+    return 'This request moved in the sheet since the dashboard loaded. Press Refresh, then save again.';
+  }
+
   return 'Request could not be completed.';
 }
 
@@ -220,11 +225,22 @@ function listOrderRequests(data) {
   const values = sheet.getDataRange().getValues();
   const requests = [];
 
+  // scope=recent: submitted in the last ADMIN_RECENT_DAYS days, or the event is today or later.
+  // scope=older: everything else. No scope: every request, as before.
+  const scope = data.scope;
+  const cutoff = Date.now() - ADMIN_RECENT_DAYS * 24 * 60 * 60 * 1000;
+  const todayIso = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd');
+
   for (let i = 1; i < values.length; i++) {
     const row = values[i];
     if (!row[0] && !row[1] && !row[2]) continue;
 
-    requests.push(buildOrderRequest(row, i + 1, adminColumns));
+    const request = buildOrderRequest(row, i + 1, adminColumns);
+    if (scope === 'recent' || scope === 'older') {
+      const isRecent = request.timestampSort >= cutoff || (request.eventDateIso && request.eventDateIso >= todayIso);
+      if ((scope === 'recent') !== Boolean(isRecent)) continue;
+    }
+    requests.push(request);
   }
 
   requests.sort(function(a, b) {
@@ -263,6 +279,12 @@ function updateOrderStatus(data) {
 
   if (rowNumber > sheet.getLastRow()) {
     throw new Error('Request row not found.');
+  }
+
+  // The dashboard may be showing a saved copy. If rows were sorted or deleted since, this row now
+  // holds a different request, so refuse rather than overwrite it.
+  if (data.expectedTimestamp && String(sortValue(sheet.getRange(rowNumber, 1).getValue())) !== String(data.expectedTimestamp)) {
+    throw new Error('Request moved.');
   }
 
   sheet.getRange(rowNumber, adminColumns.pipelineStatus, 1, 4).setValues([[
